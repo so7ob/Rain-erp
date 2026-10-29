@@ -23,6 +23,12 @@ export function issueNumber(body) {
   return Number(match[1]);
 }
 
+export function pullRequestNumber(value) {
+  ensure(/^[1-9][0-9]*$/.test(value ?? '') && Number.isSafeInteger(Number(value)),
+    'PR_NUMBER must be a positive, safe integer; policy never runs without a PR.');
+  return Number(value);
+}
+
 export function parseVersion(version) {
   const match = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.exec(version);
   ensure(match, `Invalid release version: ${version}`);
@@ -122,11 +128,12 @@ export function validatePR(pr, issue, context = {}) {
     ensure((meta[key]?.length ?? 0) >= minimum && !/^(?:pending|todo|\[)/i.test(meta[key]), `Document ${key}.`);
   }
   const kind = meta.Workflow;
-  const bootstrap = kind === 'bootstrap' && issue.number === config.bootstrapIssue;
+  const bootstrap = kind === 'bootstrap' && issue.number === config.bootstrapIssue && labels.has('kind:bootstrap');
   if (pr.base.ref === config.stableBranch) {
     ensure(pr.head.ref === config.integrationBranch, 'Only develop may target main.');
     ensure(context.baseContained, 'Synchronize main into develop before promotion.');
-    if (bootstrap) ensure(pr.base.sha === config.bootstrapBase, 'Bootstrap promotion is a one-time operation.');
+    if (bootstrap) ensure(pr.base.sha === config.bootstrapBase || context.bootstrapCorrection,
+      'Bootstrap corrections require verified main and an active unreleased setup.');
     else {
       ensure(kind === 'promotion' && labels.has('kind:release'), 'main requires a release promotion.');
       ensure(meta['Release-Source'] === pr.head.sha, 'The release candidate moved; repeat its review.');
