@@ -42,3 +42,7 @@ Production builds generate the ignored auto-import/component declarations before
 `corepack pnpm test` also verifies Arabic/English/Chinese catalog parity and message compilation, interpolation parameters, saved locale normalization, document direction, competing/failed language loads, composer reactivity, Arabic relative-time forms and visible-text scanner behavior. `corepack pnpm i18n:check` checks the committed source inventory and catalogs in CI. Regenerate and review inventory changes with `corepack pnpm i18n:inventory`.
 
 These checks do not establish full module localization. `corepack pnpm i18n:accept` explicitly fails while module/browser/API/output acceptance remains pending under Issue #15. See [the localization guide](localization.md) for scope, scanner limits, glossary and external integration boundaries.
+
+## Local source preview
+
+Use [the local development guide](local-development.md) to serve the authoritative frontend through Vite on the existing local port 3085, verify HMR/API routing, or restore the original static output. Runtime overrides remain ignored; this workflow does not publish an application release.
