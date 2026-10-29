@@ -1,0 +1,10 @@
+name: Question / سؤال
+description: Ask about Rain-erp usage or clarify an existing task
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: Question / السؤال
+      description: Include your setup and relevant evidence without credentials.
+    validations:
+      required: true
