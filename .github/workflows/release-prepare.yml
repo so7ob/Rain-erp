@@ -1,0 +1,53 @@
+name: Prepare release
+
+on:
+  schedule:
+    # 18:00 UTC = 21:00 Asia/Aden. The script checks the actual final day.
+    - cron: '0 18 28-31 * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Compute the release plan without writing to GitHub
+        type: boolean
+        default: true
+      version:
+        description: Optional explicit version; required to graduate to stable 1.0.0
+        type: string
+        default: ''
+
+permissions: {}
+
+concurrency:
+  group: rain-erp-delivery
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: main
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Prepare a reviewed release request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DRY_RUN: ${{ inputs.dry_run }}
+          REQUESTED_VERSION: ${{ inputs.version }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          args=(prepare)
+          if [[ "$EVENT_NAME" == schedule ]]; then args+=(--scheduled); fi
+          if [[ "$DRY_RUN" == true ]]; then args+=(--dry-run); fi
+          if [[ -n "$REQUESTED_VERSION" ]]; then args+=(--version "$REQUESTED_VERSION"); fi
+          node tools/workflow/automation.mjs "${args[@]}"
