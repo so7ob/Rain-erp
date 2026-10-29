@@ -16,9 +16,13 @@
 
 يستهدف إعداد هذا المستودع **Java 17** و**Spring Boot 3.5.15** وفق [pom.xml](pom.xml). تُفعّل وحدتا النظام والبنية التحتية افتراضيًا مع إطار العمل والخادم؛ وتبقى وحدات الأعمال الأخرى اختيارية في إعداد البناء.
 
+## مصدر الواجهة والتشغيل
+
+واجهة الإدارة المعتمدة موجودة في [`frontend/`](frontend/README.md)، مع مصدرها وترخيصها وملف قفل التبعيات. راجع دليلها للتشغيل والبناء. يحتفظ الخادم ببنية Maven الحالية؛ يجمع مستودع واحد شيفرة الطرفين ومراجعاتهما وإصدارات المنتج.
+
 <p align="center">
  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.15-blue.svg" alt="Spring Boot 3.5.15">
- <img src="https://img.shields.io/badge/Vue-3.2-blue.svg" alt="Vue 3.2">
+ <img src="https://img.shields.io/badge/Vue-3.5.34-blue.svg" alt="Vue 3.5.34">
  <img src="https://img.shields.io/github/license/YunaiV/ruoyi-vue-pro" alt="ترخيص MIT" />
 </p>
 

@@ -14,6 +14,14 @@ Rain-erp أحد منتجات [so7ob-tech — سحب التقنية](https://gith
 
 ```bash
 node --test tools/workflow/*.test.mjs
+(
+  cd frontend
+  corepack pnpm install --frozen-lockfile
+  corepack pnpm test
+  corepack pnpm build
+  corepack pnpm ts:check
+  corepack pnpm check:build
+)
 mvn -B -ntp -pl yudao-server -am verify
 python3 tools/workflow/test_report.py
 ```

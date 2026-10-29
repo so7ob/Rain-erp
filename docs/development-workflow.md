@@ -73,3 +73,9 @@ The [updated-code release dry-run](https://github.com/so7ob/Rain-erp/actions/run
 The canonical location is `so7ob/Rain-erp`. The owner authorized transfer of the existing repository in Issue #9, preserving GitHub repository ID `1438705941`, commits, branches, Issues, PRs and settings. Automation takes its repository name from `GITHUB_REPOSITORY` (or `GH_REPO` for local CLI execution), defaulting to the canonical name, and verifies the immutable ID before policy or delivery operations. This supports the old and new owner during transfer while rejecting unrelated repositories.
 
 A one-use administrative `migration` promotion is scoped to the open labeled Issue #9 and main base `8adf706eaa39992678d67a7eaacdfb0da45005b1`. It requires exact-head review, successful develop CI, SNAPSHOT metadata and no tags/releases. Preparation uses squash; main promotion and ancestry synchronization use merge commits. Integration leaves the migration Issue open for administrative acceptance. After transfer, successful normal develop delivery closes the Issue and removes its work branch. No product release or application deployment accompanies the ownership change.
+
+## Frontend in the product repository
+
+`frontend/` contains the pinned Vue source, MIT attribution, lockfile, safe defaults and local environment example. It shares the Issue/branch/review/release path with the Maven backend. Required CI installs with the pinned pnpm version and frozen lockfile, runs frontend configuration regressions, builds production assets, type-checks the full frontend source and verifies its Maven-derived version before completing backend verification.
+
+The private frontend package has no separate npm version. Its build reads the root Maven revision and emits `dist/version.json`, so preparation and promotion retain the same authoritative version without requiring a second release writer. Deployment remains independent from source integration and product release publication.

@@ -41,6 +41,21 @@ jobs:
           node tools/workflow/version.mjs
           node --test tools/workflow/*.test.mjs
           git diff --check
+      - name: Install frontend dependencies from the lockfile
+        working-directory: frontend
+        run: corepack pnpm install --frozen-lockfile
+      - name: Test frontend configuration
+        working-directory: frontend
+        run: corepack pnpm test
+      - name: Build frontend production assets
+        working-directory: frontend
+        run: corepack pnpm build
+      - name: Type-check all frontend source
+        working-directory: frontend
+        run: corepack pnpm ts:check
+      - name: Validate frontend assets and Maven product version
+        working-directory: frontend
+        run: corepack pnpm check:build
       - name: Resolve JDK version
         id: jdk
         run: |

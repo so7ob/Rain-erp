@@ -14,9 +14,13 @@ The demo links, documentation, and edition branches below belong to the upstream
 
 This repository targets **Java 17** and **Spring Boot 3.5.15**, as configured in [pom.xml](pom.xml). System management and infrastructure are enabled by default alongside the framework and server; other business modules remain optional in the build configuration.
 
+## Frontend source and development
+
+The administration source is tracked in [`frontend/`](frontend/README.en.md), with upstream attribution and a frozen dependency lockfile. Its guide covers development and builds. The backend retains its existing Maven layout; one repository owns both components and product releases.
+
 <p align="center">
  <img src="https://img.shields.io/badge/Spring%20Boot-3.5.15-blue.svg" alt="Spring Boot 3.5.15">
- <img src="https://img.shields.io/badge/Vue-3.2-blue.svg" alt="Vue 3.2">
+ <img src="https://img.shields.io/badge/Vue-3.5.34-blue.svg" alt="Vue 3.5.34">
  <img src="https://img.shields.io/github/license/YunaiV/ruoyi-vue-pro" alt="MIT License" />
 </p>
 

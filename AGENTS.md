@@ -38,3 +38,9 @@ See `CONTRIBUTING.md`, `docs/development-workflow.md`, and `docs/testing.md` for
 Issue #9 authorizes transfer of this same repository (immutable GitHub ID `1438705941`) from `wweziz0001/Rain-erp` to `so7ob/Rain-erp`. Automation resolves the GitHub repository context and verifies this ID before policy checks or privileged delivery. A clone with another repository ID cannot publish or close Issues.
 
 The administrative `Workflow: migration` uses labeled Issue #9, numbered work branches and exact-head review. Its single develop-to-main promotion is restricted to main base `8adf706eaa39992678d67a7eaacdfb0da45005b1`, verified develop, SNAPSHOT metadata and zero product tags/releases. It uses a merge commit and creates no product release. Keep the Issue open through reviewed ancestry synchronization, transfer and successful post-transfer verification. Close it through a final normal development delivery; completed Issues and the pinned main base prevent reuse of this exception. Normal development/release policy otherwise continues.
+
+## Frontend source
+
+`frontend/` is the authoritative Vue administration source. Preserve the recorded upstream revision and MIT attribution in `frontend/UPSTREAM.md` / `frontend/LICENSE`. `.runtime/frontend` is an ignored legacy runtime checkout, not a development source. Do not copy its local environment, dependencies, build output or Git metadata into this repository.
+
+Use Node.js 24 and the packageManager-pinned Corepack/pnpm version. Install with `corepack pnpm install --frozen-lockfile` in `frontend/`; run its configuration tests, production build, full type check and build/version verification, in that order. Keep real failures visible; lint is an additional upstream command. The frontend product version derives from Maven revision at build time; do not add an independently maintained frontend version. The required `verify` gate covers frontend and backend checks.
