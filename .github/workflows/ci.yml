@@ -59,7 +59,7 @@ jobs:
           cache: maven
           cache-dependency-path: '**/pom.xml'
       - name: Build and test active modules
-        run: mvn -B -ntp -pl yudao-server -am verify
+        run: mvn -B -ntp -pl yudao-server -am verify -s .github/maven-settings.xml
       - name: Validate reported tests and disabled-test baseline
         if: always()
         run: python3 tools/workflow/test_report.py
