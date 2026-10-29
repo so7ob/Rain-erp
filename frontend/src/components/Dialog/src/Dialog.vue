@@ -102,11 +102,13 @@ function closedHandler() {
     @close="closeHandler"
     @closed="closedHandler"
   >
-    <template #header="{ close }">
+    <template #header="{ close, titleId }">
       <div class="relative h-54px flex items-center justify-between pl-15px pr-15px">
-        <slot name="title">
-          {{ title }}
-        </slot>
+        <span :id="titleId">
+          <slot name="title">
+            {{ title }}
+          </slot>
+        </span>
         <div
           class="absolute right-15px top-[50%] h-54px flex translate-y-[-50%] items-center justify-between"
         >

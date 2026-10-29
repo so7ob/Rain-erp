@@ -1,19 +1,26 @@
 import { watch, ref } from 'vue'
+import type { WatchStopHandle } from 'vue'
 import { isString } from '@/utils/is'
 import { useAppStoreWithOut } from '@/store/modules/app'
 
 const appStore = useAppStoreWithOut()
+let stopLocaleWatch: WatchStopHandle | undefined
+let stopDocumentWatch: WatchStopHandle | undefined
 
 export const useTitle = (newTitle?: string) => {
+  stopLocaleWatch?.()
+  stopDocumentWatch?.()
   const { t } = useI18n()
-  const title = ref(
-    newTitle ? `${appStore.getTitle} - ${t(newTitle as string)}` : appStore.getTitle
-  )
+  const renderTitle = () => (newTitle ? `${appStore.getTitle} - ${t(newTitle)}` : appStore.getTitle)
+  const title = ref(renderTitle())
+  stopLocaleWatch = watch(renderTitle, (value) => {
+    title.value = value
+  })
 
-  watch(
+  stopDocumentWatch = watch(
     title,
     (n, o) => {
-      if (isString(n) && n !== o && document) {
+      if (isString(n) && n !== o && typeof document !== 'undefined') {
         document.title = n
       }
     },

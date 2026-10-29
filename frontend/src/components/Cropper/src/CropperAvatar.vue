@@ -1,7 +1,14 @@
 <template>
-  <div class="user-info-head" @click="open()">
-    <el-avatar v-if="sourceValue" :src="sourceValue" alt="avatar" class="img-circle img-lg" />
-    <el-avatar v-if="!sourceValue" :src="avatar" alt="avatar" class="img-circle img-lg" />
+  <div class="user-info-head">
+    <button
+      type="button"
+      class="user-avatar-trigger"
+      :aria-label="t('cropper.selectImage')"
+      @click="open()"
+    >
+      <el-avatar v-if="sourceValue" :src="sourceValue" alt="" class="img-circle img-lg" />
+      <el-avatar v-if="!sourceValue" :src="avatar" alt="" class="img-circle img-lg" />
+    </button>
     <el-button v-if="showBtn" :class="`${prefixCls}-upload-btn`" @click="open()">
       {{ btnText ? btnText : t('cropper.selectImage') }}
     </el-button>
@@ -125,7 +132,22 @@ $prefix-cls: #{$namespace}--cropper-avatar;
   height: 120px;
 }
 
-.user-info-head:hover::after {
+.user-avatar-trigger {
+  position: relative;
+  display: block;
+  padding: 0;
+  cursor: pointer;
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+}
+
+.user-avatar-trigger:focus-visible {
+  outline: 2px solid var(--el-color-primary);
+  outline-offset: 2px;
+}
+
+.user-avatar-trigger:hover::after {
   position: absolute;
   inset: 0;
   font-size: 24px;
@@ -138,5 +160,6 @@ $prefix-cls: #{$namespace}--cropper-avatar;
   background: rgb(0 0 0 / 50%);
   border-radius: 50%;
   content: '+';
+  pointer-events: none;
 }
 </style>

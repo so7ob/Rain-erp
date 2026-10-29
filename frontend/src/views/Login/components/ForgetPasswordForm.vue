@@ -4,6 +4,7 @@
     ref="formSmsResetPassword"
     :model="resetPasswordData"
     :rules="rules"
+    :validate-on-rule-change="false"
     class="login-form"
     label-position="top"
     label-width="120px"
@@ -17,23 +18,29 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item v-if="resetPasswordData.tenantEnable === 'true'" prop="tenantName">
+        <el-form-item
+          v-if="resetPasswordData.tenantEnable === 'true'"
+          prop="tenantName"
+          :label="t('login.tenantname')"
+        >
           <el-input
             v-model="resetPasswordData.tenantName"
             :placeholder="t('login.tenantNamePlaceholder')"
             :prefix-icon="iconHouse"
             type="primary"
             link
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <!-- 手机号 -->
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="mobile">
+        <el-form-item prop="mobile" :label="t('login.mobileNumber')">
           <el-input
             v-model="resetPasswordData.mobile"
             :placeholder="t('login.mobileNumberPlaceholder')"
             :prefix-icon="iconCellphone"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
@@ -47,26 +54,27 @@
       />
       <!-- 验证码 -->
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="code">
+        <el-form-item prop="code" :label="t('login.code')">
           <el-row :gutter="5" justify="space-between" style="width: 100%">
             <el-col :span="24">
               <el-input
                 v-model="resetPasswordData.code"
                 :placeholder="t('login.codePlaceholder')"
                 :prefix-icon="iconCircleCheck"
+                dir="auto"
               >
                 <template #append>
-                  <span
-                    v-if="mobileCodeTimer <= 0"
+                  <el-button
+                    link
                     class="getMobileCode"
-                    style="cursor: pointer"
+                    :disabled="mobileCodeTimer > 0"
                     @click="getCode"
                   >
-                    {{ t('login.getSmsCode') }}
-                  </span>
-                  <span v-if="mobileCodeTimer > 0" class="getMobileCode" style="cursor: pointer">
-                    {{ mobileCodeTimer }}秒后可重新获取
-                  </span>
+                    <span v-if="mobileCodeTimer <= 0">{{ t('login.getSmsCode') }}</span>
+                    <span v-else>{{
+                      t('auth.retryCountdown', { seconds: mobileCodeTimer }, mobileCodeTimer)
+                    }}</span>
+                  </el-button>
                 </template>
               </el-input>
               <!-- </el-button> -->
@@ -75,7 +83,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="password">
+        <el-form-item prop="password" :label="t('login.password')">
           <InputPassword
             v-model="resetPasswordData.password"
             :placeholder="t('login.passwordPlaceholder')"
@@ -85,7 +93,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="check_password">
+        <el-form-item prop="check_password" :label="t('login.checkPassword')">
           <InputPassword
             v-model="resetPasswordData.check_password"
             :placeholder="t('login.checkPassword')"
@@ -113,6 +121,7 @@
   </el-form>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 
 import { useIcon } from '@/hooks/web/useIcon'
@@ -136,34 +145,46 @@ const iconCellphone = useIcon({ icon: 'ep:cellphone' })
 const iconCircleCheck = useIcon({ icon: 'ep:circle-check' })
 const { validForm } = useFormValid(formSmsResetPassword)
 const { handleBackLogin, getLoginState, setLoginState } = useLoginState()
+useLocalizedForm(() => formSmsResetPassword.value)
+
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.RESET_PASSWORD)
 const captchaType = ref('blockPuzzle') // blockPuzzle 滑块 clickWord 点击文字 pictureWord 文字验证码
 
 const validatePass2 = (_rule, value) => {
   if (value === '') {
-    return Promise.reject(new Error('请再次输入密码'))
+    return Promise.reject(new Error(t('auth.validation.confirmPassword')))
   }
   if (value !== resetPasswordData.password) {
-    return Promise.reject(new Error('两次输入密码不一致!'))
+    return Promise.reject(new Error(t('profile.password.diffPwd')))
   }
   return Promise.resolve()
 }
 
-const rules = {
-  tenantName: [{ required: true, min: 2, max: 20, trigger: 'blur', message: '长度为4到16位' }],
-  mobile: [{ required: true, min: 11, max: 11, trigger: 'blur', message: '手机号长度为11位' }],
+const rules = computed(() => ({
+  tenantName: [
+    { required: true, min: 2, max: 20, trigger: 'blur', message: t('auth.validation.tenantLength') }
+  ],
+  mobile: [
+    {
+      required: true,
+      min: 11,
+      max: 11,
+      trigger: 'blur',
+      message: t('auth.validation.mobileLength')
+    }
+  ],
   password: [
     {
       required: true,
       min: 4,
       max: 16,
       trigger: 'blur',
-      message: '密码长度为4到16位'
+      message: t('auth.validation.password4To16')
     }
   ],
   check_password: [{ required: true, validator: validatePass2, trigger: 'blur' }],
   code: [required]
-}
+}))
 
 const resetPasswordData = reactive({
   captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE,

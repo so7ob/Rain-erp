@@ -5,13 +5,13 @@
   "scannerLimits": "Vue visible text/attributes/expressions and contextual JS/TS display literals are detected. Runtime-generated strings, CSS content, third-party UIs, images, backend dynamic outputs and user-authored data need separate review. Java counts are inventory only, not a proof of extraction.",
   "catalogs": {
     "ar": {
-      "keys": 406
+      "keys": 447
     },
     "en": {
-      "keys": 406
+      "keys": 447
     },
     "zh-CN": {
-      "keys": 406
+      "keys": 447
     }
   },
   "frontend": {
@@ -387,33 +387,10 @@
       "status": "pending-acceptance",
       "files": 11,
       "vueFiles": 9,
-      "visibleLiteralCandidates": 32,
+      "visibleLiteralCandidates": 0,
       "templateParseErrors": 0,
-      "kinds": {
-        "script": 19,
-        "template": 12,
-        "attribute": 1
-      },
-      "examples": [
-        {
-          "file": "src/views/Login/components/ForgetPasswordForm.vue",
-          "line": 153,
-          "kind": "script",
-          "text": "长度为4到16位"
-        },
-        {
-          "file": "src/views/Login/components/ForgetPasswordForm.vue",
-          "line": 154,
-          "kind": "script",
-          "text": "手机号长度为11位"
-        },
-        {
-          "file": "src/views/Login/components/ForgetPasswordForm.vue",
-          "line": 161,
-          "kind": "script",
-          "text": "密码长度为4到16位"
-        }
-      ]
+      "kinds": {},
+      "examples": []
     },
     "mall": {
       "status": "pending-acceptance",
@@ -643,33 +620,10 @@
       "status": "pending-acceptance",
       "files": 7,
       "vueFiles": 6,
-      "visibleLiteralCandidates": 9,
+      "visibleLiteralCandidates": 0,
       "templateParseErrors": 0,
-      "kinds": {
-        "script": 2,
-        "attribute": 3,
-        "template": 4
-      },
-      "examples": [
-        {
-          "file": "src/views/Profile/components/UserSocial.vue",
-          "line": 79,
-          "kind": "script",
-          "text": "绑定成功"
-        },
-        {
-          "file": "src/views/Profile/components/UserSocial.vue",
-          "line": 103,
-          "kind": "script",
-          "text": "解绑成功"
-        },
-        {
-          "file": "src/views/Profile/components/UserSocial.vue",
-          "line": 3,
-          "kind": "attribute",
-          "text": "序号"
-        }
-      ]
+      "kinds": {},
+      "examples": []
     },
     "Redirect": {
       "status": "pending-acceptance",
@@ -712,13 +666,13 @@
     },
     "shared": {
       "status": "pending-acceptance",
-      "files": 999,
+      "files": 1000,
       "vueFiles": 206,
-      "visibleLiteralCandidates": 1957,
+      "visibleLiteralCandidates": 1955,
       "templateParseErrors": 0,
       "kinds": {
         "script": 829,
-        "attribute": 682,
+        "attribute": 680,
         "template": 446
       },
       "examples": [

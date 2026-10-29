@@ -1,5 +1,12 @@
 <template>
-  <el-form ref="formRef" :model="password" :rules="rules" :label-width="200">
+  <el-form
+    ref="formRef"
+    :model="password"
+    :rules="rules"
+    :validate-on-rule-change="false"
+    label-position="top"
+    label-width="auto"
+  >
     <el-form-item :label="t('profile.password.oldPassword')" prop="oldPassword">
       <InputPassword v-model="password.oldPassword" />
     </el-form-item>
@@ -16,6 +23,7 @@
   </el-form>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import type { FormInstance, FormRules } from 'element-plus'
 
 import { InputPassword } from '@/components/InputPassword'
@@ -33,6 +41,8 @@ const password = reactive({
 })
 
 // 表单校验
+useLocalizedForm(() => formRef.value)
+
 const equalToPassword = (_rule, value) => {
   if (password.newPassword !== value) {
     return Promise.reject(new Error(t('profile.password.diffPwd')))
@@ -40,20 +50,20 @@ const equalToPassword = (_rule, value) => {
   return Promise.resolve()
 }
 
-const rules = reactive<FormRules>({
+const rules = computed<FormRules>(() => ({
   oldPassword: [
     { required: true, message: t('profile.password.oldPwdMsg'), trigger: 'blur' },
-    { min: 4, max: 16, message: t('profile.password.pwdRules'), trigger: 'blur' }
+    { min: 4, max: 16, message: t('auth.validation.password4To16'), trigger: 'blur' }
   ],
   newPassword: [
     { required: true, message: t('profile.password.newPwdMsg'), trigger: 'blur' },
-    { min: 4, max: 16, message: t('profile.password.pwdRules'), trigger: 'blur' }
+    { min: 4, max: 16, message: t('auth.validation.password4To16'), trigger: 'blur' }
   ],
   confirmPassword: [
     { required: true, message: t('profile.password.cfPwdMsg'), trigger: 'blur' },
     { required: true, validator: equalToPassword, trigger: 'blur' }
   ]
-})
+}))
 
 const submit = (formEl: FormInstance | undefined) => {
   if (!formEl) return

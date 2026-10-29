@@ -1,21 +1,25 @@
 <template>
   <el-table :data="socialUsers" :show-header="false">
-    <el-table-column fixed="left" title="序号" type="seq" width="60" />
-    <el-table-column align="left" label="社交平台" width="120">
+    <el-table-column fixed="left" :title="t('common.index')" type="seq" width="60" />
+    <el-table-column align="left" :label="t('auth.social.platform')" width="120">
       <template #default="{ row }">
         <img :src="row.img" alt="" class="h-5 align-middle" />
         <p class="mr-5">{{ row.title }}</p>
       </template>
     </el-table-column>
-    <el-table-column align="center" label="操作">
+    <el-table-column align="center" :label="t('table.action')">
       <template #default="{ row }">
         <template v-if="row.openid">
-          已绑定
-          <el-button link class="mr-5" type="primary" @click="unbind(row)">(解绑)</el-button>
+          {{ t('auth.social.bound') }}
+          <el-button link class="mr-5" type="primary" @click="unbind(row)">{{
+            t('auth.social.unlink')
+          }}</el-button>
         </template>
         <template v-else>
-          未绑定
-          <el-button link class="mr-5" type="primary" @click="bind(row)">(绑定)</el-button>
+          {{ t('auth.social.unbound') }}
+          <el-button link class="mr-5" type="primary" @click="bind(row)">{{
+            t('auth.social.link')
+          }}</el-button>
         </template>
       </template>
     </el-table-column>
@@ -29,6 +33,8 @@ import { buildSocialRedirectUri, clearSocialCallback, getSocialCallback } from '
 import { useTagsViewStore } from '@/store/modules/tagsView'
 
 defineOptions({ name: 'UserSocial' })
+
+const { t } = useI18n()
 defineProps<{
   activeName: string
 }>()
@@ -76,7 +82,7 @@ const bindSocial = async () => {
     tagsViewStore.delVisitedView(callbackRoute)
   }
   socialBind(type, code, state).then(() => {
-    message.success('绑定成功')
+    message.success(t('auth.social.linkSuccess'))
     emit('update:activeName', 'userSocial')
   })
 }
@@ -100,7 +106,7 @@ const unbind = async (row) => {
   if (res) {
     row.openid = undefined
   }
-  message.success('解绑成功')
+  message.success(t('auth.social.unlinkSuccess'))
 }
 
 onMounted(async () => {

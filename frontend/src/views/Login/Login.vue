@@ -1,5 +1,5 @@
 <template>
-  <div
+  <main
     :class="prefixCls"
     class="relative h-[100%] lt-md:px-10px lt-sm:px-10px lt-xl:px-10px lt-xl:px-10px"
   >
@@ -47,7 +47,7 @@
         <!-- 右边的登录界面 -->
         <Transition appear enter-active-class="animate__animated animate__bounceInRight">
           <div
-            class="m-auto h-[calc(100%-60px)] w-[100%] flex items-center at-2xl:max-w-500px at-lg:max-w-500px at-md:max-w-500px at-xl:max-w-500px"
+            class="m-auto min-h-[calc(100%-60px)] w-[100%] flex items-center py-24px at-2xl:max-w-500px at-lg:max-w-500px at-md:max-w-500px at-xl:max-w-500px"
           >
             <!-- 账号登录 -->
             <LoginForm class="m-auto h-auto p-20px lt-xl:(rounded-3xl light:bg-white)" />
@@ -65,7 +65,7 @@
         </Transition>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 <script lang="ts" setup>
 import { underlineToHump } from '@/utils'

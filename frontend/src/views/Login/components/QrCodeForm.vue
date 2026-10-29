@@ -10,10 +10,12 @@
           :text="qrcode.qrContent"
           :logo="logoImg"
           :disabled="!!error"
-          disabled-text="请刷新二维码"
+          :disabled-text="t('auth.qr.refreshRequired')"
         />
-        <p class="mt-12px text-14px">{{ error || '请使用管理后台手机端扫一扫，并确认登录' }}</p>
-        <el-button v-if="error" class="mt-8px" @click="createQrcode">刷新二维码</el-button>
+        <p class="mt-12px text-14px">{{ error ? t(error) : t('auth.qr.instructions') }}</p>
+        <el-button v-if="error" class="mt-8px" @click="createQrcode">{{
+          t('auth.qr.refresh')
+        }}</el-button>
       </el-card>
     </el-col>
     <el-divider class="enter-x">{{ t('login.qrcode') }}</el-divider>
@@ -59,9 +61,7 @@ const createQrcode = async () => {
     if (stopped) return
     stopPolling()
     loading.value = false
-    error.value = qrcode.value
-      ? '二维码已失效，请刷新后重新扫码'
-      : '二维码生成失败，请刷新后重试'
+    error.value = qrcode.value ? 'auth.qr.expired' : 'auth.qr.failed'
   }
   qrcode.value = undefined
   error.value = ''

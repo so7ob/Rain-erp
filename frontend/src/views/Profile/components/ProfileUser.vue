@@ -7,41 +7,41 @@
       <li class="list-group-item">
         <Icon class="mr-5px" icon="ep:user" />
         {{ t('profile.user.username') }}
-        <div class="pull-right">{{ userInfo?.username }}</div>
+        <div class="pull-right" dir="auto">{{ userInfo?.username }}</div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="ep:phone" />
         {{ t('profile.user.mobile') }}
-        <div class="pull-right">{{ userInfo?.mobile }}</div>
+        <div class="pull-right" dir="ltr">{{ userInfo?.mobile }}</div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="fontisto:email" />
         {{ t('profile.user.email') }}
-        <div class="pull-right">{{ userInfo?.email }}</div>
+        <div class="pull-right" dir="ltr">{{ userInfo?.email }}</div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="carbon:tree-view-alt" />
         {{ t('profile.user.dept') }}
-        <div v-if="userInfo?.dept" class="pull-right">{{ userInfo?.dept.name }}</div>
+        <div v-if="userInfo?.dept" class="pull-right" dir="auto">{{ userInfo?.dept.name }}</div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="ep:suitcase" />
         {{ t('profile.user.posts') }}
-        <div v-if="userInfo?.posts" class="pull-right">
+        <div v-if="userInfo?.posts" class="pull-right" dir="auto">
           {{ userInfo?.posts.map((post) => post.name).join(',') }}
         </div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="icon-park-outline:peoples" />
         {{ t('profile.user.roles') }}
-        <div v-if="userInfo?.roles" class="pull-right">
+        <div v-if="userInfo?.roles" class="pull-right" dir="auto">
           {{ userInfo?.roles.map((role) => role.name).join(',') }}
         </div>
       </li>
       <li class="list-group-item">
         <Icon class="mr-5px" icon="ep:calendar" />
         {{ t('profile.user.createTime') }}
-        <div class="pull-right">{{ formatDate(userInfo.createTime) }}</div>
+        <div class="pull-right" dir="ltr">{{ formatDate(userInfo.createTime) }}</div>
       </li>
     </ul>
   </div>
@@ -105,6 +105,10 @@ onMounted(async () => {
 }
 
 .list-group-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
   padding: 11px 0;
   margin-bottom: -1px;
   font-size: 13px;
@@ -113,6 +117,9 @@ onMounted(async () => {
 }
 
 .pull-right {
-  float: right !important;
+  max-inline-size: 100%;
+  margin-inline-start: auto;
+  overflow-wrap: anywhere;
+  text-align: end;
 }
 </style>

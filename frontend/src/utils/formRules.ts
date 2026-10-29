@@ -1,7 +1,7 @@
-const { t } = useI18n()
-
 // 必填项
 export const required = {
   required: true,
-  message: t('common.required')
+  get message() {
+    return useI18n().t('common.required')
+  }
 }

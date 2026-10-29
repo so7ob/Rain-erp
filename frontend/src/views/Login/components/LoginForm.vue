@@ -4,6 +4,7 @@
     ref="formLogin"
     :model="loginData.loginForm"
     :rules="LoginRules"
+    :validate-on-rule-change="false"
     class="login-form"
     label-position="top"
     label-width="120px"
@@ -16,27 +17,33 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item v-if="loginData.tenantEnable === 'true'" prop="tenantName">
+        <el-form-item
+          v-if="loginData.tenantEnable === 'true'"
+          prop="tenantName"
+          :label="t('login.tenantname')"
+        >
           <el-input
             v-model="loginData.loginForm.tenantName"
             :placeholder="t('login.tenantNamePlaceholder')"
             :prefix-icon="iconHouse"
             link
             type="primary"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="username">
+        <el-form-item prop="username" :label="t('login.username')">
           <el-input
             v-model="loginData.loginForm.username"
             :placeholder="t('login.usernamePlaceholder')"
             :prefix-icon="iconAvatar"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="password">
+        <el-form-item prop="password" :label="t('login.password')">
           <el-input
             v-model="loginData.loginForm.password"
             :placeholder="t('login.passwordPlaceholder')"
@@ -44,6 +51,7 @@
             show-password
             type="password"
             @keyup.enter="getCode()"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
@@ -56,13 +64,14 @@
               </el-checkbox>
             </el-col>
             <el-col :offset="6" :span="12">
-              <el-link
-                class="float-right"
+              <el-button
+                class="auth-forgot-password"
+                link
                 type="primary"
                 @click="setLoginState(LoginStateEnum.RESET_PASSWORD)"
               >
                 {{ t('login.forgetPassword') }}
-              </el-link>
+              </el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -84,18 +93,23 @@
       />
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <el-row :gutter="5" justify="space-between" style="width: 100%">
-            <el-col :span="8">
+          <el-row
+            :gutter="5"
+            justify="space-between"
+            class="auth-alternative-actions"
+            style="width: 100%"
+          >
+            <el-col :xs="24" :sm="8">
               <el-button class="w-full" @click="setLoginState(LoginStateEnum.MOBILE)">
                 {{ t('login.btnMobile') }}
               </el-button>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="8">
               <el-button class="w-full" @click="handleQrcodeLogin">
                 {{ t('login.btnQRCode') }}
               </el-button>
             </el-col>
-            <el-col :span="8">
+            <el-col :xs="24" :sm="8">
               <el-button class="w-full" @click="setLoginState(LoginStateEnum.REGISTER)">
                 {{ t('login.btnRegister') }}
               </el-button>
@@ -106,30 +120,40 @@
       <el-divider content-position="center">{{ t('login.otherLogin') }}</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <div class="w-full flex justify-between">
-            <Icon
+          <div class="w-full flex flex-wrap justify-between gap-3">
+            <button
               v-for="(item, key) in socialList"
               :key="key"
-              :icon="item.icon"
-              :size="30"
-              class="anticon cursor-pointer"
-              color="#999"
+              type="button"
+              :aria-label="t('auth.socialSignIn', { provider: item.name })"
+              class="inline-flex cursor-pointer items-center border-0 bg-transparent p-6px"
               @click="doSocialLogin(item.type)"
-            />
+            >
+              <Icon
+                :icon="item.icon"
+                :size="30"
+                class="anticon"
+                color="var(--el-text-color-regular)"
+              />
+            </button>
           </div>
         </el-form-item>
       </el-col>
-      <el-divider content-position="center">萌新必读</el-divider>
+      <el-divider content-position="center">{{ t('auth.resources.title') }}</el-divider>
       <el-col :span="24" class="px-10px">
         <el-form-item>
-          <div class="w-full flex justify-between">
-            <el-link href="https://doc.iocoder.cn/" target="_blank">📚开发指南</el-link>
-            <el-link href="https://doc.iocoder.cn/video/" target="_blank">🔥视频教程</el-link>
+          <div class="w-full flex flex-wrap justify-between gap-3">
+            <el-link href="https://doc.iocoder.cn/" target="_blank">{{
+              t('auth.resources.guide')
+            }}</el-link>
+            <el-link href="https://doc.iocoder.cn/video/" target="_blank">{{
+              t('auth.resources.video')
+            }}</el-link>
             <el-link href="https://www.iocoder.cn/Interview/good-collection/" target="_blank">
-              ⚡面试手册
+              {{ t('auth.resources.interview') }}
             </el-link>
             <el-link href="http://static.yudao.iocoder.cn/mp/Aix9975.jpeg" target="_blank">
-              🤝外包咨询
+              {{ t('auth.resources.consulting') }}
             </el-link>
           </div>
         </el-form-item>
@@ -138,6 +162,7 @@
   </el-form>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import { ElLoading } from 'element-plus'
 import LoginFormTitle from './LoginFormTitle.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
@@ -167,13 +192,15 @@ const loginLoading = ref(false)
 const verify = ref()
 const captchaType = ref('blockPuzzle') // blockPuzzle 滑块 clickWord 点击文字 pictureWord 文字验证码
 
+useLocalizedForm(() => formLogin.value)
+
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN)
 
-const LoginRules = {
+const LoginRules = computed(() => ({
   tenantName: [required],
   username: [required],
   password: [required]
-}
+}))
 const loginData = reactive({
   isShowPassword: false,
   captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE,
@@ -188,10 +215,10 @@ const loginData = reactive({
 })
 
 const socialList = [
-  { icon: 'ant-design:wechat-filled', type: 30 },
-  { icon: 'ant-design:dingtalk-circle-filled', type: 20 },
-  { icon: 'ant-design:github-filled', type: 0 },
-  { icon: 'ant-design:alipay-circle-filled', type: 0 }
+  { icon: 'ant-design:wechat-filled', type: 30, name: 'WeChat' },
+  { icon: 'ant-design:dingtalk-circle-filled', type: 20, name: 'DingTalk' },
+  { icon: 'ant-design:github-filled', type: 0, name: 'GitHub' },
+  { icon: 'ant-design:alipay-circle-filled', type: 0, name: 'Alipay' }
 ]
 
 // 获取验证码
@@ -259,7 +286,7 @@ const handleLogin = async (params: any) => {
     }
     loading.value = ElLoading.service({
       lock: true,
-      text: '正在加载系统中...',
+      text: t('auth.loading'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
     if (loginDataLoginForm.rememberMe) {
@@ -286,7 +313,7 @@ const handleLogin = async (params: any) => {
 // 社交登录
 const doSocialLogin = async (type: number) => {
   if (type === 0) {
-    message.error('此方式未配置')
+    message.error(t('auth.providerUnavailable'))
   } else {
     loginLoading.value = true
     if (loginData.tenantEnable === 'true') {
@@ -295,7 +322,7 @@ const doSocialLogin = async (type: number) => {
       // 如果获取不到，则需要弹出提示，进行处理
       if (!authUtil.getTenantId()) {
         try {
-          const data = await message.prompt('请输入租户名称', t('common.reminder'))
+          const data = await message.prompt(t('login.tenantNamePlaceholder'), t('common.reminder'))
           if (data?.action !== 'confirm') throw 'cancel'
           const res = await LoginApi.getTenantIdByName(data.value)
           authUtil.setTenantId(res)
@@ -334,6 +361,21 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
+.auth-alternative-actions {
+  row-gap: 8px;
+
+  .el-button {
+    min-height: 40px;
+    height: auto;
+    padding-block: 10px;
+    white-space: normal;
+  }
+}
+
+.auth-forgot-password {
+  float: inline-end;
+}
+
 :deep(.anticon) {
   &:hover {
     color: var(--el-color-primary) !important;

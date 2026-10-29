@@ -8,7 +8,7 @@
     <div>
       <el-form :model="formData" class="login-form">
         <!-- 授权范围的选择 -->
-        此第三方应用请求获得以下权限：
+        <p class="mb-12px">{{ t('auth.sso.request') }}</p>
         <el-form-item prop="scopes">
           <el-checkbox-group v-model="formData.scopes">
             <el-checkbox
@@ -29,10 +29,12 @@
             type="primary"
             @click.prevent="handleAuthorize(true)"
           >
-            <span v-if="!formLoading">同意授权</span>
-            <span v-else>授 权 中...</span>
+            <span v-if="!formLoading">{{ t('auth.sso.approve') }}</span>
+            <span v-else>{{ t('auth.sso.pending') }}</span>
           </el-button>
-          <el-button class="w-3/10" @click.prevent="handleAuthorize(false)">拒绝</el-button>
+          <el-button class="w-3/10" @click.prevent="handleAuthorize(false)">{{
+            t('auth.sso.reject')
+          }}</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -45,6 +47,8 @@ import { LoginStateEnum, useLoginState } from './useLogin'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 
 defineOptions({ name: 'SSOLogin' })
+
+const { t } = useI18n()
 
 const route = useRoute() // 路由
 const { currentRoute } = useRouter() // 路由
@@ -177,9 +181,9 @@ const formatScope = (scope) => {
   // 这里仅仅是一个 demo，可以考虑录入到字典数据中，例如说字典类型 "system_oauth2_scope"，它的每个 scope 都是一条字典数据。
   switch (scope) {
     case 'user.read':
-      return '访问你的个人信息'
+      return t('auth.sso.readProfile')
     case 'user.write':
-      return '修改你的个人信息'
+      return t('auth.sso.writeProfile')
     default:
       return scope
   }

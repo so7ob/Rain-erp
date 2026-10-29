@@ -1,7 +1,7 @@
 <template>
-  <h2 class="enter-x mb-3 text-center text-2xl font-bold xl:text-center xl:text-3xl">
+  <h1 class="enter-x mb-3 text-center text-2xl font-bold xl:text-center xl:text-3xl">
     {{ getFormTitle }}
-  </h2>
+  </h1>
 </template>
 <script lang="ts" setup>
 import { LoginStateEnum, useLoginState } from './useLogin'

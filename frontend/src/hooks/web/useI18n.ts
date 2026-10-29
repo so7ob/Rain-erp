@@ -2,6 +2,8 @@ import { i18n } from '@/plugins/vueI18n'
 
 type I18nGlobalTranslation = {
   (key: string): string
+  (key: string, plural: number): string
+  (key: string, named: Record<string, unknown>, plural: number): string
   (key: string, locale: string): string
   (key: string, locale: string, list: unknown[]): string
   (key: string, locale: string, named: Record<string, unknown>): string
