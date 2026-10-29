@@ -16,6 +16,7 @@ import errorCode from './errorCode'
 import { resetRouter } from '@/router'
 import { deleteUserCache } from '@/hooks/web/useCache'
 import { ApiEncrypt } from '@/utils/encrypt'
+import { useLocaleStoreWithOut } from '@/store/modules/locale'
 
 const tenantEnable = import.meta.env.VITE_APP_TENANT_ENABLE
 const { result_code, base_url, request_timeout } = config
@@ -49,6 +50,7 @@ const service: AxiosInstance = axios.create({
 // request拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    config.headers.set('Accept-Language', useLocaleStoreWithOut().getCurrentLocale.lang)
     // 是否需要设置访问租户；该配置仅供前端请求拦截器使用，不作为请求头发送
     const isVisitTenant = config.headers.get('isVisitTenant') !== false
     config.headers.delete('isVisitTenant')
@@ -243,7 +245,13 @@ service.interceptors.response.use(
 
 const refreshToken = async () => {
   axios.defaults.headers.common['tenant-id'] = getTenantId()
-  return await axios.post(base_url + '/system/auth/refresh-token?refreshToken=' + getRefreshToken())
+  return await axios.post(
+    base_url + '/system/auth/refresh-token?refreshToken=' + getRefreshToken(),
+    undefined,
+    {
+      headers: { 'Accept-Language': useLocaleStoreWithOut().getCurrentLocale.lang }
+    }
+  )
 }
 const handleAuthorized = () => {
   const { t } = useI18n()

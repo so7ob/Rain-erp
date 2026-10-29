@@ -3,17 +3,19 @@ import { createI18n } from 'vue-i18n'
 import { useLocaleStoreWithOut } from '@/store/modules/locale'
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { setHtmlPageLang } from './helper'
+import { arabicPluralRule, fallbackLocale, supportedLocales } from '@/locales/policy'
+import { loadLocaleMessages } from '@/locales/catalogs'
 
 export let i18n: ReturnType<typeof createI18n>
 
 const createI18nOptions = async (): Promise<I18nOptions> => {
   const localeStore = useLocaleStoreWithOut()
   const locale = localeStore.getCurrentLocale
-  const localeMap = localeStore.getLocaleMap
-  const defaultLocal = await import(`../../locales/${locale.lang}.ts`)
-  const message = defaultLocal.default ?? {}
-
   setHtmlPageLang(locale.lang)
+  const [message, fallback] = await Promise.all([
+    loadLocaleMessages(locale.lang),
+    loadLocaleMessages(fallbackLocale)
+  ])
 
   localeStore.setCurrentLocale({
     lang: locale.lang
@@ -23,11 +25,13 @@ const createI18nOptions = async (): Promise<I18nOptions> => {
   return {
     legacy: false,
     locale: locale.lang,
-    fallbackLocale: locale.lang,
+    fallbackLocale,
+    pluralRules: { ar: arabicPluralRule },
     messages: {
+      [fallbackLocale]: fallback,
       [locale.lang]: message
     },
-    availableLocales: localeMap.map((v) => v.lang),
+    availableLocales: [...supportedLocales],
     sync: true,
     silentTranslationWarn: true,
     missingWarn: false,
