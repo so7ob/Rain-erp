@@ -29,6 +29,6 @@ GitHub Release publication does not authorize application deployment, database c
 
 ## Bootstrap exception
 
-Issue #1 bootstraps this policy from commit `606b3a2a1e49b947e1e12054c7faf3f6232137bc`: numbered work branch → reviewed develop PR → verified develop → reviewed one-time develop-to-main policy promotion → verified main → protection and automation checks. The promotion uses `Workflow: bootstrap`, creates no product tag/release, and is valid only while main is still at that original base. Document closure and ancestry synchronization for this setup Issue after all acceptance criteria pass.
+Issue #1 bootstraps this policy from commit `606b3a2a1e49b947e1e12054c7faf3f6232137bc`: numbered work branch → reviewed develop PR → verified develop → reviewed develop-to-main policy promotion → verified main → protection and automation checks. It uses `Workflow: bootstrap` and the `kind:bootstrap` label, with no product tag/release. Corrections within this setup phase also require verified main, ancestry from the original base, and no existing tags/releases. The setup Issue must remain open until correction, synchronization and acceptance checks pass; its closure ends the bootstrap exception.
 
 See `CONTRIBUTING.md`, `docs/development-workflow.md`, and `docs/testing.md` for commands and recovery procedures.

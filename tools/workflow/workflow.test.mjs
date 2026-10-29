@@ -5,9 +5,10 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { config, fields, issueNumber, parseVersion, nextVersion, nextSnapshot, validateVersions, setVersion,
-  validatePR, reviewBody, isMonthEndAden, verifyRun, tagAction, changelogEntry, updateChangelog, releaseNotes } from './core.mjs';
+  validatePR, reviewBody, isMonthEndAden, verifyRun, tagAction, changelogEntry, updateChangelog, releaseNotes, pullRequestNumber } from './core.mjs';
 import { GitHub } from './github.mjs';
 import { prepare, reconcile } from './automation.mjs';
+import { checkPR } from './policy.mjs';
 
 const head = 'a'.repeat(40), base = 'b'.repeat(40), other = 'c'.repeat(40);
 const versionFiles = (version = '0.1.0-SNAPSHOT') => ({
@@ -43,10 +44,12 @@ test('branch number must equal its Issue', () => assert.throws(() => validatePR(
 test('stale base blocks merging', () => assert.throws(() => validatePR(pr(), issue(), {baseContained:false}), /current develop/));
 test('ordinary work cannot target main', () => assert.throws(() => validatePR(pr({base:{ref:'main',sha:base}}), issue(), {baseContained:true}), /Only develop/));
 test('foreign repository work is rejected', () => assert.throws(() => validatePR(pr({head:{...pr().head,repo:{full_name:'other/repo'}}}), issue(), {baseContained:true}), /repository/));
-test('bootstrap promotion is limited to original main base', () => {
+test('bootstrap promotion needs its labeled setup Issue and an allowed base', () => {
   const candidate=pr({body:body({issue:1,kind:'bootstrap'}),head:{...pr().head,ref:'develop'},base:{ref:'main',sha:config.bootstrapBase}});
-  assert.equal(validatePR(candidate,{...issue(),number:1},{baseContained:true}).kind,'bootstrap');
-  assert.throws(() => validatePR({...candidate,base:{ref:'main',sha:base}},{...issue(),number:1},{baseContained:true}),/one-time/);
+  const setup={...issue(),number:1,labels:['kind:bootstrap']};
+  assert.equal(validatePR(candidate,setup,{baseContained:true}).kind,'bootstrap');
+  assert.throws(() => validatePR({...candidate,base:{ref:'main',sha:base}},setup,{baseContained:true}),/Bootstrap corrections/);
+  assert.throws(() => validatePR(candidate,{...setup,labels:[]},{baseContained:true}));
 });
 test('promotion freezes source, version, notes and release Issue', () => {
   const tracked={...issue(),labels:['kind:release'],body:'Release-Version: v0.1.0'};
@@ -289,4 +292,24 @@ test('local execution reuses gh authentication without extracting credentials',a
     return {status:0,stdout:'{"number":12}',stderr:''};
   }});
   assert.equal((await api.write('PATCH','issues/12',{state:'closed'})).number,12);
+});
+test('policy dispatch rejects missing, malformed and unsafe PR numbers at the CLI',()=>{
+  assert.equal(pullRequestNumber('12'),12);
+  for(const value of ['', 'invalid', '0', '-1', '1.5', '1e2', '9007199254740993']) {
+    const result=spawnSync(process.execPath,['tools/workflow/policy.mjs'],{encoding:'utf8',env:{...process.env,PR_NUMBER:value}});
+    assert.equal(result.status,1,value);
+    assert.match(result.stderr,/PR_NUMBER must be/);
+    assert(!result.stdout.includes('Version:'));
+  }
+});
+test('bootstrap correction requires verified main, no releases/tags and an open setup Issue',async()=>{
+  const setup={...issue(),number:1,labels:['kind:bootstrap']};
+  const candidate=pr({body:body({issue:1,kind:'bootstrap'}),head:{...pr().head,ref:'develop'},base:{ref:'main',sha:other}});
+  for(const [tagged,released,mainVerified,open,expected] of [[false,false,true,true,true],[true,false,true,true,false],[false,true,true,true,false],[false,false,false,true,false],[false,false,true,false,false]]) {
+    const api={get:async()=>({...setup,state:open?'open':'closed'}),contains:async()=>true,
+      list:async path=>path==='tags'?(tagged?[{}]:[]):path==='releases'?(released?[{}]:[]):path.includes('/jobs')?jobs:
+        path.includes('branch=main')?(mainVerified?[run({head_branch:'main',head_sha:other})]:[]):[run()]};
+    if(expected)assert.equal((await checkPR(api,candidate,versionFiles())).kind,'bootstrap');
+    else await assert.rejects(()=>checkPR(api,candidate,versionFiles()));
+  }
 });

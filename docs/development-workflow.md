@@ -52,7 +52,7 @@ node tools/workflow/automation.mjs prepare --version 1.0.0
 node tools/workflow/automation.mjs reconcile --run-id <successful-branch-CI-run> --dry-run
 ```
 
-Issue #1 is the one-time bootstrap: policy PR to develop, verified bootstrap promotion to the original main base, then protection/Actions activation and ancestry synchronization. It publishes no product release. Future promotions use the release workflow.
+Issue #1 is the one-time bootstrap phase: policy PR to develop, verified bootstrap promotion to the original main base, then protection/Actions activation and ancestry synchronization. Reviewed setup corrections are allowed while this labeled Issue remains open, only with verified main, original-base ancestry and no existing tags/releases. Closing Issue #1 ends this exception. It publishes no product release; later promotions use the release workflow.
 
 ## Bootstrap verification record — 2026-10-29
 
@@ -62,4 +62,4 @@ Issue #1 is the one-time bootstrap: policy PR to develop, verified bootstrap pro
 - GitHub policy rejected a [missing review](https://github.com/wweziz0001/Rain-erp/actions/runs/40933070887) and a [stale reviewed head](https://github.com/wweziz0001/Rain-erp/actions/runs/40934039332), then accepted the updated review.
 - [Release preparation dry-run](https://github.com/wweziz0001/Rain-erp/actions/runs/40937005565) computed `v0.1.0` with no new Issue, tag or Release. Both branches require PRs, `policy`, `verify` and resolved conversations, including administrators; release tag updates/deletion are blocked.
 
-The PR delivering this audit uses the normal `development` workflow under active protection. Its post-merge CI and automated delivery comment on [Issue #1](https://github.com/wweziz0001/Rain-erp/issues/1) provide the final live closure/branch-cleanup evidence. Maven verification reports 920 cases (902 executed, 18 documented existing skips); all 44 workflow tests pass.
+Final verification uses a normal `development` audit PR under active protection, after any setup corrections and ancestry synchronization. Its post-merge CI and automated delivery comment on [Issue #1](https://github.com/wweziz0001/Rain-erp/issues/1) provide the final live closure/branch-cleanup evidence. Maven verification reports 920 cases (902 executed, 18 documented existing skips); workflow tests also cover invalid manual policy dispatch and the restricted setup-correction path.
