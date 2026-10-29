@@ -4,6 +4,7 @@
     ref="formLogin"
     :model="registerData.registerForm"
     :rules="registerRules"
+    :validate-on-rule-change="false"
     class="login-form"
     label-position="top"
     label-width="120px"
@@ -16,7 +17,11 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item v-if="registerData.tenantEnable === 'true'" prop="tenantName">
+        <el-form-item
+          v-if="registerData.tenantEnable === 'true'"
+          prop="tenantName"
+          :label="t('login.tenantname')"
+        >
           <el-input
             v-model="registerData.registerForm.tenantName"
             :placeholder="t('login.tenantname')"
@@ -24,31 +29,34 @@
             link
             type="primary"
             size="large"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="username">
+        <el-form-item prop="username" :label="t('login.username')">
           <el-input
             v-model="registerData.registerForm.username"
             :placeholder="t('login.username')"
             size="large"
             :prefix-icon="iconAvatar"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="nickname">
+        <el-form-item prop="nickname" :label="t('profile.user.nickname')">
           <el-input
             v-model="registerData.registerForm.nickname"
-            placeholder="昵称"
+            :placeholder="t('profile.user.nickname')"
             size="large"
             :prefix-icon="iconAvatar"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="password">
+        <el-form-item prop="password" :label="t('login.password')">
           <el-input
             v-model="registerData.registerForm.password"
             type="password"
@@ -57,11 +65,12 @@
             size="large"
             :prefix-icon="iconLock"
             show-password
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="confirmPassword">
+        <el-form-item prop="confirmPassword" :label="t('login.checkPassword')">
           <el-input
             v-model="registerData.registerForm.confirmPassword"
             type="password"
@@ -70,6 +79,7 @@
             :placeholder="t('login.checkPassword')"
             :prefix-icon="iconLock"
             show-password
+            dir="auto"
           />
         </el-form-item>
       </el-col>
@@ -93,6 +103,7 @@
   </el-form>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import { ElLoading } from 'element-plus'
 import LoginFormTitle from './LoginFormTitle.vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
@@ -118,38 +129,40 @@ const loginLoading = ref(false)
 const verify = ref()
 const captchaType = ref('blockPuzzle') // blockPuzzle 滑块 clickWord 点击文字 pictureWord 文字验证码
 
+useLocalizedForm(() => formLogin.value)
+
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.REGISTER)
 
 const equalToPassword = (_rule, value) => {
   if (registerData.registerForm.password !== value) {
-    return Promise.reject(new Error('两次输入的密码不一致'))
+    return Promise.reject(new Error(t('profile.password.diffPwd')))
   }
   return Promise.resolve()
 }
 
-const registerRules = {
+const registerRules = computed(() => ({
   tenantName: [
-    { required: true, trigger: 'blur', message: '请输入您所属的租户' },
-    { min: 2, max: 20, message: '租户账号长度必须介于 2 和 20 之间', trigger: 'blur' }
+    { required: true, trigger: 'blur', message: t('auth.validation.tenantRequired') },
+    { min: 2, max: 20, message: t('auth.validation.tenantLength'), trigger: 'blur' }
   ],
   username: [
-    { required: true, trigger: 'blur', message: '请输入您的账号' },
-    { min: 4, max: 30, message: '用户账号长度必须介于 4 和 30 之间', trigger: 'blur' }
+    { required: true, trigger: 'blur', message: t('auth.validation.usernameRequired') },
+    { min: 4, max: 30, message: t('auth.validation.usernameLength'), trigger: 'blur' }
   ],
   nickname: [
-    { required: true, trigger: 'blur', message: '请输入您的昵称' },
-    { min: 0, max: 30, message: '昵称长度必须介于 0 和 30 之间', trigger: 'blur' }
+    { required: true, trigger: 'blur', message: t('auth.validation.nicknameRequired') },
+    { min: 0, max: 30, message: t('auth.validation.nicknameLength'), trigger: 'blur' }
   ],
   password: [
-    { required: true, trigger: 'blur', message: '请输入您的密码' },
-    { min: 5, max: 20, message: '用户密码长度必须介于 5 和 20 之间', trigger: 'blur' },
-    { pattern: /^[^<>"'|\\]+$/, message: '不能包含非法字符：< > " \' \\\ |', trigger: 'blur' }
+    { required: true, trigger: 'blur', message: t('auth.validation.passwordRequired') },
+    { min: 5, max: 20, message: t('auth.validation.passwordLength'), trigger: 'blur' },
+    { pattern: /^[^<>"'|\\]+$/, message: t('auth.validation.passwordCharacters'), trigger: 'blur' }
   ],
   confirmPassword: [
-    { required: true, trigger: 'blur', message: '请再次输入您的密码' },
+    { required: true, trigger: 'blur', message: t('auth.validation.confirmPassword') },
     { required: true, validator: equalToPassword, trigger: 'blur' }
   ]
-}
+}))
 
 const registerData = reactive({
   isShowPassword: false,
@@ -191,7 +204,7 @@ const handleRegister = async (params: any) => {
     }
     loading.value = ElLoading.service({
       lock: true,
-      text: '正在加载系统中...',
+      text: t('auth.loading'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
 

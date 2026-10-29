@@ -38,13 +38,14 @@ const setLang = async (lang: LocaleType) => {
 
 <template>
   <ElDropdown :class="prefixCls" trigger="click" :disabled="switching" @command="setLang">
-    <Icon
-      :class="$attrs.class"
-      :color="color"
-      :size="18"
-      class="cursor-pointer !p-0"
-      icon="ion:language-sharp"
-    />
+    <button
+      type="button"
+      :aria-label="t('auth.language')"
+      :disabled="switching"
+      class="inline-flex cursor-pointer items-center border-0 bg-transparent p-5px text-inherit"
+    >
+      <Icon :class="$attrs.class" :color="color" :size="18" icon="ion:language-sharp" />
+    </button>
     <template #dropdown>
       <ElDropdownMenu>
         <ElDropdownItem

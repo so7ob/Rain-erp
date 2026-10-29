@@ -14,6 +14,7 @@ const Sun = useIcon({ icon: 'emojione-monotone:sun', color: '#fde047' })
 const CrescentMoon = useIcon({ icon: 'emojione-monotone:crescent-moon', color: '#fde047' })
 
 const appStore = useAppStore()
+const { t } = useI18n()
 
 // 初始化获取是否是暗黑主题
 const isDark = ref(appStore.getIsDark)
@@ -29,6 +30,7 @@ const themeChange = (val: boolean) => {
 <template>
   <ElSwitch
     v-model="isDark"
+    :aria-label="t('auth.theme')"
     :active-color="blackColor"
     :active-icon="Sun"
     :border-color="blackColor"

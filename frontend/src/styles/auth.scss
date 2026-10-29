@@ -1,0 +1,58 @@
+@use './variables.scss' as tokens;
+
+.#{tokens.$namespace}-login,
+.profile-layout {
+  --el-color-primary: #2554ca;
+  --rain-auth-action-bg: #2554ca;
+  --rain-auth-action-hover: #1943b0;
+  --rain-auth-action-text: #fff;
+
+  .el-button--primary:not(.is-link):not(.is-text) {
+    --el-button-bg-color: var(--rain-auth-action-bg);
+    --el-button-border-color: var(--rain-auth-action-bg);
+    --el-button-text-color: var(--rain-auth-action-text);
+    --el-button-hover-bg-color: var(--rain-auth-action-hover);
+    --el-button-hover-border-color: var(--rain-auth-action-hover);
+    --el-button-hover-text-color: var(--rain-auth-action-text);
+    --el-button-active-bg-color: var(--rain-auth-action-hover);
+    --el-button-active-border-color: var(--rain-auth-action-hover);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate__animated {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+.dark .#{tokens.$namespace}-login,
+.dark .profile-layout {
+  --el-color-primary: #82baff;
+}
+
+@supports (color: oklch(0.5 0 0)) {
+  .#{tokens.$namespace}-login,
+  .profile-layout {
+    --el-color-primary: oklch(0.49 0.19 264);
+    --rain-auth-action-bg: oklch(0.49 0.19 264);
+    --rain-auth-action-hover: oklch(0.43 0.18 264);
+    --rain-auth-action-text: oklch(1 0 0);
+  }
+
+  .dark .#{tokens.$namespace}-login,
+  .dark .profile-layout {
+    --el-color-primary: oklch(0.78 0.12 255);
+  }
+}
+
+.profile-layout .el-button--danger:not(.is-link):not(.is-text) {
+  --el-button-bg-color: #b91c1c;
+  --el-button-border-color: #b91c1c;
+  --el-button-text-color: #fff;
+  --el-button-hover-bg-color: #991b1b;
+  --el-button-hover-border-color: #991b1b;
+  --el-button-hover-text-color: #fff;
+  --el-button-active-bg-color: #991b1b;
+  --el-button-active-border-color: #991b1b;
+}

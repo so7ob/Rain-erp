@@ -1,5 +1,5 @@
 <template>
-  <div
+  <main
     :class="prefixCls"
     class="relative h-[100%] lt-md:px-10px lt-sm:px-10px lt-xl:px-10px lt-xl:px-10px"
   >
@@ -46,7 +46,7 @@
         <!-- 右边的登录界面 -->
         <Transition appear enter-active-class="animate__animated animate__bounceInRight">
           <div
-            class="m-auto h-[calc(100%-60px)] w-[100%] flex items-center at-2xl:max-w-500px at-lg:max-w-500px at-md:max-w-500px at-xl:max-w-500px"
+            class="m-auto min-h-[calc(100%-60px)] w-[100%] flex items-center py-24px at-2xl:max-w-500px at-lg:max-w-500px at-md:max-w-500px at-xl:max-w-500px"
           >
             <!-- 账号登录 -->
             <el-form
@@ -54,6 +54,7 @@
               ref="formLogin"
               :model="loginData.loginForm"
               :rules="LoginRules"
+              :validate-on-rule-change="false"
               class="login-form"
               label-position="top"
               label-width="120px"
@@ -66,27 +67,33 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="24" style="padding-right: 10px; padding-left: 10px">
-                  <el-form-item v-if="loginData.tenantEnable" prop="tenantName">
+                  <el-form-item
+                    v-if="loginData.tenantEnable"
+                    prop="tenantName"
+                    :label="t('login.tenantname')"
+                  >
                     <el-input
                       v-model="loginData.loginForm.tenantName"
                       :placeholder="t('login.tenantNamePlaceholder')"
                       :prefix-icon="iconHouse"
                       link
                       type="primary"
+                      dir="auto"
                     />
                   </el-form-item>
                 </el-col>
                 <el-col :span="24" style="padding-right: 10px; padding-left: 10px">
-                  <el-form-item prop="username">
+                  <el-form-item prop="username" :label="t('login.username')">
                     <el-input
                       v-model="loginData.loginForm.username"
                       :placeholder="t('login.usernamePlaceholder')"
                       :prefix-icon="iconAvatar"
+                      dir="auto"
                     />
                   </el-form-item>
                 </el-col>
                 <el-col :span="24" style="padding-right: 10px; padding-left: 10px">
-                  <el-form-item prop="password">
+                  <el-form-item prop="password" :label="t('login.password')">
                     <el-input
                       v-model="loginData.loginForm.password"
                       :placeholder="t('login.passwordPlaceholder')"
@@ -94,6 +101,7 @@
                       show-password
                       type="password"
                       @keyup.enter="getCode()"
+                      dir="auto"
                     />
                   </el-form-item>
                 </el-col>
@@ -147,10 +155,11 @@
         </Transition>
       </div>
     </div>
-  </div>
+  </main>
 </template>
 
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import { underlineToHump } from '@/utils'
 import { clearSocialCallback, getSocialCallback } from '@/utils/social'
 
@@ -188,13 +197,15 @@ const loginLoading = ref(false)
 const verify = ref()
 const captchaType = ref('blockPuzzle') // blockPuzzle 滑块 clickWord 点击文字 pictureWord 文字验证码
 
+useLocalizedForm(() => formLogin.value)
+
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.LOGIN)
 
-const LoginRules = {
+const LoginRules = computed(() => ({
   tenantName: [required],
   username: [required],
   password: [required]
-}
+}))
 const loginData = reactive({
   isShowPassword: false,
   captchaEnable: import.meta.env.VITE_APP_CAPTCHA_ENABLE !== 'false',
@@ -292,7 +303,7 @@ const handleLogin = async (params) => {
     }
     loading.value = ElLoading.service({
       lock: true,
-      text: '正在加载系统中...',
+      text: t('auth.loading'),
       background: 'rgba(0, 0, 0, 0.7)'
     })
     if (loginDataLoginForm.rememberMe) {

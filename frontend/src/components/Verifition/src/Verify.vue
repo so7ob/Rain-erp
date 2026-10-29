@@ -10,7 +10,7 @@
           <i class="iconfont icon-close"></i>
         </span>
       </div>
-      <div :style="{ padding: mode == 'pop' ? '10px' : '0' }" class="verifybox-bottom">
+      <div dir="ltr" :style="{ padding: mode == 'pop' ? '10px' : '0' }" class="verifybox-bottom">
         <!-- 验证码容器 -->
         <component
           :is="componentType"

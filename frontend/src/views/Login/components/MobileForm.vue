@@ -4,6 +4,7 @@
     ref="formSmsLogin"
     :model="loginData.loginForm"
     :rules="rules"
+    :validate-on-rule-change="false"
     class="login-form"
     label-position="top"
     label-width="120px"
@@ -17,49 +18,56 @@
         </el-form-item>
       </el-col>
       <el-col :span="24" class="px-10px">
-        <el-form-item v-if="loginData.tenantEnable === 'true'" prop="tenantName">
+        <el-form-item
+          v-if="loginData.tenantEnable === 'true'"
+          prop="tenantName"
+          :label="t('login.tenantname')"
+        >
           <el-input
             v-model="loginData.loginForm.tenantName"
             :placeholder="t('login.tenantNamePlaceholder')"
             :prefix-icon="iconHouse"
             type="primary"
             link
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <!-- 手机号 -->
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="mobileNumber">
+        <el-form-item prop="mobileNumber" :label="t('login.mobileNumber')">
           <el-input
             v-model="loginData.loginForm.mobileNumber"
             :placeholder="t('login.mobileNumberPlaceholder')"
             :prefix-icon="iconCellphone"
+            dir="auto"
           />
         </el-form-item>
       </el-col>
       <!-- 验证码 -->
       <el-col :span="24" class="px-10px">
-        <el-form-item prop="code">
+        <el-form-item prop="code" :label="t('login.code')">
           <el-row :gutter="5" justify="space-between" style="width: 100%">
             <el-col :span="24">
               <el-input
                 v-model="loginData.loginForm.code"
                 :placeholder="t('login.codePlaceholder')"
                 :prefix-icon="iconCircleCheck"
+                dir="auto"
               >
                 <!-- <el-button class="w-[100%]"> -->
                 <template #append>
-                  <span
-                    v-if="mobileCodeTimer <= 0"
+                  <el-button
+                    link
                     class="getMobileCode"
-                    style="cursor: pointer"
+                    :disabled="mobileCodeTimer > 0"
                     @click="getSmsCode"
                   >
-                    {{ t('login.getSmsCode') }}
-                  </span>
-                  <span v-if="mobileCodeTimer > 0" class="getMobileCode" style="cursor: pointer">
-                    {{ mobileCodeTimer }}秒后可重新获取
-                  </span>
+                    <span v-if="mobileCodeTimer <= 0">{{ t('login.getSmsCode') }}</span>
+                    <span v-else>{{
+                      t('auth.retryCountdown', { seconds: mobileCodeTimer }, mobileCodeTimer)
+                    }}</span>
+                  </el-button>
                 </template>
               </el-input>
               <!-- </el-button> -->
@@ -86,6 +94,7 @@
   </el-form>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
 
 import { useIcon } from '@/hooks/web/useIcon'
@@ -110,13 +119,15 @@ const iconCellphone = useIcon({ icon: 'ep:cellphone' })
 const iconCircleCheck = useIcon({ icon: 'ep:circle-check' })
 const { validForm } = useFormValid(formSmsLogin)
 const { handleBackLogin, getLoginState } = useLoginState()
+useLocalizedForm(() => formSmsLogin.value)
+
 const getShow = computed(() => unref(getLoginState) === LoginStateEnum.MOBILE)
 
-const rules = {
+const rules = computed(() => ({
   tenantName: [required],
   mobileNumber: [required],
   code: [required]
-}
+}))
 const loginData = reactive({
   codeImg: '',
   tenantEnable: import.meta.env.VITE_APP_TENANT_ENABLE,
@@ -181,7 +192,7 @@ const signIn = async () => {
   if (!data) return
   ElLoading.service({
     lock: true,
-    text: '正在加载系统中...',
+    text: t('auth.loading'),
     background: 'rgba(0, 0, 0, 0.7)'
   })
   loginLoading.value = true

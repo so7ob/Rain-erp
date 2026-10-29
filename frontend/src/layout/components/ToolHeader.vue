@@ -93,39 +93,46 @@ export default defineComponent({
             ) : undefined}
           </div>
         ) : undefined}
-        <div class="h-full flex items-center">
-          <FmsAccountSetSwitch />
-          {hasTenantVisitPermission.value ? <TenantVisit /> : undefined}
-          <div
-            class="v-setting custom-hover"
-            title={t('setting.projectSetting')}
-            onClick={openSetting}
-          >
-            <Icon color="var(--top-header-text-color)" size={18} icon="ep:setting" />
+        <div class="tool-header-tools h-full flex items-center">
+          <div class="tool-header-actions h-full">
+            <div class="h-full w-max flex items-center">
+              <FmsAccountSetSwitch />
+              {hasTenantVisitPermission.value ? <TenantVisit /> : undefined}
+              <div
+                class="v-setting custom-hover"
+                title={t('setting.projectSetting')}
+                onClick={openSetting}
+              >
+                <Icon color="var(--top-header-text-color)" size={18} icon="ep:setting" />
+              </div>
+              {screenfull.value ? (
+                <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
+              ) : undefined}
+              {search.value ? (
+                <RouterSearch isModal={false} color="var(--top-header-text-color)" />
+              ) : undefined}
+              {size.value ? (
+                <SizeDropdown
+                  class="custom-hover"
+                  color="var(--top-header-text-color)"
+                ></SizeDropdown>
+              ) : undefined}
+              {message.value ? (
+                <Message class="custom-hover" color="var(--top-header-text-color)"></Message>
+              ) : undefined}
+              {/* IM 聊天入口 */}
+              {im.value ? (
+                <div class="custom-hover" onClick={goToChat}>
+                  <Icon color="var(--top-header-text-color)" size={18} icon="ep:chat-dot-round" />
+                </div>
+              ) : undefined}
+            </div>
           </div>
-          {screenfull.value ? (
-            <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
-          ) : undefined}
-          {search.value ? (
-            <RouterSearch isModal={false} color="var(--top-header-text-color)" />
-          ) : undefined}
-          {size.value ? (
-            <SizeDropdown class="custom-hover" color="var(--top-header-text-color)"></SizeDropdown>
-          ) : undefined}
           {locale.value ? (
             <LocaleDropdown
               class="custom-hover"
               color="var(--top-header-text-color)"
             ></LocaleDropdown>
-          ) : undefined}
-          {message.value ? (
-            <Message class="custom-hover" color="var(--top-header-text-color)"></Message>
-          ) : undefined}
-          {/* IM 聊天入口 */}
-          {im.value ? (
-            <div class="custom-hover" onClick={goToChat}>
-              <Icon color="var(--top-header-text-color)" size={18} icon="ep:chat-dot-round" />
-            </div>
           ) : undefined}
           <UserInfo></UserInfo>
         </div>
@@ -140,5 +147,15 @@ $prefix-cls: #{$namespace}-tool-header;
 
 .#{$prefix-cls} {
   transition: left var(--transition-time-02);
+}
+
+.tool-header-tools,
+.tool-header-actions {
+  min-inline-size: 0;
+}
+
+.tool-header-actions {
+  overflow-x: auto;
+  scrollbar-width: thin;
 }
 </style>

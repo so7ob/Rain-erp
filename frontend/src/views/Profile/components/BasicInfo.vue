@@ -1,5 +1,12 @@
 <template>
-  <Form ref="formRef" :labelWidth="200" :rules="rules" :schema="schema">
+  <Form
+    ref="formRef"
+    label-position="top"
+    label-width="auto"
+    :rules="rules"
+    :validate-on-rule-change="false"
+    :schema="schema"
+  >
     <template #sex="form">
       <el-radio-group v-model="form['sex']">
         <el-radio :value="1">{{ t('profile.user.man') }}</el-radio>
@@ -13,6 +20,7 @@
   </div>
 </template>
 <script lang="ts" setup>
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import type { FormRules } from 'element-plus'
 import { FormSchema } from '@/types/form'
 import type { FormExpose } from '@/components/Form'
@@ -35,7 +43,9 @@ const emit = defineEmits<{
 }>()
 
 // 表单校验
-const rules = reactive<FormRules>({
+useLocalizedForm(() => formRef.value?.getElFormRef())
+
+const rules = computed<FormRules>(() => ({
   nickname: [{ required: true, message: t('profile.rules.nickname'), trigger: 'blur' }],
   email: [
     { required: true, message: t('profile.rules.mail'), trigger: 'blur' },
@@ -53,26 +63,37 @@ const rules = reactive<FormRules>({
       trigger: 'blur'
     }
   ]
-})
+}))
 const schema = reactive<FormSchema[]>([
   {
     field: 'nickname',
-    label: t('profile.user.nickname'),
-    component: 'Input'
+    get label() {
+      return t('profile.user.nickname')
+    },
+    component: 'Input',
+    componentProps: { dir: 'auto' }
   },
   {
     field: 'mobile',
-    label: t('profile.user.mobile'),
-    component: 'Input'
+    get label() {
+      return t('profile.user.mobile')
+    },
+    component: 'Input',
+    componentProps: { dir: 'ltr', inputmode: 'tel' }
   },
   {
     field: 'email',
-    label: t('profile.user.email'),
-    component: 'Input'
+    get label() {
+      return t('profile.user.email')
+    },
+    component: 'Input',
+    componentProps: { dir: 'ltr', inputmode: 'email' }
   },
   {
     field: 'sex',
-    label: t('profile.user.sex'),
+    get label() {
+      return t('profile.user.sex')
+    },
     component: 'InputNumber',
     value: 0
   }
