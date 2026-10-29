@@ -53,3 +53,13 @@ node tools/workflow/automation.mjs reconcile --run-id <successful-branch-CI-run>
 ```
 
 Issue #1 is the one-time bootstrap: policy PR to develop, verified bootstrap promotion to the original main base, then protection/Actions activation and ancestry synchronization. It publishes no product release. Future promotions use the release workflow.
+
+## Bootstrap verification record — 2026-10-29
+
+- [Policy PR #2](https://github.com/wweziz0001/Rain-erp/pull/2) was squash-merged after successful current-head checks; [develop verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40934610925) passed on `cb1b82b`.
+- [Bootstrap promotion #3](https://github.com/wweziz0001/Rain-erp/pull/3) preserved history with a merge commit; [main verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40935848147) passed on `195265c`.
+- [Synchronization #4](https://github.com/wweziz0001/Rain-erp/pull/4) restored main ancestry in develop; [post-merge verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40936991959) passed on `21ac96a`.
+- GitHub policy rejected a [missing review](https://github.com/wweziz0001/Rain-erp/actions/runs/40933070887) and a [stale reviewed head](https://github.com/wweziz0001/Rain-erp/actions/runs/40934039332), then accepted the updated review.
+- [Release preparation dry-run](https://github.com/wweziz0001/Rain-erp/actions/runs/40937005565) computed `v0.1.0` with no new Issue, tag or Release. Both branches require PRs, `policy`, `verify` and resolved conversations, including administrators; release tag updates/deletion are blocked.
+
+The PR delivering this audit uses the normal `development` workflow under active protection. Its post-merge CI and automated delivery comment on [Issue #1](https://github.com/wweziz0001/Rain-erp/issues/1) provide the final live closure/branch-cleanup evidence. Maven verification reports 920 cases (902 executed, 18 documented existing skips); all 44 workflow tests pass.
