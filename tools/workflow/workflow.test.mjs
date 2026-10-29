@@ -5,7 +5,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { config, fields, issueNumber, parseVersion, nextVersion, nextSnapshot, validateVersions, setVersion,
-  validatePR, reviewBody, isMonthEndAden, verifyRun, tagAction, changelogEntry, updateChangelog, releaseNotes, pullRequestNumber } from './core.mjs';
+  validatePR, reviewBody, isMonthEndAden, verifyRun, tagAction, changelogEntry, updateChangelog, releaseNotes, pullRequestNumber, repositoryConfig } from './core.mjs';
 import { GitHub } from './github.mjs';
 import { prepare, reconcile } from './automation.mjs';
 import { checkPR } from './policy.mjs';
@@ -286,7 +286,7 @@ test('annotated tag lookup resolves its commit rather than the tag object',async
 });
 test('local execution reuses gh authentication without extracting credentials',async()=>{
   const api=new GitHub({token:'',runner:(command,args,options)=>{
-    assert.equal(command,'gh');assert(args.includes('repos/wweziz0001/Rain-erp/issues/12'));
+    assert.equal(command,'gh');assert(args.includes(`repos/${config.repository}/issues/12`));
     assert(!args.some(arg=>arg.includes('Authorization')));
     assert.deepEqual(JSON.parse(options.input),{state:'closed'});
     return {status:0,stdout:'{"number":12}',stderr:''};
@@ -310,6 +310,47 @@ test('bootstrap correction requires verified main, no releases/tags and an open 
       list:async path=>path==='tags'?(tagged?[{}]:[]):path==='releases'?(released?[{}]:[]):path.includes('/jobs')?jobs:
         path.includes('branch=main')?(mainVerified?[run({head_branch:'main',head_sha:other})]:[]):[run()]};
     if(expected)assert.equal((await checkPR(api,candidate,versionFiles())).kind,'bootstrap');
+    else await assert.rejects(()=>checkPR(api,candidate,versionFiles()));
+  }
+});
+test('repository context follows a transfer while keeping the canonical URL and immutable ID',()=>{
+  const settings={repository:config.canonicalRepository,repositoryId:config.repositoryId};
+  for(const repository of [config.ownershipMigration.from,config.ownershipMigration.to]) {
+    assert.equal(repositoryConfig(settings,{GITHUB_REPOSITORY:repository}).repository,repository);
+    assert.equal(repositoryConfig(settings,{GH_REPO:repository}).repository,repository);
+  }
+  assert.equal(repositoryConfig(settings,{}).repository,config.ownershipMigration.to);
+  assert.throws(()=>repositoryConfig(settings,{GITHUB_REPOSITORY:'../other/repo'}),/context/);
+  assert.throws(()=>repositoryConfig({...settings,repositoryId:0},{}),/ID/);
+});
+test('repository identity validation rejects a different project before delivery',async()=>{
+  for(const id of [config.repositoryId,config.repositoryId+1]) {
+    const api=new GitHub({token:'fixture',fetcher:async url=>{
+      assert.equal(url,`https://api.github.com/repos/${config.repository}`);
+      return {ok:true,status:200,json:async()=>({id,full_name:config.repository})};
+    }});
+    if(id===config.repositoryId)assert.equal((await api.verifyRepository()).id,id);
+    else await assert.rejects(()=>api.verifyRepository(),/Repository ID/);
+  }
+});
+test('ownership promotion is bound to its Issue, label, reviewed head and single main base',()=>{
+  const tracked={...issue(),number:config.ownershipMigration.issue,labels:['kind:migration']};
+  const candidate=pr({body:body({issue:tracked.number,kind:'migration'}),head:{...pr().head,ref:'develop'},base:{ref:'main',sha:config.ownershipMigration.mainBase}});
+  const context={baseContained:true,migrationAllowed:true,revision:'0.1.0-SNAPSHOT'};
+  assert.equal(validatePR(candidate,tracked,context).kind,'migration');
+  assert.throws(()=>validatePR(candidate,{...tracked,labels:[]},context));
+  assert.throws(()=>validatePR(candidate,{...tracked,number:tracked.number+1},context));
+  assert.throws(()=>validatePR({...candidate,base:{ref:'main',sha:other}},tracked,context),/pinned main/);
+  assert.throws(()=>validatePR(candidate,tracked,{...context,migrationAllowed:false}),/pinned main/);
+  assert.throws(()=>validatePR(candidate,tracked,{...context,revision:'0.1.0'}),/pinned main/);
+});
+test('ownership promotion requires develop verification and no product tags/releases',async()=>{
+  const tracked={...issue(),number:config.ownershipMigration.issue,labels:['kind:migration']};
+  const candidate=pr({body:body({issue:tracked.number,kind:'migration'}),head:{...pr().head,ref:'develop'},base:{ref:'main',sha:config.ownershipMigration.mainBase}});
+  for(const [tagged,released,verified,expected] of [[false,false,true,true],[true,false,true,false],[false,true,true,false],[false,false,false,false]]) {
+    const api={get:async()=>tracked,contains:async()=>true,list:async path=>
+      path==='tags'?(tagged?[{}]:[]):path==='releases'?(released?[{}]:[]):path.includes('/jobs')?jobs:(verified?[run()]:[])};
+    if(expected)assert.equal((await checkPR(api,candidate,versionFiles())).kind,'migration');
     else await assert.rejects(()=>checkPR(api,candidate,versionFiles()));
   }
 });

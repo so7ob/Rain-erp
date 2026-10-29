@@ -1,6 +1,12 @@
 import { readFileSync } from 'node:fs';
 
-export const config = JSON.parse(readFileSync(new URL('./config.json', import.meta.url)));
+export function repositoryConfig(settings, env = process.env) {
+  const repository = env.GITHUB_REPOSITORY || env.GH_REPO || settings.repository;
+  ensure(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repository), 'Use an owner/repository context.');
+  ensure(Number.isSafeInteger(settings.repositoryId) && settings.repositoryId > 0, 'Pin the immutable repository ID.');
+  return { ...settings, canonicalRepository: settings.repository, repository };
+}
+export const config = repositoryConfig(JSON.parse(readFileSync(new URL('./config.json', import.meta.url))));
 const types = '(?:feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)';
 export const workBranch = new RegExp(`^${types}/([1-9][0-9]*)-[a-z0-9]+(?:-[a-z0-9]+)*$`);
 export const conventional = new RegExp(`^${types}(?:\\([^()\\r\\n]+\\))?!?: .+`);
@@ -129,11 +135,14 @@ export function validatePR(pr, issue, context = {}) {
   }
   const kind = meta.Workflow;
   const bootstrap = kind === 'bootstrap' && issue.number === config.bootstrapIssue && labels.has('kind:bootstrap');
+  const migration = kind === 'migration' && issue.number === config.ownershipMigration.issue && labels.has('kind:migration');
   if (pr.base.ref === config.stableBranch) {
     ensure(pr.head.ref === config.integrationBranch, 'Only develop may target main.');
     ensure(context.baseContained, 'Synchronize main into develop before promotion.');
     if (bootstrap) ensure(pr.base.sha === config.bootstrapBase || context.bootstrapCorrection,
       'Bootstrap corrections require verified main and an active unreleased setup.');
+    else if (migration) ensure(pr.base.sha === config.ownershipMigration.mainBase && context.migrationAllowed &&
+      context.revision?.endsWith('-SNAPSHOT'), 'Ownership migration is limited to its verified, unreleased pinned main base.');
     else {
       ensure(kind === 'promotion' && labels.has('kind:release'), 'main requires a release promotion.');
       ensure(meta['Release-Source'] === pr.head.sha, 'The release candidate moved; repeat its review.');
@@ -143,7 +152,7 @@ export function validatePR(pr, issue, context = {}) {
     const branch = workBranch.exec(pr.head.ref);
     ensure(branch && Number(branch[1]) === issue.number, 'Use <type>/<issue-number>-<description>.');
     ensure(context.baseContained, 'Update the work branch from current develop.');
-    ensure(['development', 'release', 'sync'].includes(kind) || bootstrap, 'Invalid workflow kind.');
+    ensure(['development', 'release', 'sync'].includes(kind) || bootstrap || migration, 'Invalid workflow kind.');
     if (kind === 'development') ensure(!labels.has('kind:release'), 'Release Issues use the release workflow.');
     if (kind === 'release') ensure(labels.has('kind:release'), 'Release preparation requires a release Issue.');
     if (kind === 'sync') {
