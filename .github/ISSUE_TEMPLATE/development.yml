@@ -1,0 +1,33 @@
+name: Development task / مهمة تطوير
+description: A feature, fix, test, configuration or documentation change for Rain-erp
+title: ''
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Change type / نوع التغيير
+      options: [feat, fix, docs, refactor, perf, test, build, ci, chore]
+    validations:
+      required: true
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal and current behavior / الهدف والسلوك الحالي
+      description: Describe the concrete problem and desired result.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria / معايير القبول
+      description: List observable outcomes and any compatibility or data requirements.
+      placeholder: '- [ ] ...'
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation / التحقق
+      description: Reproduction steps, relevant tests, logs without secrets, or screenshots.
+    validations:
+      required: true

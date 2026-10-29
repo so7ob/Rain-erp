@@ -1,0 +1,14 @@
+{
+  "repository": "wweziz0001/Rain-erp",
+  "integrationBranch": "develop",
+  "stableBranch": "main",
+  "bootstrapIssue": 1,
+  "bootstrapBase": "606b3a2a1e49b947e1e12054c7faf3f6232137bc",
+  "initialVersion": "0.1.0",
+  "ciPath": ".github/workflows/ci.yml",
+  "versionFiles": [
+    "pom.xml",
+    "yudao-dependencies/pom.xml",
+    "yudao-server/src/main/resources/application.yaml"
+  ]
+}

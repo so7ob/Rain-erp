@@ -1,0 +1,20 @@
+[
+  "cn.iocoder.yudao.module.infra.framework.file.core.ftp.FtpFileClientTest.test",
+  "cn.iocoder.yudao.module.infra.framework.file.core.local.LocalFileClientTest.test",
+  "cn.iocoder.yudao.module.infra.framework.file.core.local.LocalFileClientTest.testGetContent_notFound",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testAliyun",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testHuaweiCloud",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testMinIO",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testQCloud",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testQiniu",
+  "cn.iocoder.yudao.module.infra.framework.file.core.s3.S3FileClientTest.testQiniu_privateGet",
+  "cn.iocoder.yudao.module.infra.framework.file.core.sftp.SftpFileClientTest.test",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testAliyunSmsClient_getSmsTemplate",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testAliyunSmsClient_sendSms",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testHuaweiSmsClient_sendSms",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testQiniuSmsClient_getSmsTemplate",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testQiniuSmsClient_sendSms",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testTencentSmsClient_getSmsTemplate",
+  "cn.iocoder.yudao.module.system.framework.sms.core.client.impl.SmsClientTests.testTencentSmsClient_sendSms",
+  "cn.iocoder.yudao.module.system.service.mail.MailSendServiceImplTest.testDemo"
+]

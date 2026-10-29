@@ -2,6 +2,8 @@
 
 [العربية](README.md) | **English**
 
+Development and release policy: [contributing guide](CONTRIBUTING.md) · [workflow details](docs/development-workflow.md).
+
 **Rain-erp** is a product of **[so7ob-tech — سحب التقنية](https://github.com/so7ob-tech)**, providing a platform for business management and enterprise resource planning.
 
 > **so7ob-tech — Raining smart solutions.**
