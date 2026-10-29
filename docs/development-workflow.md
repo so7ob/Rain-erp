@@ -1,6 +1,6 @@
 # Rain-erp development and release workflow
 
-The repository is `wweziz0001/Rain-erp`; `main` remains its default stable branch. `develop` is the integration branch. The policy is also binding on automated coding agents through `AGENTS.md`.
+The repository is `so7ob/Rain-erp`; `main` remains its default stable branch. `develop` is the integration branch. The policy is also binding on automated coding agents through `AGENTS.md`.
 
 ## Work delivery
 
@@ -56,10 +56,20 @@ Issue #1 is the one-time bootstrap phase: policy PR to develop, verified bootstr
 
 ## Bootstrap verification record — 2026-10-29
 
-- [Policy PR #2](https://github.com/wweziz0001/Rain-erp/pull/2) was squash-merged after successful current-head checks; [develop verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40934610925) passed on `cb1b82b`.
-- [Bootstrap promotion #3](https://github.com/wweziz0001/Rain-erp/pull/3) preserved history with a merge commit; [main verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40935848147) passed on `195265c`.
-- [Synchronization #4](https://github.com/wweziz0001/Rain-erp/pull/4) restored main ancestry in develop; [post-merge verification](https://github.com/wweziz0001/Rain-erp/actions/runs/40936991959) passed on `21ac96a`.
-- GitHub policy rejected a [missing review](https://github.com/wweziz0001/Rain-erp/actions/runs/40933070887) and a [stale reviewed head](https://github.com/wweziz0001/Rain-erp/actions/runs/40934039332), then accepted the updated review.
-- [Release preparation dry-run](https://github.com/wweziz0001/Rain-erp/actions/runs/40937005565) computed `v0.1.0` with no new Issue, tag or Release. Both branches require PRs, `policy`, `verify` and resolved conversations, including administrators; release tag updates/deletion are blocked.
+- [Policy PR #2](https://github.com/so7ob/Rain-erp/pull/2) was squash-merged after successful current-head checks; [develop verification](https://github.com/so7ob/Rain-erp/actions/runs/40934610925) passed on `cb1b82b`.
+- [Bootstrap promotion #3](https://github.com/so7ob/Rain-erp/pull/3) preserved history with a merge commit; [main verification](https://github.com/so7ob/Rain-erp/actions/runs/40935848147) passed on `195265c`.
+- [Synchronization #4](https://github.com/so7ob/Rain-erp/pull/4) restored main ancestry in develop; [post-merge verification](https://github.com/so7ob/Rain-erp/actions/runs/40936991959) passed on `21ac96a`.
+- GitHub policy rejected a [missing review](https://github.com/so7ob/Rain-erp/actions/runs/40933070887) and a [stale reviewed head](https://github.com/so7ob/Rain-erp/actions/runs/40934039332), then accepted the updated review.
+- [Release preparation dry-run](https://github.com/so7ob/Rain-erp/actions/runs/40937005565) computed `v0.1.0` with no new Issue, tag or Release. Both branches require PRs, `policy`, `verify` and resolved conversations, including administrators; release tag updates/deletion are blocked.
 
-Final verification uses a normal `development` audit PR under active protection, after any setup corrections and ancestry synchronization. Its post-merge CI and automated delivery comment on [Issue #1](https://github.com/wweziz0001/Rain-erp/issues/1) provide the final live closure/branch-cleanup evidence. Maven verification reports 920 cases (902 executed, 18 documented existing skips); workflow tests also cover invalid manual policy dispatch and the restricted setup-correction path.
+Final verification uses a normal `development` audit PR under active protection, after any setup corrections and ancestry synchronization. Its post-merge CI and automated delivery comment on [Issue #1](https://github.com/so7ob/Rain-erp/issues/1) provide the final live closure/branch-cleanup evidence. Maven verification reports 920 cases (902 executed, 18 documented existing skips); workflow tests also cover invalid manual policy dispatch and the restricted setup-correction path.
+
+The final setup correction rejects missing, malformed and unsafe policy-dispatch PR numbers. [PR #5](https://github.com/so7ob/Rain-erp/pull/5) delivered it to develop; [PR #6](https://github.com/so7ob/Rain-erp/pull/6) promoted it to main at `8adf706eaa39992678d67a7eaacdfb0da45005b1`, with [successful main verification](https://github.com/so7ob/Rain-erp/actions/runs/40939858890). [PR #7](https://github.com/so7ob/Rain-erp/pull/7) restored main ancestry to develop using a merge commit.
+
+The [updated-code release dry-run](https://github.com/so7ob/Rain-erp/actions/runs/40940218673) passed. Before/after checks confirmed unchanged Issues, branch heads, tags and Releases, with zero product tags/Releases. All 46 workflow regressions pass; Maven verification still reports 902 executed cases, 18 documented existing skips and no failures/errors. Final delivery uses the normal development path so the bot's Issue #1 comment records the successful develop SHA before closure and work-branch deletion.
+
+## Repository ownership transfer
+
+The canonical location is `so7ob/Rain-erp`. The owner authorized transfer of the existing repository in Issue #9, preserving GitHub repository ID `1438705941`, commits, branches, Issues, PRs and settings. Automation takes its repository name from `GITHUB_REPOSITORY` (or `GH_REPO` for local CLI execution), defaulting to the canonical name, and verifies the immutable ID before policy or delivery operations. This supports the old and new owner during transfer while rejecting unrelated repositories.
+
+A one-use administrative `migration` promotion is scoped to the open labeled Issue #9 and main base `8adf706eaa39992678d67a7eaacdfb0da45005b1`. It requires exact-head review, successful develop CI, SNAPSHOT metadata and no tags/releases. Preparation uses squash; main promotion and ancestry synchronization use merge commits. Integration leaves the migration Issue open for administrative acceptance. After transfer, successful normal develop delivery closes the Issue and removes its work branch. No product release or application deployment accompanies the ownership change.

@@ -33,6 +33,11 @@ export async function checkPR(api, pr, files) {
       context.bootstrapCorrection = !tags.length && !releases.length &&
         await api.contains(config.bootstrapBase, pr.base.sha) && await verifiedBranch(api, config.stableBranch, pr.base.sha);
     }
+    if (meta.Workflow === 'migration') {
+      const [tags, releases] = await Promise.all([api.list('tags'), api.list('releases')]);
+      context.migrationAllowed = !tags.length && !releases.length &&
+        [config.ownershipMigration.from, config.ownershipMigration.to].includes(config.repository);
+    }
   }
   if (['release', 'promotion'].includes(meta.Workflow)) {
     const requested = issueMeta['Release-Requested-Version'];
@@ -60,6 +65,7 @@ export async function checkPR(api, pr, files) {
 async function main() {
   const number = pullRequestNumber(process.env.PR_NUMBER);
   const api = new GitHub();
+  await api.verifyRepository();
   const files = Object.fromEntries([...config.versionFiles, 'CHANGELOG.md'].map(path => [path, readFileSync(path, 'utf8')]));
   const pr = await api.get(`pulls/${number}`);
   const checkout = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();

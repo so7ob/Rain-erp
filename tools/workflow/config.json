@@ -1,5 +1,12 @@
 {
-  "repository": "wweziz0001/Rain-erp",
+  "repository": "so7ob/Rain-erp",
+  "repositoryId": 1438705941,
+  "ownershipMigration": {
+    "issue": 9,
+    "from": "wweziz0001/Rain-erp",
+    "to": "so7ob/Rain-erp",
+    "mainBase": "8adf706eaa39992678d67a7eaacdfb0da45005b1"
+  },
   "integrationBranch": "develop",
   "stableBranch": "main",
   "bootstrapIssue": 1,
