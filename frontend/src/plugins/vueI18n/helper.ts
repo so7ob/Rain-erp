@@ -1,3 +1,5 @@
+import { applyDocumentLocale } from '@/locales/policy'
+
 export const setHtmlPageLang = (locale: LocaleType) => {
-  document.querySelector('html')?.setAttribute('lang', locale)
+  applyDocumentLocale(locale, document.documentElement)
 }

@@ -1,0 +1,981 @@
+{
+  "schemaVersion": 1,
+  "trackingIssue": 15,
+  "definition": "Candidate counts are work discovery, not completed translation or a percentage. Every module needs linguistic, API/output and browser acceptance.",
+  "scannerLimits": "Vue visible text/attributes/expressions and contextual JS/TS display literals are detected. Runtime-generated strings, CSS content, third-party UIs, images, backend dynamic outputs and user-authored data need separate review. Java counts are inventory only, not a proof of extraction.",
+  "catalogs": {
+    "ar": {
+      "keys": 406
+    },
+    "en": {
+      "keys": 406
+    },
+    "zh-CN": {
+      "keys": 406
+    }
+  },
+  "frontend": {
+    "ai": {
+      "status": "pending-acceptance",
+      "files": 72,
+      "vueFiles": 69,
+      "visibleLiteralCandidates": 732,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 127,
+        "template": 196,
+        "attribute": 409
+      },
+      "examples": [
+        {
+          "file": "src/views/ai/chat/index/components/conversation/ConversationList.vue",
+          "line": 301,
+          "kind": "script",
+          "text": "重命名成功"
+        },
+        {
+          "file": "src/views/ai/chat/index/components/conversation/ConversationList.vue",
+          "line": 323,
+          "kind": "script",
+          "text": "对话已删除"
+        },
+        {
+          "file": "src/views/ai/chat/index/components/conversation/ConversationList.vue",
+          "line": 334,
+          "kind": "script",
+          "text": "确认后对话会全部清空，置顶的对话除外。"
+        }
+      ]
+    },
+    "ai1": {
+      "status": "pending-acceptance",
+      "files": 43,
+      "vueFiles": 41,
+      "visibleLiteralCandidates": 455,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 91,
+        "attribute": 236,
+        "template": 128
+      },
+      "examples": [
+        {
+          "file": "src/views/ai1/agent/AgentForm.vue",
+          "line": 98,
+          "kind": "script",
+          "text": "Agent 名称不能为空"
+        },
+        {
+          "file": "src/views/ai1/agent/AgentForm.vue",
+          "line": 99,
+          "kind": "script",
+          "text": "模型供应商不能为空"
+        },
+        {
+          "file": "src/views/ai1/agent/AgentForm.vue",
+          "line": 100,
+          "kind": "script",
+          "text": "对话模型不能为空"
+        }
+      ]
+    },
+    "bpm": {
+      "status": "pending-acceptance",
+      "files": 53,
+      "vueFiles": 45,
+      "visibleLiteralCandidates": 719,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 134,
+        "attribute": 372,
+        "template": 213
+      },
+      "examples": [
+        {
+          "file": "src/views/bpm/category/CategoryForm.vue",
+          "line": 69,
+          "kind": "script",
+          "text": "分类名不能为空"
+        },
+        {
+          "file": "src/views/bpm/category/CategoryForm.vue",
+          "line": 70,
+          "kind": "script",
+          "text": "分类标志不能为空"
+        },
+        {
+          "file": "src/views/bpm/category/CategoryForm.vue",
+          "line": 71,
+          "kind": "script",
+          "text": "分类状态不能为空"
+        }
+      ]
+    },
+    "crm": {
+      "status": "pending-acceptance",
+      "files": 119,
+      "vueFiles": 118,
+      "visibleLiteralCandidates": 1687,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 259,
+        "attribute": 1234,
+        "script": 194
+      },
+      "examples": [
+        {
+          "file": "src/views/crm/backlog/components/ClueFollowList.vue",
+          "line": 3,
+          "kind": "template",
+          "text": "分配给我的线索"
+        },
+        {
+          "file": "src/views/crm/backlog/components/ClueFollowList.vue",
+          "line": 12,
+          "kind": "attribute",
+          "text": "状态"
+        },
+        {
+          "file": "src/views/crm/backlog/components/ClueFollowList.vue",
+          "line": 16,
+          "kind": "attribute",
+          "text": "状态"
+        }
+      ]
+    },
+    "erp": {
+      "status": "pending-acceptance",
+      "files": 63,
+      "vueFiles": 63,
+      "visibleLiteralCandidates": 1489,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 108,
+        "attribute": 1128,
+        "template": 253
+      },
+      "examples": [
+        {
+          "file": "src/views/erp/finance/account/AccountForm.vue",
+          "line": 64,
+          "kind": "script",
+          "text": "名称不能为空"
+        },
+        {
+          "file": "src/views/erp/finance/account/AccountForm.vue",
+          "line": 65,
+          "kind": "script",
+          "text": "开启状态不能为空"
+        },
+        {
+          "file": "src/views/erp/finance/account/AccountForm.vue",
+          "line": 66,
+          "kind": "script",
+          "text": "排序不能为空"
+        }
+      ]
+    },
+    "Error": {
+      "status": "pending-acceptance",
+      "files": 3,
+      "vueFiles": 3,
+      "visibleLiteralCandidates": 0,
+      "templateParseErrors": 0,
+      "kinds": {},
+      "examples": []
+    },
+    "fms": {
+      "status": "pending-acceptance",
+      "files": 85,
+      "vueFiles": 80,
+      "visibleLiteralCandidates": 1196,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 357,
+        "script": 283,
+        "attribute": 556
+      },
+      "examples": [
+        {
+          "file": "src/views/fms/closing/ClosingSchemeCard.vue",
+          "line": 33,
+          "kind": "template",
+          "text": "金额"
+        },
+        {
+          "file": "src/views/fms/closing/ClosingSchemeCard.vue",
+          "line": 43,
+          "kind": "template",
+          "text": "凭证 #"
+        },
+        {
+          "file": "src/views/fms/closing/ClosingSchemeCard.vue",
+          "line": 59,
+          "kind": "script",
+          "text": "重新生成"
+        }
+      ]
+    },
+    "Home": {
+      "status": "pending-acceptance",
+      "files": 4,
+      "vueFiles": 2,
+      "visibleLiteralCandidates": 12,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 12
+      },
+      "examples": [
+        {
+          "file": "src/views/Home/Index.vue",
+          "line": 240,
+          "kind": "script",
+          "text": "github.com/YunaiV/ruoyi-vue-pro"
+        },
+        {
+          "file": "src/views/Home/Index.vue",
+          "line": 248,
+          "kind": "script",
+          "text": "github.com/yudaocode/yudao-ui-admin-vue3"
+        },
+        {
+          "file": "src/views/Home/Index.vue",
+          "line": 256,
+          "kind": "script",
+          "text": "github.com/yudaocode/yudao-mall-uniapp"
+        }
+      ]
+    },
+    "hrm": {
+      "status": "pending-acceptance",
+      "files": 203,
+      "vueFiles": 198,
+      "visibleLiteralCandidates": 3223,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 1963,
+        "template": 596,
+        "script": 664
+      },
+      "examples": [
+        {
+          "file": "src/views/hrm/attendance/clock/AttendanceClockDailyDetail.vue",
+          "line": 5,
+          "kind": "attribute",
+          "text": "班次"
+        },
+        {
+          "file": "src/views/hrm/attendance/clock/AttendanceClockDailyDetail.vue",
+          "line": 6,
+          "kind": "attribute",
+          "text": "考勤结果"
+        },
+        {
+          "file": "src/views/hrm/attendance/clock/AttendanceClockDailyDetail.vue",
+          "line": 9,
+          "kind": "attribute",
+          "text": "应打卡次数"
+        }
+      ]
+    },
+    "IFrame": {
+      "status": "pending-acceptance",
+      "files": 1,
+      "vueFiles": 1,
+      "visibleLiteralCandidates": 0,
+      "templateParseErrors": 0,
+      "kinds": {},
+      "examples": []
+    },
+    "im": {
+      "status": "pending-acceptance",
+      "files": 138,
+      "vueFiles": 101,
+      "visibleLiteralCandidates": 907,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 302,
+        "script": 217,
+        "attribute": 388
+      },
+      "examples": [
+        {
+          "file": "src/views/im/home/components/card/CardBubble.vue",
+          "line": 28,
+          "kind": "template",
+          "text": "人群聊"
+        },
+        {
+          "file": "src/views/im/home/components/friend/FriendAddDialog.vue",
+          "line": 267,
+          "kind": "script",
+          "text": "不能添加自己为好友"
+        },
+        {
+          "file": "src/views/im/home/components/friend/FriendAddDialog.vue",
+          "line": 12,
+          "kind": "attribute",
+          "text": "输入昵称回车搜索（最多展示 20 条）"
+        }
+      ]
+    },
+    "infra": {
+      "status": "pending-acceptance",
+      "files": 52,
+      "vueFiles": 51,
+      "visibleLiteralCandidates": 788,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 506,
+        "template": 183,
+        "script": 99
+      },
+      "examples": [
+        {
+          "file": "src/views/infra/apiAccessLog/ApiAccessLogDetail.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "详情"
+        },
+        {
+          "file": "src/views/infra/apiAccessLog/ApiAccessLogDetail.vue",
+          "line": 4,
+          "kind": "attribute",
+          "text": "日志主键"
+        },
+        {
+          "file": "src/views/infra/apiAccessLog/ApiAccessLogDetail.vue",
+          "line": 7,
+          "kind": "attribute",
+          "text": "链路追踪"
+        }
+      ]
+    },
+    "iot": {
+      "status": "pending-acceptance",
+      "files": 96,
+      "vueFiles": 91,
+      "visibleLiteralCandidates": 1372,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 286,
+        "attribute": 735,
+        "template": 351
+      },
+      "examples": [
+        {
+          "file": "src/views/iot/alert/config/AlertConfigForm.vue",
+          "line": 156,
+          "kind": "script",
+          "text": "配置名称不能为空"
+        },
+        {
+          "file": "src/views/iot/alert/config/AlertConfigForm.vue",
+          "line": 157,
+          "kind": "script",
+          "text": "告警级别不能为空"
+        },
+        {
+          "file": "src/views/iot/alert/config/AlertConfigForm.vue",
+          "line": 158,
+          "kind": "script",
+          "text": "配置状态不能为空"
+        }
+      ]
+    },
+    "Login": {
+      "status": "pending-acceptance",
+      "files": 11,
+      "vueFiles": 9,
+      "visibleLiteralCandidates": 32,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 19,
+        "template": 12,
+        "attribute": 1
+      },
+      "examples": [
+        {
+          "file": "src/views/Login/components/ForgetPasswordForm.vue",
+          "line": 153,
+          "kind": "script",
+          "text": "长度为4到16位"
+        },
+        {
+          "file": "src/views/Login/components/ForgetPasswordForm.vue",
+          "line": 154,
+          "kind": "script",
+          "text": "手机号长度为11位"
+        },
+        {
+          "file": "src/views/Login/components/ForgetPasswordForm.vue",
+          "line": 161,
+          "kind": "script",
+          "text": "密码长度为4到16位"
+        }
+      ]
+    },
+    "mall": {
+      "status": "pending-acceptance",
+      "files": 137,
+      "vueFiles": 124,
+      "visibleLiteralCandidates": 1834,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 464,
+        "attribute": 1122,
+        "script": 248
+      },
+      "examples": [
+        {
+          "file": "src/views/mall/home/components/ComparisonCard.vue",
+          "line": 16,
+          "kind": "template",
+          "text": "昨日数据"
+        },
+        {
+          "file": "src/views/mall/home/components/MemberStatisticsCard.vue",
+          "line": 4,
+          "kind": "attribute",
+          "text": "用户统计"
+        },
+        {
+          "file": "src/views/mall/home/components/OperationDataCard.vue",
+          "line": 4,
+          "kind": "attribute",
+          "text": "运营数据"
+        }
+      ]
+    },
+    "member": {
+      "status": "pending-acceptance",
+      "files": 32,
+      "vueFiles": 32,
+      "visibleLiteralCandidates": 444,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 319,
+        "template": 85,
+        "script": 40
+      },
+      "examples": [
+        {
+          "file": "src/views/member/config/index.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "会员手册（功能开启）"
+        },
+        {
+          "file": "src/views/member/config/index.vue",
+          "line": 12,
+          "kind": "attribute",
+          "text": "hideId"
+        },
+        {
+          "file": "src/views/member/config/index.vue",
+          "line": 17,
+          "kind": "attribute",
+          "text": "积分"
+        }
+      ]
+    },
+    "mes": {
+      "status": "pending-acceptance",
+      "files": 287,
+      "vueFiles": 284,
+      "visibleLiteralCandidates": 5702,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 1291,
+        "attribute": 3576,
+        "script": 835
+      },
+      "examples": [
+        {
+          "file": "src/views/mes/cal/calendar/CalendarDateCell.vue",
+          "line": 9,
+          "kind": "template",
+          "text": "休"
+        },
+        {
+          "file": "src/views/mes/cal/calendar/CalendarDateCell.vue",
+          "line": 10,
+          "kind": "template",
+          "text": "班"
+        },
+        {
+          "file": "src/views/mes/cal/calendar/CalendarLegend.vue",
+          "line": 6,
+          "kind": "template",
+          "text": "配色说明："
+        }
+      ]
+    },
+    "mp": {
+      "status": "pending-acceptance",
+      "files": 67,
+      "vueFiles": 46,
+      "visibleLiteralCandidates": 379,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 67,
+        "attribute": 176,
+        "template": 136
+      },
+      "examples": [
+        {
+          "file": "src/views/mp/account/AccountForm.vue",
+          "line": 94,
+          "kind": "script",
+          "text": "名称不能为空"
+        },
+        {
+          "file": "src/views/mp/account/AccountForm.vue",
+          "line": 95,
+          "kind": "script",
+          "text": "公众号账号不能为空"
+        },
+        {
+          "file": "src/views/mp/account/AccountForm.vue",
+          "line": 96,
+          "kind": "script",
+          "text": "公众号 appId 不能为空"
+        }
+      ]
+    },
+    "oa": {
+      "status": "pending-acceptance",
+      "files": 161,
+      "vueFiles": 159,
+      "visibleLiteralCandidates": 2884,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 1844,
+        "template": 610,
+        "script": 430
+      },
+      "examples": [
+        {
+          "file": "src/views/oa/announcement/list/components/OaAnnouncementDetail.vue",
+          "line": 3,
+          "kind": "attribute",
+          "text": "公告详情"
+        },
+        {
+          "file": "src/views/oa/announcement/list/components/OaAnnouncementDetail.vue",
+          "line": 5,
+          "kind": "attribute",
+          "text": "公告标题"
+        },
+        {
+          "file": "src/views/oa/announcement/list/components/OaAnnouncementDetail.vue",
+          "line": 6,
+          "kind": "attribute",
+          "text": "发布人"
+        }
+      ]
+    },
+    "pay": {
+      "status": "pending-acceptance",
+      "files": 23,
+      "vueFiles": 23,
+      "visibleLiteralCandidates": 520,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 59,
+        "attribute": 350,
+        "template": 111
+      },
+      "examples": [
+        {
+          "file": "src/views/pay/app/components/AppForm.vue",
+          "line": 72,
+          "kind": "script",
+          "text": "应用名不能为空"
+        },
+        {
+          "file": "src/views/pay/app/components/AppForm.vue",
+          "line": 73,
+          "kind": "script",
+          "text": "应用标识不能为空"
+        },
+        {
+          "file": "src/views/pay/app/components/AppForm.vue",
+          "line": 74,
+          "kind": "script",
+          "text": "开启状态不能为空"
+        }
+      ]
+    },
+    "pms": {
+      "status": "pending-acceptance",
+      "files": 83,
+      "vueFiles": 77,
+      "visibleLiteralCandidates": 1264,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 547,
+        "script": 323,
+        "template": 394
+      },
+      "examples": [
+        {
+          "file": "src/views/pms/kb/document/components/KnowledgeDocumentLabelSelect.vue",
+          "line": 8,
+          "kind": "attribute",
+          "text": "请选择标签"
+        },
+        {
+          "file": "src/views/pms/kb/document/index.vue",
+          "line": 310,
+          "kind": "script",
+          "text": "删除成功"
+        },
+        {
+          "file": "src/views/pms/kb/document/index.vue",
+          "line": 320,
+          "kind": "script",
+          "text": "删除成功"
+        }
+      ]
+    },
+    "Profile": {
+      "status": "pending-acceptance",
+      "files": 7,
+      "vueFiles": 6,
+      "visibleLiteralCandidates": 9,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 2,
+        "attribute": 3,
+        "template": 4
+      },
+      "examples": [
+        {
+          "file": "src/views/Profile/components/UserSocial.vue",
+          "line": 79,
+          "kind": "script",
+          "text": "绑定成功"
+        },
+        {
+          "file": "src/views/Profile/components/UserSocial.vue",
+          "line": 103,
+          "kind": "script",
+          "text": "解绑成功"
+        },
+        {
+          "file": "src/views/Profile/components/UserSocial.vue",
+          "line": 3,
+          "kind": "attribute",
+          "text": "序号"
+        }
+      ]
+    },
+    "Redirect": {
+      "status": "pending-acceptance",
+      "files": 1,
+      "vueFiles": 1,
+      "visibleLiteralCandidates": 0,
+      "templateParseErrors": 0,
+      "kinds": {},
+      "examples": []
+    },
+    "report": {
+      "status": "pending-acceptance",
+      "files": 3,
+      "vueFiles": 3,
+      "visibleLiteralCandidates": 3,
+      "templateParseErrors": 0,
+      "kinds": {
+        "attribute": 3
+      },
+      "examples": [
+        {
+          "file": "src/views/report/goview/index.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "大屏设计器"
+        },
+        {
+          "file": "src/views/report/jmreport/bi.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "大屏设计器"
+        },
+        {
+          "file": "src/views/report/jmreport/index.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "报表设计器"
+        }
+      ]
+    },
+    "shared": {
+      "status": "pending-acceptance",
+      "files": 999,
+      "vueFiles": 206,
+      "visibleLiteralCandidates": 1957,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 829,
+        "attribute": 682,
+        "template": 446
+      },
+      "examples": [
+        {
+          "file": "src/api/iot/thingmodel/index.ts",
+          "line": 197,
+          "kind": "script",
+          "text": "功能名称不能为空"
+        },
+        {
+          "file": "src/api/iot/thingmodel/index.ts",
+          "line": 201,
+          "kind": "script",
+          "text": "支持中文、大小写字母、日文、数字、短划线、下划线、斜杠和小数点，必须以中文、英文或数字开头，不超过 30 个字符"
+        },
+        {
+          "file": "src/api/iot/thingmodel/index.ts",
+          "line": 205,
+          "kind": "script",
+          "text": "功能类型不能为空"
+        }
+      ]
+    },
+    "system": {
+      "status": "pending-acceptance",
+      "files": 68,
+      "vueFiles": 68,
+      "visibleLiteralCandidates": 1182,
+      "templateParseErrors": 0,
+      "kinds": {
+        "script": 159,
+        "attribute": 786,
+        "template": 234,
+        "jsx": 3
+      },
+      "examples": [
+        {
+          "file": "src/views/system/area/AreaForm.vue",
+          "line": 37,
+          "kind": "script",
+          "text": "IP 地址不能为空"
+        },
+        {
+          "file": "src/views/system/area/AreaForm.vue",
+          "line": 58,
+          "kind": "script",
+          "text": "查询成功"
+        },
+        {
+          "file": "src/views/system/area/AreaForm.vue",
+          "line": 2,
+          "kind": "attribute",
+          "text": "IP 查询"
+        }
+      ]
+    },
+    "wms": {
+      "status": "pending-acceptance",
+      "files": 42,
+      "vueFiles": 39,
+      "visibleLiteralCandidates": 963,
+      "templateParseErrors": 0,
+      "kinds": {
+        "template": 323,
+        "script": 117,
+        "attribute": 523
+      },
+      "examples": [
+        {
+          "file": "src/views/wms/home/components/WmsHomeInventoryCharts.vue",
+          "line": 11,
+          "kind": "template",
+          "text": "货物占比"
+        },
+        {
+          "file": "src/views/wms/home/components/WmsHomeInventoryCharts.vue",
+          "line": 12,
+          "kind": "template",
+          "text": "按商品库存数量汇总 Top 5"
+        },
+        {
+          "file": "src/views/wms/home/components/WmsHomeInventoryCharts.vue",
+          "line": 30,
+          "kind": "template",
+          "text": "库存分布"
+        }
+      ]
+    }
+  },
+  "backend": {
+    "yudao-dependencies": {
+      "javaFiles": 0,
+      "businessErrorConstants": 0,
+      "excelHeaders": 0,
+      "validationMessages": 0,
+      "status": "pending-acceptance"
+    },
+    "yudao-framework": {
+      "javaFiles": 353,
+      "businessErrorConstants": 14,
+      "excelHeaders": 1,
+      "validationMessages": 74,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-ai": {
+      "javaFiles": 191,
+      "businessErrorConstants": 31,
+      "excelHeaders": 0,
+      "validationMessages": 85,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-ai1-springai": {
+      "javaFiles": 139,
+      "businessErrorConstants": 49,
+      "excelHeaders": 0,
+      "validationMessages": 85,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-bpm": {
+      "javaFiles": 224,
+      "businessErrorConstants": 61,
+      "excelHeaders": 2,
+      "validationMessages": 145,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-crm": {
+      "javaFiles": 282,
+      "businessErrorConstants": 75,
+      "excelHeaders": 188,
+      "validationMessages": 147,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-erp": {
+      "javaFiles": 216,
+      "businessErrorConstants": 125,
+      "excelHeaders": 207,
+      "validationMessages": 123,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-fms": {
+      "javaFiles": 259,
+      "businessErrorConstants": 122,
+      "excelHeaders": 149,
+      "validationMessages": 321,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-hrm": {
+      "javaFiles": 577,
+      "businessErrorConstants": 150,
+      "excelHeaders": 142,
+      "validationMessages": 777,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-im": {
+      "javaFiles": 279,
+      "businessErrorConstants": 76,
+      "excelHeaders": 0,
+      "validationMessages": 143,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-infra": {
+      "javaFiles": 205,
+      "businessErrorConstants": 48,
+      "excelHeaders": 99,
+      "validationMessages": 122,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-iot": {
+      "javaFiles": 467,
+      "businessErrorConstants": 92,
+      "excelHeaders": 30,
+      "validationMessages": 227,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-mall": {
+      "javaFiles": 819,
+      "businessErrorConstants": 203,
+      "excelHeaders": 63,
+      "validationMessages": 482,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-member": {
+      "javaFiles": 185,
+      "businessErrorConstants": 26,
+      "excelHeaders": 0,
+      "validationMessages": 123,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-mes": {
+      "javaFiles": 1122,
+      "businessErrorConstants": 538,
+      "excelHeaders": 763,
+      "validationMessages": 615,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-mp": {
+      "javaFiles": 124,
+      "businessErrorConstants": 36,
+      "excelHeaders": 0,
+      "validationMessages": 104,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-oa": {
+      "javaFiles": 432,
+      "businessErrorConstants": 149,
+      "excelHeaders": 0,
+      "validationMessages": 582,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-pay": {
+      "javaFiles": 227,
+      "businessErrorConstants": 69,
+      "excelHeaders": 44,
+      "validationMessages": 152,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-pms": {
+      "javaFiles": 281,
+      "businessErrorConstants": 84,
+      "excelHeaders": 25,
+      "validationMessages": 202,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-report": {
+      "javaFiles": 29,
+      "businessErrorConstants": 1,
+      "excelHeaders": 0,
+      "validationMessages": 4,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-system": {
+      "javaFiles": 427,
+      "businessErrorConstants": 113,
+      "excelHeaders": 93,
+      "validationMessages": 274,
+      "status": "pending-acceptance"
+    },
+    "yudao-module-wms": {
+      "javaFiles": 149,
+      "businessErrorConstants": 58,
+      "excelHeaders": 61,
+      "validationMessages": 103,
+      "status": "pending-acceptance"
+    },
+    "yudao-server": {
+      "javaFiles": 2,
+      "businessErrorConstants": 0,
+      "excelHeaders": 0,
+      "validationMessages": 0,
+      "status": "pending-acceptance"
+    },
+    "yudao-ui": {
+      "javaFiles": 0,
+      "businessErrorConstants": 0,
+      "excelHeaders": 0,
+      "validationMessages": 0,
+      "status": "pending-acceptance"
+    }
+  }
+}

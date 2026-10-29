@@ -36,3 +36,9 @@ corepack pnpm check:build
 The six configuration regressions verify Maven version parsing, rejection of conflicting versions, public-only environment definitions, local overrides, valid ports, same-origin requests and empty credential/provider defaults. The production build compiles the imported Vue source; artifact verification checks the actual HTML entry scripts and Maven-matching `version.json`. Local browser smoke additionally verifies the login page and the API proxy against the existing local backend.
 
 Production builds generate the ignored auto-import/component declarations before full `corepack pnpm ts:check`; this fixes the missing-global diagnostics observed when running the unprepared upstream checkout directly. Full frontend type verification passes after generation and is a required CI step. The upstream lint command remains available; this import does not claim a full lint/style audit.
+
+## Localization verification
+
+`corepack pnpm test` also verifies Arabic/English/Chinese catalog parity and message compilation, interpolation parameters, saved locale normalization, document direction, competing/failed language loads, composer reactivity, Arabic relative-time forms and visible-text scanner behavior. `corepack pnpm i18n:check` checks the committed source inventory and catalogs in CI. Regenerate and review inventory changes with `corepack pnpm i18n:inventory`.
+
+These checks do not establish full module localization. `corepack pnpm i18n:accept` explicitly fails while module/browser/API/output acceptance remains pending under Issue #15. See [the localization guide](localization.md) for scope, scanner limits, glossary and external integration boundaries.
