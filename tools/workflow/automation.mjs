@@ -264,7 +264,6 @@ export async function reconcile(api, runId, { dryRun = false } = {}) {
 }
 
 async function main() {
-  ensure(!process.env.GITHUB_REPOSITORY || process.env.GITHUB_REPOSITORY === config.repository, 'Unexpected repository.');
   const [command, ...args] = process.argv.slice(2);
   const allowed = command === 'prepare' ? ['--dry-run', '--scheduled', '--version'] : ['--dry-run', '--run-id'];
   for (let index = 0; index < args.length; index++) {
@@ -277,6 +276,7 @@ async function main() {
   const dryRun = args.includes('--dry-run');
   const option = name => args.includes(name) ? args[args.indexOf(name) + 1] : undefined;
   const api = new GitHub();
+  await api.verifyRepository();
   const result = command === 'prepare'
     ? await prepare(api, { dryRun, scheduled: args.includes('--scheduled'), requested: option('--version') })
     : command === 'reconcile'

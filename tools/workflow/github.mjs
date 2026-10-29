@@ -11,7 +11,7 @@ export class GitHub {
   }
 
   async request(method, path, body, { optional = false } = {}) {
-    ensure(path.startsWith(`/repos/${config.repository}/`), 'Unexpected repository API path.');
+    ensure(path === `/repos/${config.repository}` || path.startsWith(`/repos/${config.repository}/`), 'Unexpected repository API path.');
     if (method !== 'GET' && this.dryRun) {
       this.operations.push({ method, path, body });
       return null;
@@ -38,8 +38,14 @@ export class GitHub {
     return data;
   }
 
-  get(path, options) { return this.request('GET', `/repos/${config.repository}/${path}`, undefined, options); }
+  get(path, options) { return this.request('GET', `/repos/${config.repository}${path ? `/${path}` : ''}`, undefined, options); }
   write(method, path, data) { return this.request(method, `/repos/${config.repository}/${path}`, data); }
+
+  async verifyRepository() {
+    const repository = await this.get('');
+    ensure(repository.id === config.repositoryId, 'Repository ID differs from the authorized project; stop before mutations.');
+    return repository;
+  }
 
   async list(path, key) {
     const result = [];
