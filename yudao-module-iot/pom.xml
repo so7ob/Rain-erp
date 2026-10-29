@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>yudao</artifactId>
+        <groupId>cn.iocoder.boot</groupId>
+        <version>${revision}</version>
+    </parent>
+    <modules>
+        <module>yudao-module-iot-biz</module>
+        <module>yudao-module-iot-core</module>
+        <module>yudao-module-iot-gateway</module>
+    </modules>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>yudao-module-iot</artifactId>
+    <packaging>pom</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>
+        物联网大模块，由 biz 业务、gateway 设备网关、core 核心等组成
+        例如说：产品、物模型、设备、规则引擎、OTA 升级、设备接入等等
+    </description>
+
+</project>
