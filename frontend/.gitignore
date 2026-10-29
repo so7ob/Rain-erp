@@ -1,0 +1,17 @@
+node_modules
+.DS_Store
+dist
+dist-ssr
+/dist*
+pnpm-debug
+auto-*.d.ts
+.idea
+.history
+output/
+.playwright-cli/
+
+# Local configuration and generated state
+.env
+.env.*
+!.env.example
+*.tsbuildinfo

@@ -53,3 +53,7 @@ application-my.yaml
 /yudao-ui-app/unpackage/
 .DS_Store
 **/.DS_Store
+
+# Local runtime state is never product source.
+/.runtime/
+/script/docker-compose/.env
