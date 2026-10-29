@@ -47,6 +47,9 @@ jobs:
       - name: Test frontend configuration
         working-directory: frontend
         run: corepack pnpm test
+      - name: Validate translation catalogs and localization inventory
+        working-directory: frontend
+        run: corepack pnpm i18n:check
       - name: Build frontend production assets
         working-directory: frontend
         run: corepack pnpm build

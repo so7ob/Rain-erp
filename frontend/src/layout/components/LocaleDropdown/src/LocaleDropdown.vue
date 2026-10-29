@@ -19,21 +19,25 @@ const localeStore = useLocaleStore()
 const langMap = computed(() => localeStore.getLocaleMap)
 
 const currentLang = computed(() => localeStore.getCurrentLocale)
+const { changeLocale } = useLocale()
+const { t } = useI18n()
+const switching = ref(false)
 
-const setLang = (lang: LocaleType) => {
+const setLang = async (lang: LocaleType) => {
   if (lang === unref(currentLang).lang) return
-  // 需要重新加载页面让整个语言多初始化
-  window.location.reload()
-  localeStore.setCurrentLocale({
-    lang
-  })
-  const { changeLocale } = useLocale()
-  changeLocale(lang)
+  switching.value = true
+  try {
+    await changeLocale(lang)
+  } catch {
+    ElMessage.error(t('sys.api.apiRequestFailed'))
+  } finally {
+    switching.value = false
+  }
 }
 </script>
 
 <template>
-  <ElDropdown :class="prefixCls" trigger="click" @command="setLang">
+  <ElDropdown :class="prefixCls" trigger="click" :disabled="switching" @command="setLang">
     <Icon
       :class="$attrs.class"
       :color="color"
@@ -43,7 +47,12 @@ const setLang = (lang: LocaleType) => {
     />
     <template #dropdown>
       <ElDropdownMenu>
-        <ElDropdownItem v-for="item in langMap" :key="item.lang" :command="item.lang">
+        <ElDropdownItem
+          v-for="item in langMap"
+          :key="item.lang"
+          :command="item.lang"
+          :disabled="item.lang === currentLang.lang"
+        >
           {{ item.name }}
         </ElDropdownItem>
       </ElDropdownMenu>
