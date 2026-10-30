@@ -19,6 +19,7 @@ import { resetRouter } from '@/router'
 import { deleteUserCache } from '@/hooks/web/useCache'
 import { ApiEncrypt } from '@/utils/encrypt'
 import { useLocaleStoreWithOut } from '@/store/modules/locale'
+import { continueAuthenticationContext } from '@/hooks/web/cacheContext'
 
 const tenantEnable = import.meta.env.VITE_APP_TENANT_ENABLE
 const { result_code, base_url, request_timeout } = config
@@ -83,7 +84,7 @@ const refreshSession = createSingleRefresh(
     ) {
       return Promise.reject(data)
     }
-    setToken(data.data)
+    continueAuthenticationContext(() => setToken(data.data))
     return sessionIdentity()
   },
   (session) => session.id

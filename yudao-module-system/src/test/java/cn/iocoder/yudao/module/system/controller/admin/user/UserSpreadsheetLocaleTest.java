@@ -37,6 +37,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -68,7 +69,7 @@ class UserSpreadsheetLocaleTest {
         UserController controller = new UserController();
         ReflectUtil.setFieldValue(controller, "userService", users);
         DeptService departments = mock(DeptService.class);
-        when(departments.getDeptMap(anyCollection())).thenReturn(Map.of());
+        when(departments.getDeptMap(anyCollection())).thenReturn(new HashMap<>());
         ReflectUtil.setFieldValue(controller, "deptService", departments);
         mvc = MockMvcBuilders.standaloneSetup(controller)
                 .addFilters(new RequestLocaleFilter(messages))
@@ -84,7 +85,8 @@ class UserSpreadsheetLocaleTest {
     void localizedTemplatesRoundTripUnderEveryReadingLanguage(String language) throws Exception {
         var request = get("/system/user/get-import-template");
         if (language != null) request.header("Accept-Language", language);
-        var response = mvc.perform(request).andExpect(status().isOk()).andReturn().getResponse();
+        var response = mvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith("application/vnd.ms-excel")).andReturn().getResponse();
         String tag = effective(language);
         Locale locale = Locale.forLanguageTag(tag);
         assertEquals(tag, response.getHeader("Content-Language"));
@@ -143,7 +145,8 @@ class UserSpreadsheetLocaleTest {
         when(users.getUserPage(any())).thenReturn(new PageResult<>(List.of(user), 1L));
         MockHttpServletRequestBuilder request = get("/system/user/export-excel");
         if (language != null) request.header("Accept-Language", language);
-        var response = mvc.perform(request).andExpect(status().isOk()).andReturn().getResponse();
+        var response = mvc.perform(request).andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith("application/vnd.ms-excel")).andReturn().getResponse();
         try (Workbook workbook = WorkbookFactory.create(new ByteArrayInputStream(response.getContentAsByteArray()))) {
             var sheet = workbook.getSheetAt(0);
             assertEquals("9223372036854775807", sheet.getRow(1).getCell(0).getStringCellValue());
