@@ -1,0 +1,33 @@
+{
+  "shell": {
+    "collapseNavigation": "Collapse navigation",
+    "expandNavigation": "Expand navigation",
+    "enterFullscreen": "Enter fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "dialog": "Dialog",
+    "selectRows": "Select records",
+    "lockPasswordPlaceholder": "Enter the screen lock password",
+    "myNotifications": "My notifications",
+    "viewAll": "View all",
+    "selectTenant": "Choose a tenant",
+    "visitingTenant": "Now visiting tenant: {name}",
+    "colorOption": "Color {color}",
+    "menuBorder": "Navigation border",
+    "menuBackground": "Navigation background",
+    "menuLightBackground": "Navigation secondary background",
+    "menuActiveBackground": "Selected navigation background",
+    "menuCollapsedBackground": "Collapsed selected navigation background",
+    "menuText": "Navigation text",
+    "menuActiveText": "Selected navigation text",
+    "logoText": "Logo text",
+    "logoBorder": "Logo border",
+    "headerBackground": "Header background",
+    "headerText": "Header text",
+    "headerHover": "Header hover background",
+    "headerBorder": "Header border",
+    "unreadNotifications": "No unread notifications | One unread notification | {count} unread notifications",
+    "userMenu": "User menu",
+    "pageSize": "Rows per page",
+    "pageNumber": "Page number"
+  }
+}

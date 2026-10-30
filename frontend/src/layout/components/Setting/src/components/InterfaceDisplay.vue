@@ -158,92 +158,133 @@ watch(
   <div :class="prefixCls">
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.breadcrumb') }}</span>
-      <ElSwitch v-model="breadcrumb" @change="breadcrumbChange" />
+      <ElSwitch
+        :aria-label="t('setting.breadcrumb')"
+        v-model="breadcrumb"
+        @change="breadcrumbChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.breadcrumbIcon') }}</span>
-      <ElSwitch v-model="breadcrumbIcon" @change="breadcrumbIconChange" />
+      <ElSwitch
+        :aria-label="t('setting.breadcrumbIcon')"
+        v-model="breadcrumbIcon"
+        @change="breadcrumbIconChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.hamburgerIcon') }}</span>
-      <ElSwitch v-model="hamburger" @change="hamburgerChange" />
+      <ElSwitch
+        :aria-label="t('setting.hamburgerIcon')"
+        v-model="hamburger"
+        @change="hamburgerChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.screenfullIcon') }}</span>
-      <ElSwitch v-model="screenfull" @change="screenfullChange" />
+      <ElSwitch
+        :aria-label="t('setting.screenfullIcon')"
+        v-model="screenfull"
+        @change="screenfullChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.sizeIcon') }}</span>
-      <ElSwitch v-model="size" @change="sizeChange" />
+      <ElSwitch :aria-label="t('setting.sizeIcon')" v-model="size" @change="sizeChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.localeIcon') }}</span>
-      <ElSwitch v-model="locale" @change="localeChange" />
+      <ElSwitch :aria-label="t('setting.localeIcon')" v-model="locale" @change="localeChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.messageIcon') }}</span>
-      <ElSwitch v-model="message" @change="messageChange" />
+      <ElSwitch :aria-label="t('setting.messageIcon')" v-model="message" @change="messageChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.imIcon') }}</span>
-      <ElSwitch v-model="im" @change="imChange" />
+      <ElSwitch :aria-label="t('setting.imIcon')" v-model="im" @change="imChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.tagsView') }}</span>
-      <ElSwitch v-model="tagsView" @change="tagsViewChange" />
+      <ElSwitch :aria-label="t('setting.tagsView')" v-model="tagsView" @change="tagsViewChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.tagsViewImmerse') }}</span>
-      <ElSwitch v-model="tagsViewImmerse" @change="tagsViewImmerseChange" />
+      <ElSwitch
+        :aria-label="t('setting.tagsViewImmerse')"
+        v-model="tagsViewImmerse"
+        @change="tagsViewImmerseChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.tagsViewIcon') }}</span>
-      <ElSwitch v-model="tagsViewIcon" @change="tagsViewIconChange" />
+      <ElSwitch
+        :aria-label="t('setting.tagsViewIcon')"
+        v-model="tagsViewIcon"
+        @change="tagsViewIconChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.logo') }}</span>
-      <ElSwitch v-model="logo" @change="logoChange" />
+      <ElSwitch :aria-label="t('setting.logo')" v-model="logo" @change="logoChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.uniqueOpened') }}</span>
-      <ElSwitch v-model="uniqueOpened" @change="uniqueOpenedChange" />
+      <ElSwitch
+        :aria-label="t('setting.uniqueOpened')"
+        v-model="uniqueOpened"
+        @change="uniqueOpenedChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.fixedHeader') }}</span>
-      <ElSwitch v-model="fixedHeader" @change="fixedHeaderChange" />
+      <ElSwitch
+        :aria-label="t('setting.fixedHeader')"
+        v-model="fixedHeader"
+        @change="fixedHeaderChange"
+      />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.footer') }}</span>
-      <ElSwitch v-model="footer" @change="footerChange" />
+      <ElSwitch :aria-label="t('setting.footer')" v-model="footer" @change="footerChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.greyMode') }}</span>
-      <ElSwitch v-model="greyMode" @change="greyModeChange" />
+      <ElSwitch :aria-label="t('setting.greyMode')" v-model="greyMode" @change="greyModeChange" />
     </div>
 
     <div class="flex items-center justify-between">
       <span class="text-14px">{{ t('setting.fixedMenu') }}</span>
-      <ElSwitch v-model="fixedMenu" @change="fixedMenuChange" />
+      <ElSwitch
+        :aria-label="t('setting.fixedMenu')"
+        v-model="fixedMenu"
+        @change="fixedMenuChange"
+      />
     </div>
 
     <div class="flex items-center justify-between gap-10px">
       <span class="shrink-0 whitespace-nowrap text-14px">{{ t('watermark.watermark') }}</span>
-      <ElInput v-model="water" class="min-w-0 flex-1" @change="setWater()" />
+      <ElInput
+        :aria-label="t('watermark.watermark')"
+        v-model="water"
+        class="min-w-0 flex-1"
+        @change="setWater()"
+      />
     </div>
   </div>
 </template>

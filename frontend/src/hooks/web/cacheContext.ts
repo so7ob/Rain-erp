@@ -10,6 +10,7 @@ import {
 
 const revision = shallowRef(0)
 const userId = shallowRef(0)
+const effectiveLocale = shallowRef<ReturnType<typeof normalizeLocale>>()
 let storage: WebStorageCache | undefined
 const raw = () => (storage ??= new WebStorageCache({ storage: 'localStorage' }))
 const identity = createCacheIdentity(
@@ -33,7 +34,10 @@ export const getAuthenticationCacheScope = () => {
 }
 export const getCacheLocale = () => {
   void revision.value
-  return normalizeLocale(raw().get('lang'))
+  return effectiveLocale.value ?? normalizeLocale(raw().get('lang'))
+}
+export const setCacheLocale = (locale: unknown) => {
+  effectiveLocale.value = normalizeLocale(locale)
 }
 export const getDisplayCacheScope = () =>
   displayCacheScope(getAuthenticationCacheScope(), userId.value, getCacheLocale())

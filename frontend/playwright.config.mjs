@@ -20,9 +20,16 @@ export default defineConfig({
   },
   webServer: external
     ? undefined
-    : {
-        command: 'corepack pnpm exec vite preview --host 127.0.0.1 --port 4173 --strictPort',
-        url: 'http://127.0.0.1:4173',
-        reuseExistingServer: false
-      }
+    : [
+        {
+          command: 'corepack pnpm exec vite preview --host 127.0.0.1 --port 4173 --strictPort',
+          url: 'http://127.0.0.1:4173',
+          reuseExistingServer: false
+        },
+        {
+          command: 'corepack pnpm exec vite --host 127.0.0.1 --port 4174 --strictPort',
+          url: 'http://127.0.0.1:4174/tests/components/index.html',
+          reuseExistingServer: false
+        }
+      ]
 })

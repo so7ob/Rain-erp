@@ -3,33 +3,41 @@ import { createI18n } from 'vue-i18n'
 import { useLocaleStoreWithOut } from '@/store/modules/locale'
 import type { I18n, I18nOptions } from 'vue-i18n'
 import { setHtmlPageLang } from './helper'
-import { arabicPluralRule, fallbackLocale, supportedLocales } from '@/locales/policy'
+import {
+  arabicPluralRule,
+  fallbackLocale,
+  supportedLocales,
+  loadPreferredLocale
+} from '@/locales/policy'
 import { loadLocaleMessages } from '@/locales/catalogs'
+import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
 
 export let i18n: ReturnType<typeof createI18n>
 
 const createI18nOptions = async (): Promise<I18nOptions> => {
   const localeStore = useLocaleStoreWithOut()
-  const locale = localeStore.getCurrentLocale
-  setHtmlPageLang(locale.lang)
-  const [message, fallback] = await Promise.all([
-    loadLocaleMessages(locale.lang),
-    loadLocaleMessages(fallbackLocale)
-  ])
+  const { wsCache } = useCache()
+  setHtmlPageLang(localeStore.getCurrentLocale.lang)
+  const fallbackLoading = loadLocaleMessages(fallbackLocale)
+  const {
+    locale,
+    messages: [message, fallback]
+  } = await loadPreferredLocale(
+    () => wsCache.get(CACHE_KEY.LANG),
+    (selected) => Promise.all([loadLocaleMessages(selected), fallbackLoading])
+  )
 
-  localeStore.setCurrentLocale({
-    lang: locale.lang
-    // elLocale: elLocal
-  })
+  localeStore.setCurrentLocale({ lang: locale }, false)
+  setHtmlPageLang(locale)
 
   return {
     legacy: false,
-    locale: locale.lang,
+    locale,
     fallbackLocale,
     pluralRules: { ar: arabicPluralRule },
     messages: {
       [fallbackLocale]: fallback,
-      [locale.lang]: message
+      [locale]: message
     },
     availableLocales: [...supportedLocales],
     sync: true,

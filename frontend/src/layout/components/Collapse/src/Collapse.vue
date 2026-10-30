@@ -14,6 +14,7 @@ defineProps({
 })
 
 const appStore = useAppStore()
+const { t } = useI18n()
 
 const collapse = computed(() => appStore.getCollapse)
 
@@ -24,12 +25,19 @@ const toggleCollapse = () => {
 </script>
 
 <template>
-  <div :class="prefixCls" @click="toggleCollapse">
+  <button
+    type="button"
+    :class="prefixCls"
+    class="inline-flex items-center justify-center border-0 bg-transparent p-8px text-inherit"
+    :aria-label="collapse ? t('shell.expandNavigation') : t('shell.collapseNavigation')"
+    :aria-expanded="!collapse"
+    @click="toggleCollapse"
+  >
     <Icon
       :color="color"
       :icon="collapse ? 'ep:expand' : 'ep:fold'"
       :size="18"
       class="cursor-pointer"
     />
-  </div>
+  </button>
 </template>

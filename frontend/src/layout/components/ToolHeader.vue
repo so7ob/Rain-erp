@@ -98,13 +98,15 @@ export default defineComponent({
             <div class="h-full w-max flex items-center">
               <FmsAccountSetSwitch />
               {hasTenantVisitPermission.value ? <TenantVisit /> : undefined}
-              <div
-                class="v-setting custom-hover"
+              <button
+                type="button"
+                class="v-setting custom-hover inline-flex items-center justify-center border-0 bg-transparent p-8px text-inherit"
                 title={t('setting.projectSetting')}
+                aria-label={t('setting.projectSetting')}
                 onClick={openSetting}
               >
                 <Icon color="var(--top-header-text-color)" size={18} icon="ep:setting" />
-              </div>
+              </button>
               {screenfull.value ? (
                 <Screenfull class="custom-hover" color="var(--top-header-text-color)"></Screenfull>
               ) : undefined}

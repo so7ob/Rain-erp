@@ -1,0 +1,33 @@
+{
+  "shell": {
+    "collapseNavigation": "طي قائمة التنقل",
+    "expandNavigation": "توسيع قائمة التنقل",
+    "enterFullscreen": "عرض بملء الشاشة",
+    "exitFullscreen": "إنهاء ملء الشاشة",
+    "dialog": "نافذة حوار",
+    "selectRows": "اختيار سجلات",
+    "lockPasswordPlaceholder": "أدخل كلمة مرور قفل الشاشة",
+    "myNotifications": "إشعاراتي",
+    "viewAll": "عرض الكل",
+    "selectTenant": "اختر منشأة",
+    "visitingTenant": "المنشأة المزارة الآن: {name}",
+    "colorOption": "اللون {color}",
+    "menuBorder": "حدود قائمة التنقل",
+    "menuBackground": "خلفية قائمة التنقل",
+    "menuLightBackground": "الخلفية الثانوية لقائمة التنقل",
+    "menuActiveBackground": "خلفية عنصر التنقل المحدد",
+    "menuCollapsedBackground": "خلفية عنصر التنقل المحدد عند الطي",
+    "menuText": "نص قائمة التنقل",
+    "menuActiveText": "نص عنصر التنقل المحدد",
+    "logoText": "نص الشعار",
+    "logoBorder": "حدود الشعار",
+    "headerBackground": "خلفية الترويسة",
+    "headerText": "نص الترويسة",
+    "headerHover": "خلفية الترويسة عند التأشير",
+    "headerBorder": "حدود الترويسة",
+    "unreadNotifications": "لا توجد إشعارات غير مقروءة | إشعار غير مقروء | إشعاران غير مقروءين | {count} إشعارات غير مقروءة | {count} إشعارًا غير مقروء | {count} إشعار غير مقروء",
+    "userMenu": "قائمة المستخدم",
+    "pageSize": "عدد السجلات في الصفحة",
+    "pageNumber": "رقم الصفحة"
+  }
+}

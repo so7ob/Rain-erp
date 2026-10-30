@@ -39,16 +39,31 @@ export const applyDocumentLocale = (
 }
 
 // A slower earlier import must never overwrite a more recent language choice.
-export const createLocaleSwitcher = <T>(
+export const loadPreferredLocale = async <T>(
+  read: () => unknown,
+  load: (locale: SupportedLocale) => Promise<T>
+) => {
+  for (;;) {
+    const locale = normalizeLocale(read())
+    try {
+      const messages = await load(locale)
+      if (normalizeLocale(read()) === locale) return { locale, messages }
+    } catch (error) {
+      if (normalizeLocale(read()) === locale) throw error
+    }
+  }
+}
+
+export const createLocaleSwitcher = <T, Context = void>(
   load: (locale: SupportedLocale) => Promise<T>,
-  apply: (locale: SupportedLocale, messages: T) => void
+  apply: (locale: SupportedLocale, messages: T, context?: Context) => void
 ) => {
   let latestRequest = 0
-  return async (value: unknown) => {
+  return async (value: unknown, context?: Context) => {
     const locale = normalizeLocale(value)
     const request = ++latestRequest
     const messages = await load(locale)
-    if (request === latestRequest) apply(locale, messages)
+    if (request === latestRequest) apply(locale, messages, context)
   }
 }
 

@@ -1,0 +1,28 @@
+// Shared overlays are teleported outside the page's contrast adapter.
+:is(.rain-settings, .rain-table-select, .v-lock-dialog, .rain-error, .rain-notifications) {
+  font-family: var(--el-font-family);
+  .el-button--primary {
+    --el-button-bg-color: #2554ca;
+    --el-button-border-color: #2554ca;
+    --el-button-text-color: #fff;
+    --el-button-hover-bg-color: #1943b0;
+    --el-button-hover-border-color: #1943b0;
+    --el-button-hover-text-color: #fff;
+    --el-button-active-bg-color: #1943b0;
+    --el-button-active-border-color: #1943b0;
+  }
+}
+.rain-settings .el-button--danger {
+  --el-button-bg-color: #b91c1c;
+  --el-button-border-color: #b91c1c;
+  --el-button-text-color: #fff;
+  --el-button-hover-bg-color: #991b1b;
+  --el-button-hover-border-color: #991b1b;
+  --el-button-hover-text-color: #fff;
+}
+.v-lock-dialog .el-form-item__error {
+  color: #b91c1c;
+}
+.dark .v-lock-dialog .el-form-item__error {
+  color: #fca5a5;
+}

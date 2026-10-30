@@ -39,6 +39,7 @@ export async function fixtureApi(page, authenticated = false) {
     else if (url.pathname.endsWith('/auth/get-permission-info'))
       data = { user: profile, roles: ['admin'], permissions: ['*:*:*'], menus: [] }
     else if (url.pathname.endsWith('/user/profile/get')) data = profile
+    else if (url.pathname.endsWith('/notify-message/get-unread-count')) data = 0
     else if (url.pathname.endsWith('/auth/send-sms-code')) data = true
     else if (url.pathname.endsWith('/auth/qrcode/create'))
       data = { qrcodeId: 'fixture', secret: 'fixture-only', qrContent: 'rain-erp-test-qr' }

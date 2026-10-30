@@ -14,7 +14,7 @@ const appStore = useAppStore()
 
 const layout = computed(() => appStore.getLayout)
 
-const layouts: { className: string; label: string; type: VbenLayoutType }[] = [
+const layouts = computed<{ className: string; label: string; type: VbenLayoutType }[]>(() => [
   {
     className: 'sidebar-nav',
     label: t('setting.vertical'),
@@ -45,15 +45,18 @@ const layouts: { className: string; label: string; type: VbenLayoutType }[] = [
     label: t('setting.headerTwoColumn'),
     type: 'header-mixed-nav'
   }
-]
+])
 </script>
 
 <template>
   <div :class="prefixCls" class="grid grid-cols-3 gap-14px">
-    <div
+    <button
+      type="button"
       v-for="item in layouts"
       :key="item.type"
-      class="flex cursor-pointer flex-col items-center gap-6px"
+      class="flex cursor-pointer flex-col items-center gap-6px border-0 bg-transparent p-0 text-inherit"
+      :aria-label="item.label"
+      :aria-pressed="layout === item.type"
       @click="appStore.setLayout(item.type)"
     >
       <div
@@ -69,13 +72,14 @@ const layouts: { className: string; label: string; type: VbenLayoutType }[] = [
       >
         <div
           v-if="item.type === 'sidebar-mixed-nav' || item.type === 'header-mixed-nav'"
-          class="absolute left-[10%] top-0 h-full w-[33%] bg-gray-200"
+          class="absolute top-0 h-full w-[33%] bg-gray-200"
+          style="inset-inline-start: 10%"
         ></div>
       </div>
       <span class="max-w-76px truncate text-12px text-[var(--el-text-color-regular)]">
         {{ item.label }}
       </span>
-    </div>
+    </button>
   </div>
 </template>
 
@@ -90,7 +94,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::before {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       width: 33%;
       height: 100%;
@@ -102,7 +106,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::after {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       width: 100%;
       height: 25%;
       background-color: #fff;
@@ -119,7 +123,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::before {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       width: 100%;
       height: 33%;
@@ -131,7 +135,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::after {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       width: 33%;
       height: 100%;
       background-color: #fff;
@@ -147,7 +151,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::before {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       width: 100%;
       height: 33%;
@@ -165,7 +169,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::before {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 1;
       width: 100%;
       height: 33%;
@@ -177,7 +181,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
     &::after {
       position: absolute;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       width: 10%;
       height: 100%;
       background-color: #fff;
@@ -189,7 +193,7 @@ $prefix-cls: #{$namespace}-layout-radio-picker;
   &__mixed-nav::after {
     position: absolute;
     top: 33%;
-    left: 0;
+    inset-inline-start: 0;
     width: 33%;
     height: 67%;
     background-color: #fff;

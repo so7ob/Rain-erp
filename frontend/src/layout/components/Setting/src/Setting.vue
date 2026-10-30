@@ -13,6 +13,8 @@ import InterfaceDisplay from './components/InterfaceDisplay.vue'
 import LayoutRadioPicker from './components/LayoutRadioPicker.vue'
 import { isHeaderNavLayout } from '@/utils/layout'
 import { useSetting } from './useSetting'
+import { LocaleDropdown } from '@/layout/components/LocaleDropdown'
+import { useLocaleStore } from '@/store/modules/locale'
 
 defineOptions({ name: 'Setting' })
 
@@ -20,6 +22,8 @@ const { t } = useI18n()
 const appStore = useAppStore()
 const layout = computed(() => appStore.getLayout)
 const { drawerVisible } = useSetting()
+const localeStore = useLocaleStore()
+const drawerDirection = computed(() => (localeStore.getCurrentLocale.lang === 'ar' ? 'ltr' : 'rtl'))
 
 // 主题色相关
 const systemTheme = ref(appStore.getTheme.elColorPrimary)
@@ -109,78 +113,78 @@ const copyConfig = async () => {
   const { copy, copied, isSupported } = useClipboard({
     legacy: true,
     source: `
-      // 面包屑
+      // ${t('setting.breadcrumb')}
       breadcrumb: ${appStore.getBreadcrumb},
-      // 面包屑图标
+      // ${t('setting.breadcrumbIcon')}
       breadcrumbIcon: ${appStore.getBreadcrumbIcon},
-      // 折叠图标
+      // ${t('setting.hamburgerIcon')}
       hamburger: ${appStore.getHamburger},
-      // 全屏图标
+      // ${t('setting.screenfullIcon')}
       screenfull: ${appStore.getScreenfull},
-      // 尺寸图标
+      // ${t('setting.sizeIcon')}
       size: ${appStore.getSize},
-      // 多语言图标
+      // ${t('setting.localeIcon')}
       locale: ${appStore.getLocale},
-      // 消息图标
+      // ${t('setting.messageIcon')}
       message: ${appStore.getMessage},
-      // IM 即时通讯图标
+      // ${t('setting.imIcon')}
       im: ${appStore.getIm},
-      // 标签页
+      // ${t('setting.tagsView')}
       tagsView: ${appStore.getTagsView},
-      // 标签页
+      // ${t('setting.tagsViewImmerse')}
       tagsViewImmerse: ${appStore.getTagsViewImmerse},
-      // 标签页图标
+      // ${t('setting.tagsViewIcon')}
       tagsViewIcon: ${appStore.getTagsViewIcon},
-      // logo
+      // ${t('setting.logo')}
       logo: ${appStore.getLogo},
-      // 菜单手风琴
+      // ${t('setting.uniqueOpened')}
       uniqueOpened: ${appStore.getUniqueOpened},
-      // 固定header
+      // ${t('setting.fixedHeader')}
       fixedHeader: ${appStore.getFixedHeader},
-      // 页脚
+      // ${t('setting.footer')}
       footer: ${appStore.getFooter},
-      // 灰色模式
+      // ${t('setting.greyMode')}
       greyMode: ${appStore.getGreyMode},
-      // layout布局
+      // ${t('setting.layout')}
       layout: '${appStore.getLayout}',
-      // 暗黑模式
+      // ${t('setting.theme')}
       isDark: ${appStore.getIsDark},
-      // 组件尺寸
+      // ${t('setting.sizeIcon')}
       currentSize: '${appStore.getCurrentSize}',
-      // 主题相关
+      // ${t('setting.systemTheme')}
       theme: {
-        // 主题色
+        // ${t('setting.systemTheme')}
         elColorPrimary: '${appStore.getTheme.elColorPrimary}',
-        // 左侧菜单边框颜色
+        // ${t('shell.menuBorder')}
         leftMenuBorderColor: '${appStore.getTheme.leftMenuBorderColor}',
-        // 左侧菜单背景颜色
+        // ${t('shell.menuBackground')}
         leftMenuBgColor: '${appStore.getTheme.leftMenuBgColor}',
-        // 左侧菜单浅色背景颜色
+        // ${t('shell.menuLightBackground')}
         leftMenuBgLightColor: '${appStore.getTheme.leftMenuBgLightColor}',
-        // 左侧菜单选中背景颜色
+        // ${t('shell.menuActiveBackground')}
         leftMenuBgActiveColor: '${appStore.getTheme.leftMenuBgActiveColor}',
-        // 左侧菜单收起选中背景颜色
+        // ${t('shell.menuCollapsedBackground')}
         leftMenuCollapseBgActiveColor: '${appStore.getTheme.leftMenuCollapseBgActiveColor}',
-        // 左侧菜单字体颜色
+        // ${t('shell.menuText')}
         leftMenuTextColor: '${appStore.getTheme.leftMenuTextColor}',
-        // 左侧菜单选中字体颜色
+        // ${t('shell.menuActiveText')}
         leftMenuTextActiveColor: '${appStore.getTheme.leftMenuTextActiveColor}',
-        // logo字体颜色
+        // ${t('shell.logoText')}
         logoTitleTextColor: '${appStore.getTheme.logoTitleTextColor}',
-        // logo边框颜色
+        // ${t('shell.logoBorder')}
         logoBorderColor: '${appStore.getTheme.logoBorderColor}',
-        // 头部背景颜色
+        // ${t('shell.headerBackground')}
         topHeaderBgColor: '${appStore.getTheme.topHeaderBgColor}',
-        // 头部字体颜色
+        // ${t('shell.headerText')}
         topHeaderTextColor: '${appStore.getTheme.topHeaderTextColor}',
-        // 头部悬停颜色
+        // ${t('shell.headerHover')}
         topHeaderHoverColor: '${appStore.getTheme.topHeaderHoverColor}',
-        // 头部边框颜色
+        // ${t('shell.headerBorder')}
         topToolBorderColor: '${appStore.getTheme.topToolBorderColor}'
       }
     `
   })
-  if (!isSupported) {
+  if (!unref(isSupported)) {
     ElMessage.error(t('setting.copyFailed'))
   } else {
     await copy()
@@ -201,9 +205,20 @@ const clear = () => {
 </script>
 
 <template>
-  <ElDrawer v-model="drawerVisible" :z-index="4000" direction="rtl" size="350px">
-    <template #header>
-      <span class="text-16px font-700">{{ t('setting.projectSetting') }}</span>
+  <ElDrawer
+    v-model="drawerVisible"
+    :direction="drawerDirection"
+    size="350px"
+    class="rain-settings"
+    :title="t('setting.projectSetting')"
+  >
+    <template #header="{ titleId }">
+      <div class="flex items-center justify-between gap-8px">
+        <span :id="titleId" class="text-16px font-700" role="heading" aria-level="2">{{
+          t('setting.projectSetting')
+        }}</span>
+        <LocaleDropdown />
+      </div>
     </template>
 
     <div class="text-center">
@@ -218,6 +233,7 @@ const clear = () => {
       <!-- 系统主题 -->
       <ElDivider>{{ t('setting.systemTheme') }}</ElDivider>
       <ColorRadioPicker
+        :label="t('setting.systemTheme')"
         v-model="systemTheme"
         :schema="[
           '#409eff',
@@ -235,6 +251,7 @@ const clear = () => {
       <!-- 头部主题 -->
       <ElDivider>{{ t('setting.headerTheme') }}</ElDivider>
       <ColorRadioPicker
+        :label="t('setting.headerTheme')"
         v-model="headerTheme"
         :schema="[
           '#fff',
@@ -253,6 +270,7 @@ const clear = () => {
       <template v-if="!isHeaderNavLayout(layout)">
         <ElDivider>{{ t('setting.menuTheme') }}</ElDivider>
         <ColorRadioPicker
+          :label="t('setting.menuTheme')"
           v-model="menuTheme"
           :schema="[
             '#fff',
@@ -286,3 +304,14 @@ const clear = () => {
     </div>
   </ElDrawer>
 </template>
+
+<style lang="scss">
+.rain-settings {
+  max-inline-size: 100vw;
+}
+.rain-settings button:focus-visible {
+  box-shadow: 0 0 0 2px var(--el-text-color-primary);
+  border-radius: 2px;
+  outline: none;
+}
+</style>

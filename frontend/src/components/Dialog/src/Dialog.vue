@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { propTypes } from '@/utils/propTypes'
 import { isNumber } from '@/utils/is'
+import { LocaleDropdown } from '@/layout/components/LocaleDropdown'
 
 defineOptions({ name: 'Dialog' })
 
 const slots = useSlots()
+const { t } = useI18n()
 const emits = defineEmits(['update:modelValue'])
 
 const props = defineProps({
   modelValue: propTypes.bool.def(false),
-  title: propTypes.string.def('Dialog'),
+  title: propTypes.string.def(''),
+  showLocale: propTypes.bool.def(false),
   fullscreen: propTypes.bool.def(true),
   defaultFullscreen: propTypes.bool.def(false),
   width: propTypes.oneOfType([String, Number]).def('40%'),
@@ -25,7 +28,8 @@ const getBindValue = computed(() => {
     'title',
     'maxHeight',
     'appendToBody',
-    'loading'
+    'loading',
+    'showLocale'
   ]
   const attrs = useAttrs()
   const obj = { ...attrs, ...props }
@@ -103,30 +107,43 @@ function closedHandler() {
     @closed="closedHandler"
   >
     <template #header="{ close, titleId }">
-      <div class="relative h-54px flex items-center justify-between pl-15px pr-15px">
-        <span :id="titleId">
+      <div class="rain-dialog-header">
+        <span :id="titleId" class="rain-dialog-title" role="heading" aria-level="2">
           <slot name="title">
-            {{ title }}
+            {{ title || t('shell.dialog') }}
           </slot>
         </span>
-        <div
-          class="absolute right-15px top-[50%] h-54px flex translate-y-[-50%] items-center justify-between"
-        >
-          <Icon
+        <div class="rain-dialog-actions">
+          <LocaleDropdown v-if="showLocale" />
+          <button
             v-if="fullscreen"
-            class="is-hover mr-10px cursor-pointer"
-            :icon="isFullscreen ? 'radix-icons:exit-full-screen' : 'radix-icons:enter-full-screen'"
-            color="var(--el-color-info)"
-            hover-color="var(--el-color-primary)"
+            type="button"
+            class="rain-dialog-icon"
+            :aria-label="isFullscreen ? t('shell.exitFullscreen') : t('shell.enterFullscreen')"
+            :aria-pressed="isFullscreen"
             @click="toggleFull"
-          />
-          <Icon
-            class="is-hover cursor-pointer"
-            icon="ep:close"
-            hover-color="var(--el-color-primary)"
-            color="var(--el-color-info)"
+          >
+            <Icon
+              :icon="
+                isFullscreen ? 'radix-icons:exit-full-screen' : 'radix-icons:enter-full-screen'
+              "
+              color="var(--el-text-color-regular)"
+              hover-color="var(--el-color-primary)"
+            />
+          </button>
+          <button
+            type="button"
+            class="rain-dialog-icon"
+            :aria-label="t('common.close')"
             @click.stop="close"
-          />
+          >
+            <Icon
+              class="is-hover cursor-pointer"
+              icon="ep:close"
+              hover-color="var(--el-color-primary)"
+              color="var(--el-text-color-regular)"
+            />
+          </button>
         </div>
       </div>
     </template>
@@ -149,6 +166,48 @@ function closedHandler() {
 
 <style lang="scss">
 .com-dialog {
+  max-inline-size: 100vw;
+  &:not(.is-fullscreen) {
+    max-inline-size: calc(100vw - 16px);
+    @media (max-width: 600px) {
+      width: calc(100vw - 16px) !important;
+    }
+  }
+  .rain-dialog-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    min-block-size: 54px;
+    padding-inline: 15px;
+  }
+  .rain-dialog-title {
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+  .rain-dialog-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .rain-dialog-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-inline-size: 28px;
+    min-block-size: 28px;
+    padding: 4px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  .rain-dialog-icon:focus-visible {
+    box-shadow: 0 0 0 2px var(--el-text-color-primary);
+    border-radius: 2px;
+    outline: none;
+  }
   .#{$elNamespace}-overlay-dialog {
     display: flex;
     justify-content: center;
@@ -159,9 +218,9 @@ function closedHandler() {
     margin: 0 !important;
 
     &__header {
-      height: 54px;
+      min-height: 54px;
       padding: 0;
-      margin-right: 0 !important;
+      margin-inline-end: 0 !important;
       border-bottom: 1px solid var(--el-border-color);
     }
 
