@@ -54,7 +54,8 @@
     "updateTime": "Update Time",
     "copy": "Copy",
     "copySuccess": "Copy Success",
-    "copyError": "Copy Error"
+    "copyError": "Copy Error",
+    "navigationLoading": "Loading page"
   },
   "lock": {
     "lockScreen": "Lock screen",
