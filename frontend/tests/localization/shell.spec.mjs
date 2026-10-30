@@ -144,14 +144,18 @@ test('isolated selection component keeps raw records and responds to pagination 
   await expect(
     page.getByRole('heading', { name: "Sorry, you don't have permission to access this page." })
   ).toBeVisible()
-  await expect(page.getByLabel('Fixture selection')).toHaveText('[{"id":2,"name":"عميل Test 002"}]')
+  await expect(page.getByLabel('Fixture selection', { exact: true })).toHaveText(
+    '[{"id":2,"name":"عميل Test 002"}]'
+  )
   await expect(page.getByLabel('Fixture requested pages')).toHaveText('[1,2]')
   await page.getByLabel('Fixture title').fill('common.save')
   await page.getByRole('button', { name: 'Open selection fixture' }).click()
   await expect(page.getByRole('dialog', { name: 'common.save', exact: true })).toBeVisible()
   await expect(dialog.getByRole('checkbox').last()).not.toBeChecked()
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
-  await expect(page.getByLabel('Fixture selection')).toHaveText('[{"id":2,"name":"عميل Test 002"}]')
+  await expect(page.getByLabel('Fixture selection', { exact: true })).toHaveText(
+    '[{"id":2,"name":"عميل Test 002"}]'
+  )
 })
 
 for (const width of [375, 1280]) {

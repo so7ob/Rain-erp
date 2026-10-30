@@ -32,7 +32,7 @@ const open = () => {
       <label>Fixture title <input v-model="customTitle" /></label>
       <output aria-label="Fixture selection">{{ JSON.stringify(selection) }}</output>
       <output aria-label="Fixture requested pages">{{ JSON.stringify(requested) }}</output>
-      <output aria-label="Fixture selection entered">{{ selectionEntered }}</output>
+      <output aria-label="Fixture entry readiness">{{ selectionEntered }}</output>
       <TableSelectForm
         ref="selector"
         v-model="selection"

@@ -23,7 +23,7 @@ for (const reduced of [false, true]) {
     await page.getByRole('button', { name: 'Open selection fixture' }).click()
     const dialog = page.locator('.rain-table-select')
     await expect(dialog.getByText('عميل Test 001')).toBeVisible()
-    const entered = page.locator('output[aria-label="Fixture selection entered"]')
+    const entered = page.locator('output[aria-label="Fixture entry readiness"]')
     if (!reduced) {
       await expect(entered).toHaveText('false')
       const opacity = await dialog.evaluate((element) => {

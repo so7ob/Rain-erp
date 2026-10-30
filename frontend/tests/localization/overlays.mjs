@@ -26,6 +26,6 @@ export const waitForOverlaySettled = async (dialog) => {
 
 export const waitForFixtureSelection = async (page, dialog) => {
   // The real Element Plus opened event marks entry; visibility alone includes fade frames.
-  await expect(page.locator('output[aria-label="Fixture selection entered"]')).toHaveText('true')
+  await expect(page.locator('output[aria-label="Fixture entry readiness"]')).toHaveText('true')
   await waitForOverlaySettled(dialog)
 }
