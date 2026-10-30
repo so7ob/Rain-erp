@@ -1,0 +1,27 @@
+{
+  "system": {
+    "user": {
+      "import": {
+        "action": "导入",
+        "title": "用户导入",
+        "chooseFile": "将文件拖到此处，或选择文件",
+        "updateExisting": "更新已经存在的用户数据",
+        "formats": "仅支持 xls、xlsx 格式文件。",
+        "downloadTemplate": "下载模板",
+        "removeFile": "移除 {name}",
+        "fileRequired": "请选择导入文件",
+        "oneFile": "每次只能上传一个文件",
+        "failed": "导入失败，请重新选择文件后重试。",
+        "results": "用户导入结果",
+        "filename": "用户导入模板.xls",
+        "createdCount": "创建成功：{count} 个用户",
+        "updatedCount": "更新成功：{count} 个用户",
+        "failedCount": "导入失败：{count} 条记录"
+      },
+      "export": {
+        "action": "导出",
+        "filename": "用户数据.xls"
+      }
+    }
+  }
+}

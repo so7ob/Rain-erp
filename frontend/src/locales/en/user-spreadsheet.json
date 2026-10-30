@@ -1,0 +1,27 @@
+{
+  "system": {
+    "user": {
+      "import": {
+        "action": "Import",
+        "title": "Import users",
+        "chooseFile": "Drop a file here or choose a file",
+        "updateExisting": "Update existing users",
+        "formats": "Only .xls and .xlsx files are supported.",
+        "downloadTemplate": "Download template",
+        "removeFile": "Remove {name}",
+        "fileRequired": "Choose a file to import",
+        "oneFile": "Choose one file at a time",
+        "failed": "Import failed. Choose the file again to retry.",
+        "results": "User import results",
+        "filename": "User import template.xls",
+        "createdCount": "Created {count} user | Created {count} users",
+        "updatedCount": "Updated {count} user | Updated {count} users",
+        "failedCount": "Failed to import {count} record | Failed to import {count} records"
+      },
+      "export": {
+        "action": "Export",
+        "filename": "User data.xls"
+      }
+    }
+  }
+}

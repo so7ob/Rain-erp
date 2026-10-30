@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.system.controller.admin.user.vo.user;
 
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
+import cn.iocoder.yudao.framework.excel.core.annotations.ExcelLocale;
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 import cn.iocoder.yudao.module.system.enums.DictTypeConstants;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@ExcelLocale(module = "system", value = "system.user.import")
 public class UserImportExcelVO {
 
     @ExcelProperty("登录名称")

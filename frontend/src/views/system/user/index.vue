@@ -80,7 +80,7 @@
               @click="handleImport"
               v-hasPermi="['system:user:import']"
             >
-              <Icon icon="ep:upload" /> 导入
+              <Icon icon="ep:upload" /> {{ t('system.user.import.action') }}
             </el-button>
             <el-button
               type="success"
@@ -89,7 +89,7 @@
               :loading="exportLoading"
               v-hasPermi="['system:user:export']"
             >
-              <Icon icon="ep:download" />导出
+              <Icon icon="ep:download" />{{ t('system.user.export.action') }}
             </el-button>
             <el-button
               type="danger"
@@ -308,8 +308,9 @@ const handleExport = async () => {
     await message.exportConfirm()
     // 发起导出
     exportLoading.value = true
+    const filename = t('system.user.export.filename')
     const data = await UserApi.exportUser(queryParams)
-    download.excel(data, '用户数据.xls')
+    download.excel(data, filename)
   } catch {
   } finally {
     exportLoading.value = false

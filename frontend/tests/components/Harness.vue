@@ -6,9 +6,12 @@ import { LocaleDropdown } from '@/layout/components/LocaleDropdown'
 import { useLocaleStore } from '@/store/modules/locale'
 import { useAppStore } from '@/store/modules/app'
 import { isDark } from '@/utils/is'
+import UserImportForm from '@/views/system/user/UserImportForm.vue'
 
 const locale = useLocaleStore()
 useAppStore().setIsDark(isDark())
+const importer = ref<InstanceType<typeof UserImportForm>>()
+const imports = ref(0)
 const selection = ref<any[]>([])
 const selector = ref<InstanceType<typeof TableSelectForm>>()
 const requested = ref<number[]>([])
@@ -28,6 +31,9 @@ const open = () => {
     <main style="padding: 16px">
       <h1>Shared component fixture</h1>
       <LocaleDropdown />
+      <button type="button" @click="importer?.open()">Open user import fixture</button>
+      <output aria-label="Fixture user imports">{{ imports }}</output>
+      <UserImportForm ref="importer" @success="imports++" />
       <button type="button" @click="open">Open selection fixture</button>
       <label>Fixture title <input v-model="customTitle" /></label>
       <output aria-label="Fixture selection">{{ JSON.stringify(selection) }}</output>

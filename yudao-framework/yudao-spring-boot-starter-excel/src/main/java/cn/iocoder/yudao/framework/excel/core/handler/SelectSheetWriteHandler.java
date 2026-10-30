@@ -7,9 +7,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.iocoder.yudao.framework.common.core.KeyValue;
+import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import cn.iocoder.yudao.framework.dict.core.DictFrameworkUtils;
 import cn.iocoder.yudao.framework.excel.core.annotations.ExcelColumnSelect;
 import cn.iocoder.yudao.framework.excel.core.function.ExcelColumnSelectFunction;
+import cn.iocoder.yudao.framework.excel.core.i18n.ExcelLocaleCatalog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.annotation.ExcelIgnore;
 import org.apache.fesod.sheet.annotation.ExcelIgnoreUnannotated;
@@ -55,8 +57,13 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
      * key: 列 value: 下拉数据源
      */
     private final Map<Integer, List<String>> selectMap = new HashMap<>();
+    private final ExcelLocaleCatalog catalog;
+    private final String dictionarySheetName;
 
     public SelectSheetWriteHandler(Class<?> head) {
+        catalog = ExcelLocaleCatalog.of(head);
+        dictionarySheetName = catalog == null ? DICT_SHEET_NAME
+                : ErrorMessageContext.resolve("excel.dictionary.sheet", null, DICT_SHEET_NAME);
         // 解析下拉数据
         int colIndex = 0;
         boolean ignoreUnannotated = head.isAnnotationPresent(ExcelIgnoreUnannotated.class);
@@ -112,7 +119,9 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
 
         // 情况一：使用 dictType 获得下拉数据
         if (StrUtil.isNotEmpty(dictType)) { // 情况一： 字典数据 （默认）
-            selectMap.put(colIndex, DictFrameworkUtils.getDictDataLabelList(dictType));
+            selectMap.put(colIndex, catalog == null ? DictFrameworkUtils.getDictDataLabelList(dictType)
+                    : convertList(DictFrameworkUtils.getDictDataList(dictType),
+                    data -> catalog.dictionaryLabel(dictType, data.getValue(), data.getLabel())));
             return;
         }
 
@@ -142,7 +151,10 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
         keyValues.sort(Comparator.comparing(item -> item.getValue().size())); // 升序不然创建下拉会报错
 
         // 2. 创建数据字典的 sheet 页
-        Sheet dictSheet = workbook.createSheet(DICT_SHEET_NAME);
+        Sheet dictSheet = workbook.createSheet(dictionarySheetName);
+        if (catalog != null && ExcelLocaleCatalog.isArabicRequest()) {
+            dictSheet.setRightToLeft(true);
+        }
         for (KeyValue<Integer, List<String>> keyValue : keyValues) {
             int rowLength = keyValue.getValue().size();
             // 2.1 设置字典 sheet 页的值，每一列一个字典项
@@ -161,13 +173,15 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
     /**
      * 设置单元格下拉选择
      */
-    private static void setColumnSelect(WriteSheetHolder writeSheetHolder, Workbook workbook, DataValidationHelper helper,
+    private void setColumnSelect(WriteSheetHolder writeSheetHolder, Workbook workbook, DataValidationHelper helper,
                                         KeyValue<Integer, List<String>> keyValue) {
         // 1.1 创建可被其他单元格引用的名称
         Name name = workbook.createName();
         String excelColumn = ExcelUtil.indexToColName(keyValue.getKey());
         // 1.2 下拉框数据来源 eg:字典sheet!$B1:$B2
-        String refers = DICT_SHEET_NAME + "!$" + excelColumn + "$1:$" + excelColumn + "$" + keyValue.getValue().size();
+        String sheetReference = DICT_SHEET_NAME.equals(dictionarySheetName) ? DICT_SHEET_NAME
+                : "'" + dictionarySheetName.replace("'", "''") + "'";
+        String refers = sheetReference + "!$" + excelColumn + "$1:$" + excelColumn + "$" + keyValue.getValue().size();
         name.setNameName("dict" + keyValue.getKey()); // 设置名称的名字
         name.setRefersToFormula(refers); // 设置公式
 
@@ -185,7 +199,10 @@ public class SelectSheetWriteHandler implements SheetWriteHandler {
         }
         // 2.2 阻止输入非下拉框的值
         validation.setErrorStyle(DataValidation.ErrorStyle.STOP);
-        validation.createErrorBox("提示", "此值不存在于下拉选择中！");
+        validation.createErrorBox(catalog == null ? "提示"
+                        : ErrorMessageContext.resolve("excel.dictionary.prompt", null, "提示"),
+                catalog == null ? "此值不存在于下拉选择中！"
+                        : ErrorMessageContext.resolve("excel.dictionary.invalidValue", null, "此值不存在于下拉选择中！"));
         // 2.3 添加下拉框约束
         writeSheetHolder.getSheet().addValidationData(validation);
     }

@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.system.service.user;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
+import cn.iocoder.yudao.framework.web.config.YudaoI18nAutoConfiguration;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -63,7 +64,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Import(AdminUserServiceImpl.class)
+@Import({AdminUserServiceImpl.class, YudaoI18nAutoConfiguration.class})
 public class AdminUserServiceImplTest extends BaseDbUnitTest {
 
     @Resource
