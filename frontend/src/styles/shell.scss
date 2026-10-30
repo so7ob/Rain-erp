@@ -26,3 +26,18 @@
 .dark .v-lock-dialog .el-form-item__error {
   color: #fca5a5;
 }
+.rain-table-select .el-table {
+  --el-table-header-text-color: var(--el-text-color-primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  // Element Plus animates both the overlay and its inner dialog container.
+  .el-overlay:has(.com-dialog),
+  .el-overlay:has(.com-dialog) .el-overlay-dialog,
+  .el-overlay:has(.rain-settings),
+  .el-overlay:has(.rain-settings) .rain-settings,
+  .rain-notifications {
+    animation: none !important;
+    transition: none !important;
+  }
+}

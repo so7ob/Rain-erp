@@ -91,6 +91,14 @@ Settings, lock validation, notification popovers, and isolated selection/error c
 
 Local #28 acceptance passed 40 configuration/catalog cases, 70 Chromium cases (65 production application cases and five isolated source-component cases), 50 workflow cases, and 956 Maven cases with the unchanged 18-test disabled baseline. The initial plain Maven gate and a clean retry failed five MQ cases with missing generated classes while VS Code's Java builder was active. A standard `mvn -B -ntp -s .github/maven-settings.xml -pl yudao-server -am clean verify` succeeded with the verified Java language server temporarily paused; it was resumed afterward. Keep IDE and Maven writers apart when diagnosing disappearing outputs, for example by checking the same commit in an isolated worktree. No test or compiler configuration was weakened for the successful gate.
 
+## Overlay entry and contrast correction (#32)
+
+The reviewed #28 head passed PR CI, but the identical-tree post-merge run [41137404450](https://github.com/so7ob/Rain-erp/actions/runs/41137404450) failed three selection contrast scans. Element Plus animates opacity on both the outer overlay and inner overlay-dialog container. Visibility can therefore precede stable rendered colors. The failed browser step also prevented Maven from running, causing the always-run test-report check to fail; that secondary report failure is not a Maven test result.
+
+The project adapter now honors reduced motion on these containers, settings and notification overlays. The fixture exposes the real Element Plus `opened` event; contrast and geometry scans wait for that event, full ancestor opacity and completion of finite animations. A regression holds the real normal-motion entrance at its midpoint, verifies readiness stays pending, finishes it, and then runs axe. The reduced-motion case verifies the same controlled entrance does not animate. Both retain full contrast checks without sleeps, test retries or rule exclusions. Stable measurement also exposed the selection table's low-contrast default header color; its project-scoped token now uses primary body text.
+
+The browser suite contains 72 cases: 65 production application cases and seven isolated source-component cases. The existing 375/1280 light/dark matrices remain in place. #28 remains open until the corrective descendant has successful post-merge develop CI.
+
 ## Local source preview
 
 Use [the local development guide](local-development.md) to serve the authoritative frontend through Vite on the existing local port 3085, verify HMR/API routing, or restore the original static output. Runtime overrides remain ignored; this workflow does not publish an application release.

@@ -1,6 +1,7 @@
 import { test, expect } from 'playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import { fixtureApi } from './fixtures.mjs'
+import { waitForFixtureSelection } from './overlays.mjs'
 
 const countLocaleWrites = () => {
   window.__localeWrites = 0
@@ -130,6 +131,7 @@ test('isolated selection component keeps raw records and responds to pagination 
   await page.getByRole('button', { name: 'Open selection fixture' }).click()
   const dialog = page.locator('.com-dialog')
   await expect(dialog.getByText('عميل Test 001')).toBeVisible()
+  await waitForFixtureSelection(page, dialog)
   await dialog.getByRole('button', { name: /Go to next page|الصفحة التالية|Next page/ }).click()
   await expect(dialog.getByText('عميل Test 002')).toBeVisible()
   await dialog.locator('.el-checkbox').last().click()
@@ -142,14 +144,18 @@ test('isolated selection component keeps raw records and responds to pagination 
   await expect(
     page.getByRole('heading', { name: "Sorry, you don't have permission to access this page." })
   ).toBeVisible()
-  await expect(page.getByLabel('Fixture selection')).toHaveText('[{"id":2,"name":"عميل Test 002"}]')
+  await expect(page.getByLabel('Fixture selection', { exact: true })).toHaveText(
+    '[{"id":2,"name":"عميل Test 002"}]'
+  )
   await expect(page.getByLabel('Fixture requested pages')).toHaveText('[1,2]')
   await page.getByLabel('Fixture title').fill('common.save')
   await page.getByRole('button', { name: 'Open selection fixture' }).click()
   await expect(page.getByRole('dialog', { name: 'common.save', exact: true })).toBeVisible()
   await expect(dialog.getByRole('checkbox').last()).not.toBeChecked()
   await dialog.getByRole('button', { name: 'Cancel', exact: true }).click()
-  await expect(page.getByLabel('Fixture selection')).toHaveText('[{"id":2,"name":"عميل Test 002"}]')
+  await expect(page.getByLabel('Fixture selection', { exact: true })).toHaveText(
+    '[{"id":2,"name":"عميل Test 002"}]'
+  )
 })
 
 for (const width of [375, 1280]) {
@@ -292,6 +298,7 @@ for (const width of [375, 1280]) {
       await page.getByRole('button', { name: 'Open selection fixture' }).click()
       const dialog = page.locator('.rain-table-select')
       await expect(dialog.getByText('عميل Test 001')).toBeVisible()
+      await waitForFixtureSelection(page, dialog)
       const box = await dialog.boundingBox()
       expect(box.x).toBeGreaterThanOrEqual(-1)
       expect(box.x + box.width).toBeLessThanOrEqual(width + 1)
