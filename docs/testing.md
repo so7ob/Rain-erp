@@ -58,6 +58,8 @@ The suite covers Arabic defaults, all three languages, saved preferences, reques
 
 All API and backend WebSocket requests in these tests are intercepted with synthetic fixtures. The suite sends no real login, SMS, profile update, upload or authorization request. It does not establish backend translation, security or external provider integration coverage. CI retains screenshots, failure traces and the HTML report under its localization browser artifact for 14 days; local reports stay ignored in `.runtime/`.
 
+Navigation progress is checked while deliberately unfinished, using the real application and intercepted permission requests for each language. A separate real-library fixture checks live accessible-name updates, indeterminate semantics and removal. These checks retain every existing axe rule; they cover the transient progress element instead of waiting for it to disappear. Issue #25 corrects the invalid upstream role detected by post-merge run 40985203327.
+
 ## Server localization and session verification
 
 The shared error tests verify optional `messageKey` serialization, unchanged code/msg/data, argument preservation through copies/rethrows, duplicate numeric codes with different meanings, JSON property order, and thread/context restoration. Catalog tests read every owned main-source message bundle, including inactive modules, to reject missing Arabic, duplicate keys, parameter differences and invalid indexed templates. Separate classpath checks verify the shared and keyed system errors actually resolve from their packaged modules.

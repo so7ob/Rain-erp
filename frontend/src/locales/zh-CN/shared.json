@@ -54,7 +54,8 @@
     "updateTime": "更新时间",
     "copy": "复制",
     "copySuccess": "复制成功",
-    "copyError": "复制失败"
+    "copyError": "复制失败",
+    "navigationLoading": "正在加载页面"
   },
   "lock": {
     "lockScreen": "锁定屏幕",

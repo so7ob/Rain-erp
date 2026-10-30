@@ -54,7 +54,8 @@
     "updateTime": "وقت التحديث",
     "copy": "نسخ",
     "copySuccess": "تم النسخ بنجاح",
-    "copyError": "تعذر النسخ"
+    "copyError": "تعذر النسخ",
+    "navigationLoading": "جار تحميل الصفحة"
   },
   "lock": {
     "lockScreen": "قفل الشاشة",
