@@ -8,6 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.biz.infra.logger.ApiErrorLogCommonApi;
 import cn.iocoder.yudao.framework.common.biz.infra.logger.dto.ApiErrorLogCreateReqDTO;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
+import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.collection.SetUtils;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.*;
+import static cn.iocoder.yudao.framework.web.core.i18n.WebErrorCodeConstants.*;
 
 /**
  * 全局异常处理器，将 Exception 翻译成 CommonResult + 对应的异常编号
@@ -62,7 +64,7 @@ public class GlobalExceptionHandler {
     /**
      * 忽略的 ServiceException 错误提示，避免打印过多 logger
      */
-    public static final Set<String> IGNORE_ERROR_MESSAGES = SetUtils.asSet("无效的刷新令牌");
+    public static final Set<String> IGNORE_ERROR_MESSAGE_KEYS = SetUtils.asSet("system.oauth2.refreshToken.invalid");
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     private final String applicationName;
@@ -128,7 +130,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     public CommonResult<?> missingServletRequestParameterExceptionHandler(MissingServletRequestParameterException ex) {
         log.warn("[missingServletRequestParameterExceptionHandler]", ex);
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数缺失:%s", ex.getParameterName()));
+        return CommonResult.error(REQUEST_PARAMETER_MISSING, ex.getParameterName());
     }
 
     /**
@@ -139,7 +141,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public CommonResult<?> methodArgumentTypeMismatchExceptionHandler(MethodArgumentTypeMismatchException ex) {
         log.warn("[methodArgumentTypeMismatchExceptionHandler]", ex);
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数类型错误:%s", ex.getMessage()));
+        return localizedError(REQUEST_PARAMETER_TYPE, "请求参数类型错误:" + ex.getMessage(),
+                ex.getName(), ex.getRequiredType() == null ? "Object" : ex.getRequiredType().getSimpleName(), ex.getValue());
     }
 
     /**
@@ -164,7 +167,7 @@ public class GlobalExceptionHandler {
         if (StrUtil.isEmpty(errorMessage)) {
             return CommonResult.error(BAD_REQUEST);
         }
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数不正确:%s", errorMessage));
+        return CommonResult.error(REQUEST_VALIDATION_FAILED, errorMessage);
     }
 
     /**
@@ -175,7 +178,7 @@ public class GlobalExceptionHandler {
         log.warn("[handleBindException]", ex);
         FieldError fieldError = ex.getFieldError();
         assert fieldError != null; // 断言，避免告警
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数不正确:%s", fieldError.getDefaultMessage()));
+        return CommonResult.error(REQUEST_VALIDATION_FAILED, fieldError.getDefaultMessage());
     }
 
     /**
@@ -189,10 +192,13 @@ public class GlobalExceptionHandler {
         log.warn("[methodArgumentTypeInvalidFormatExceptionHandler]", ex);
         if (ex.getCause() instanceof InvalidFormatException) {
             InvalidFormatException invalidFormatException = (InvalidFormatException) ex.getCause();
-            return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数类型错误:%s", invalidFormatException.getValue()));
+            String field = invalidFormatException.getPath().isEmpty() ? "body"
+                    : invalidFormatException.getPath().get(invalidFormatException.getPath().size() - 1).getFieldName();
+            return localizedError(REQUEST_PARAMETER_TYPE, "请求参数类型错误:" + invalidFormatException.getValue(),
+                    field == null ? "body" : field, invalidFormatException.getTargetType() == null ? "Object" : invalidFormatException.getTargetType().getSimpleName(), invalidFormatException.getValue());
         }
         if (StrUtil.startWith(ex.getMessage(), "Required request body is missing")) {
-            return CommonResult.error(BAD_REQUEST.getCode(), "请求参数类型错误: request body 缺失");
+            return CommonResult.error(REQUEST_BODY_MISSING);
         }
         return defaultExceptionHandler(ServletUtils.getRequest(), ex);
     }
@@ -204,7 +210,7 @@ public class GlobalExceptionHandler {
     public CommonResult<?> constraintViolationExceptionHandler(ConstraintViolationException ex) {
         log.warn("[constraintViolationExceptionHandler]", ex);
         ConstraintViolation<?> constraintViolation = ex.getConstraintViolations().iterator().next();
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求参数不正确:%s", constraintViolation.getMessage()));
+        return CommonResult.error(REQUEST_VALIDATION_FAILED, constraintViolation.getMessage());
     }
 
     /**
@@ -222,7 +228,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public CommonResult<?> maxUploadSizeExceededExceptionHandler(MaxUploadSizeExceededException ex) {
-        return CommonResult.error(BAD_REQUEST.getCode(), "上传文件过大，请调整后重试");
+        return CommonResult.error(UPLOAD_TOO_LARGE);
     }
 
     /**
@@ -235,7 +241,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoHandlerFoundException.class)
     public CommonResult<?> noHandlerFoundExceptionHandler(NoHandlerFoundException ex) {
         log.warn("[noHandlerFoundExceptionHandler]", ex);
-        return CommonResult.error(NOT_FOUND.getCode(), String.format("请求地址不存在:%s", ex.getRequestURL()));
+        return CommonResult.error(REQUEST_PATH_MISSING, ex.getRequestURL());
     }
 
     /**
@@ -244,7 +250,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     private CommonResult<?> noResourceFoundExceptionHandler(HttpServletRequest req, NoResourceFoundException ex) {
         log.warn("[noResourceFoundExceptionHandler]", ex);
-        return CommonResult.error(NOT_FOUND.getCode(), String.format("请求地址不存在:%s", ex.getResourcePath()));
+        return CommonResult.error(REQUEST_PATH_MISSING, ex.getResourcePath());
     }
 
     /**
@@ -255,7 +261,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public CommonResult<?> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException ex) {
         log.warn("[httpRequestMethodNotSupportedExceptionHandler]", ex);
-        return CommonResult.error(METHOD_NOT_ALLOWED.getCode(), String.format("请求方法不正确:%s", ex.getMessage()));
+        return localizedError(REQUEST_METHOD_INVALID, "请求方法不正确:" + ex.getMessage(), ex.getMethod());
     }
 
     /**
@@ -266,7 +272,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
     public CommonResult<?> httpMediaTypeNotSupportedExceptionHandler(HttpMediaTypeNotSupportedException ex) {
         log.warn("[httpMediaTypeNotSupportedExceptionHandler]", ex);
-        return CommonResult.error(BAD_REQUEST.getCode(), String.format("请求类型不正确:%s", ex.getMessage()));
+        return localizedError(REQUEST_MEDIA_TYPE_INVALID, "请求类型不正确:" + ex.getMessage(), ex.getContentType());
     }
 
     /**
@@ -299,7 +305,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ServiceException.class)
     public CommonResult<?> serviceExceptionHandler(ServiceException ex) {
         // 不包含的时候，才进行打印，避免 ex 堆栈过多
-        if (!IGNORE_ERROR_MESSAGES.contains(ex.getMessage())) {
+        if (!IGNORE_ERROR_MESSAGE_KEYS.contains(ex.getMessageKey())) {
             // 即使打印，也只打印第一层 StackTraceElement，并且使用 warn 在控制台输出，更容易看到
             try {
                 StackTraceElement[] stackTraces = ex.getStackTrace();
@@ -316,9 +322,9 @@ public class GlobalExceptionHandler {
         // ServiceException 的错误码可能为成功码，直接调用 CommonResult.error 会抛出异常，此处统一按系统异常处理。
         // 详见 Issue #1196：https://github.com/YunaiV/ruoyi-vue-pro/issues/1196
         if (CommonResult.isSuccess(ex.getCode())) {
-            return CommonResult.error(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMsg());
+            return CommonResult.error(INTERNAL_SERVER_ERROR);
         }
-        return CommonResult.error(ex.getCode(), ex.getMessage());
+        return CommonResult.error(ex);
     }
 
     /**
@@ -343,7 +349,12 @@ public class GlobalExceptionHandler {
         // 插入异常日志
         createExceptionLog(req, ex);
         // 返回 ERROR CommonResult
-        return CommonResult.error(INTERNAL_SERVER_ERROR.getCode(), INTERNAL_SERVER_ERROR.getMsg());
+        return CommonResult.error(INTERNAL_SERVER_ERROR);
+    }
+
+    private static CommonResult<?> localizedError(ErrorCode meaning, String originalMessage, Object... arguments) {
+        return CommonResult.error(meaning.getCode(), originalMessage)
+                .setMessageKey(meaning.getMessageKey()).setMessageArguments(arguments);
     }
 
     private void createExceptionLog(HttpServletRequest req, Throwable e) {
@@ -403,98 +414,82 @@ public class GlobalExceptionHandler {
         // 1. 工作流
         if (message.contains("bpm_")) {
             log.error("[工作流模块 yudao-module-bpm - 表结构未导入][参考 https://cloud.iocoder.cn/bpm/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[工作流模块 yudao-module-bpm - 表结构未导入][参考 https://cloud.iocoder.cn/bpm/ 开启]");
+            return CommonResult.error(BPM_SCHEMA_MISSING);
         }
         // 2. 支付平台
         if (message.contains("pay_")) {
             log.error("[支付模块 yudao-module-pay - 表结构未导入][参考 https://cloud.iocoder.cn/pay/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[支付模块 yudao-module-pay - 表结构未导入][参考 https://cloud.iocoder.cn/pay/build/ 开启]");
+            return CommonResult.error(PAY_SCHEMA_MISSING);
         }
         // 3. 数据报表
         if (message.contains("report_")) {
             log.error("[报表模块 yudao-module-report - 表结构未导入][参考 https://cloud.iocoder.cn/report/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[报表模块 yudao-module-report - 表结构未导入][参考 https://cloud.iocoder.cn/report/ 开启]");
+            return CommonResult.error(REPORT_SCHEMA_MISSING);
         }
         // 4. 微信公众号
         if (message.contains("mp_")) {
             log.error("[微信公众号 yudao-module-mp - 表结构未导入][参考 https://cloud.iocoder.cn/mp/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[微信公众号 yudao-module-mp - 表结构未导入][参考 https://cloud.iocoder.cn/mp/build/ 开启]");
+            return CommonResult.error(MP_SCHEMA_MISSING);
         }
         // 5. 商城系统
         if (StrUtil.containsAny(message, "product_", "promotion_", "trade_")) {
             log.error("[商城系统 yudao-module-mall - 表结构未导入][参考 https://cloud.iocoder.cn/mall/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[商城系统 yudao-module-mall - 表结构未导入][参考 https://cloud.iocoder.cn/mall/build/ 开启]");
+            return CommonResult.error(MALL_SCHEMA_MISSING);
         }
         // 6. ERP 系统
         if (message.contains("erp_")) {
             log.error("[ERP 系统 yudao-module-erp - 表结构未导入][参考 https://cloud.iocoder.cn/erp/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[ERP 系统 yudao-module-erp - 表结构未导入][参考 https://cloud.iocoder.cn/erp/build/ 开启]");
+            return CommonResult.error(ERP_SCHEMA_MISSING);
         }
         // 7. WMS 仓库管理系统
         if (message.contains("wms_")) {
             log.error("[WMS 仓库管理系统 yudao-module-wms - 表结构未导入][参考 https://doc.iocoder.cn/wms/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[WMS 仓库管理系统 yudao-module-wms - 表结构未导入][参考 https://doc.iocoder.cn/wms/build/ 开启]");
+            return CommonResult.error(WMS_SCHEMA_MISSING);
         }
         // 8. CRM 系统
         if (message.contains("crm_")) {
             log.error("[CRM 系统 yudao-module-crm - 表结构未导入][参考 https://cloud.iocoder.cn/crm/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[CRM 系统 yudao-module-crm - 表结构未导入][参考 https://cloud.iocoder.cn/crm/build/ 开启]");
+            return CommonResult.error(CRM_SCHEMA_MISSING);
         }
         // 9. MES 系统
         if (message.contains("mes_")) {
             log.error("[MES 系统 yudao-module-mes - 表结构未导入][参考 https://doc.iocoder.cn/mes/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[MES 系统 yudao-module-mes - 表结构未导入][参考 https://doc.iocoder.cn/mes/build/ 开启]");
+            return CommonResult.error(MES_SCHEMA_MISSING);
         }
         // 10. HRM 人力资源管理系统
         if (message.contains("hrm_")) {
             log.error("[HRM 人力资源管理系统 yudao-module-hrm - 表结构未导入][参考 https://doc.iocoder.cn/hrm/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[HRM 人力资源管理系统 yudao-module-hrm - 表结构未导入][参考 https://doc.iocoder.cn/hrm/build/ 开启]");
+            return CommonResult.error(HRM_SCHEMA_MISSING);
         }
         // 11. FMS 财务管理系统
         if (message.contains("fms_")) {
             log.error("[FMS 财务管理系统 yudao-module-fms - 表结构未导入][参考 https://doc.iocoder.cn/fms/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[FMS 财务管理系统 yudao-module-fms - 表结构未导入][参考 https://doc.iocoder.cn/fms/build/ 开启]");
+            return CommonResult.error(FMS_SCHEMA_MISSING);
         }
         // 12. PMS 项目管理系统
         if (message.contains("pms_")) {
             log.error("[PMS 项目管理系统 yudao-module-pms - 表结构未导入][参考 https://doc.iocoder.cn/pms/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[PMS 项目管理系统 yudao-module-pms - 表结构未导入][参考 https://doc.iocoder.cn/pms/build/ 开启]");
+            return CommonResult.error(PMS_SCHEMA_MISSING);
         }
         // 13. OA 协同办公
         if (message.contains("oa_")) {
             log.error("[OA 协同办公 yudao-module-oa - 表结构未导入][参考 https://doc.iocoder.cn/oa/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[OA 协同办公 yudao-module-oa - 表结构未导入][参考 https://doc.iocoder.cn/oa/build/ 开启]");
+            return CommonResult.error(OA_SCHEMA_MISSING);
         }
         // 14. AI 大模型
         if (message.contains("ai_")) {
             log.error("[AI 大模型 yudao-module-ai - 表结构未导入][参考 https://cloud.iocoder.cn/ai/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[AI 大模型 yudao-module-ai - 表结构未导入][参考 https://cloud.iocoder.cn/ai/build/ 开启]");
+            return CommonResult.error(AI_SCHEMA_MISSING);
         }
         // 15. IoT 物联网
         if (message.contains("iot_")) {
             log.error("[IoT 物联网 yudao-module-iot - 表结构未导入][参考 https://doc.iocoder.cn/iot/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[IoT 物联网 yudao-module-iot - 表结构未导入][参考 https://doc.iocoder.cn/iot/build/ 开启]");
+            return CommonResult.error(IOT_SCHEMA_MISSING);
         }
         // 16. IM 即时通讯
         if (message.contains("im_")) {
             log.error("[IM 即时通讯 yudao-module-im - 表结构未导入][参考 https://doc.iocoder.cn/im/build/ 开启]");
-            return CommonResult.error(NOT_IMPLEMENTED.getCode(),
-                    "[IM 即时通讯 yudao-module-im - 表结构未导入][参考 https://doc.iocoder.cn/im/build/ 开启]");
+            return CommonResult.error(IM_SCHEMA_MISSING);
         }
         return null;
     }
