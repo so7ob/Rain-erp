@@ -41,7 +41,7 @@
     <url>https://github.com/YunaiV/ruoyi-vue-pro</url>
 
     <properties>
-        <revision>0.1.0-SNAPSHOT</revision>
+        <revision>0.1.0</revision>
         <!-- Maven 相关 -->
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
