@@ -29,7 +29,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -50,7 +50,7 @@
           <el-option
             v-for="dict in getDictOptions(DICT_TYPE.SYSTEM_OAUTH2_GRANT_TYPE)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>

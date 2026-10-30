@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { getRouteTitle } from '@/hooks/web/useRouteTitle'
 import { usePermissionStore } from '@/store/modules/permission'
 import { useAppStore } from '@/store/modules/app'
 
@@ -23,7 +24,6 @@ export default defineComponent({
   setup() {
     const { push, currentRoute, resolve } = useRouter()
 
-    const { t } = useI18n()
 
     const appStore = useAppStore()
 
@@ -286,7 +286,7 @@ export default defineComponent({
                       <Icon icon={item?.meta?.icon}></Icon>
                     </div>
                     {!unref(showTitle) ? undefined : (
-                      <p class="mt-5px break-words px-2px">{t(item.meta?.title)}</p>
+                      <p class="mt-5px break-words px-2px">{getRouteTitle(item.meta)}</p>
                     )}
                   </div>
                 )

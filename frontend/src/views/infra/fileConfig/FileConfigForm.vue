@@ -22,7 +22,7 @@
           <el-option
             v-for="dict in getDictOptions(DICT_TYPE.INFRA_FILE_STORAGE)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="parseInt(dict.value)"
           />
         </el-select>

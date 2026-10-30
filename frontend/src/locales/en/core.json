@@ -1,0 +1,206 @@
+{
+  "core": {
+    "navigation": {
+      "systemManagement": "System administration",
+      "infrastructure": "Infrastructure",
+      "users": "Users",
+      "roles": "Roles",
+      "menus": "Menus",
+      "departments": "Departments",
+      "positions": "Positions",
+      "dictionaries": "Dictionaries",
+      "configuration": "Configuration",
+      "notices": "Notices and announcements",
+      "auditLogs": "Audit logs",
+      "tokens": "Token management",
+      "scheduledJobs": "Scheduled jobs",
+      "mysqlMonitoring": "MySQL monitoring",
+      "javaMonitoring": "Java monitoring",
+      "redisMonitoring": "Redis monitoring",
+      "formBuilder": "Form builder",
+      "codeGeneration": "Code generation",
+      "apiDocumentation": "API documentation",
+      "operationLogs": "Operation logs",
+      "loginLogs": "Sign-in logs",
+      "codeGenerationExample": "Code generation example",
+      "tracing": "Distributed tracing",
+      "accessLogs": "Access logs",
+      "apiLogs": "API logs",
+      "errorLogs": "Error logs",
+      "files": "Files",
+      "smsManagement": "SMS management",
+      "smsChannels": "SMS channels",
+      "smsTemplates": "SMS templates",
+      "smsLogs": "SMS logs",
+      "tenants": "Tenants",
+      "tenantManagement": "Tenant management",
+      "tenantPackages": "Tenant packages",
+      "fileConfiguration": "File storage configuration",
+      "fileManagement": "File management",
+      "dataSources": "Data source configuration",
+      "oauth": "OAuth 2.0",
+      "oauthApplications": "Application management",
+      "areas": "Regions",
+      "mailManagement": "Email management",
+      "mailAccounts": "Email accounts",
+      "mailTemplates": "Email templates",
+      "mailLogs": "Email records",
+      "notifications": "Internal notifications",
+      "notificationTemplates": "Notification templates",
+      "notificationMessages": "Notification records",
+      "socialSignIn": "Social sign-in",
+      "socialClients": "External applications",
+      "socialUsers": "External users",
+      "embeddedTables": "Master/detail tables (embedded)",
+      "singleTable": "Single table (CRUD)",
+      "treeTable": "Tree table (CRUD)",
+      "standardTables": "Master/detail tables (standard)",
+      "erpTables": "Master/detail tables (ERP)",
+      "websocket": "WebSocket",
+      "messageCenter": "Message center",
+      "monitoringCenter": "Monitoring center",
+      "untitled": "Untitled menu"
+    },
+    "dictionary": {
+      "systemUserSex": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "infraJobStatus": {
+        "active": "Active",
+        "paused": "Paused",
+        "initializing": "Initializing"
+      },
+      "infraConfigType": {
+        "builtIn": "Built in",
+        "custom": "Custom"
+      },
+      "systemNoticeType": {
+        "notice": "Notice",
+        "announcement": "Announcement"
+      },
+      "infraOperateType": {
+        "other": "Other",
+        "query": "Query",
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete",
+        "export": "Export",
+        "import": "Import"
+      },
+      "commonStatus": {
+        "enabled": "Enabled",
+        "disabled": "Disabled"
+      },
+      "systemMenuType": {
+        "directory": "Directory",
+        "menu": "Menu",
+        "button": "Button"
+      },
+      "systemRoleType": {
+        "builtIn": "Built in",
+        "custom": "Custom"
+      },
+      "systemDataScope": {
+        "all": "All data",
+        "selectedDepartments": "Selected departments",
+        "department": "Current department",
+        "departmentTree": "Current department and subdepartments",
+        "self": "Own data only"
+      },
+      "systemLoginResult": {
+        "success": "Succeeded",
+        "badCredentials": "Incorrect account or password",
+        "disabled": "User disabled",
+        "captchaMissing": "Verification code missing",
+        "captchaInvalid": "Incorrect verification code",
+        "unknown": "Unknown error"
+      },
+      "infraBooleanString": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "infraCodegenTemplateType": {
+        "single": "Single table (CRUD)",
+        "tree": "Tree table (CRUD)",
+        "detail": "Detail table",
+        "standard": "Master table (standard)",
+        "erp": "Master table (ERP)",
+        "embedded": "Master table (embedded)"
+      },
+      "infraJobLogStatus": {
+        "running": "Running",
+        "success": "Succeeded",
+        "failure": "Failed"
+      },
+      "infraApiErrorLogProcessStatus": {
+        "unprocessed": "Unprocessed",
+        "processed": "Processed",
+        "ignored": "Ignored"
+      },
+      "systemSmsTemplateType": {
+        "verification": "Verification code",
+        "notice": "Notification",
+        "marketing": "Marketing"
+      },
+      "systemSmsSendStatus": {
+        "initializing": "Initializing",
+        "sent": "Sent",
+        "failed": "Send failed",
+        "notSending": "Not sending"
+      },
+      "systemSmsReceiveStatus": {
+        "waiting": "Awaiting result",
+        "received": "Received",
+        "failed": "Receive failed"
+      },
+      "systemSmsChannelCode": {
+        "debugDingTalk": "Debug ({brand})"
+      },
+      "systemLoginType": {
+        "account": "Account sign-in",
+        "social": "Social sign-in",
+        "signOut": "Sign out",
+        "forcedSignOut": "Forced sign-out",
+        "sms": "SMS sign-in"
+      },
+      "infraCodegenScene": {
+        "administration": "Administration",
+        "userApp": "User app"
+      },
+      "infraFileStorage": {
+        "database": "Database",
+        "localDisk": "Local disk",
+        "ftp": "FTP server",
+        "sftp": "SFTP server",
+        "s3": "S3 object storage"
+      },
+      "systemMailSendStatus": {
+        "initializing": "Initializing",
+        "sent": "Sent",
+        "failed": "Send failed",
+        "notSending": "Not sending"
+      },
+      "systemNotifyTemplateType": {
+        "announcement": "Notices and announcements",
+        "system": "System message"
+      },
+      "infraCodegenFrontType": {
+        "vue2Element": "Vue2 Element UI standard template",
+        "vue3Element": "Vue3 Element Plus standard template",
+        "vben2AntSchema": "Vben2.0 Ant Design Schema template",
+        "vben5AntSchema": "Vben5.0 Ant Design Schema template",
+        "vben5AntStandard": "Vben5.0 Ant Design standard template",
+        "vben5ElementSchema": "Vben5.0 Element Plus Schema template",
+        "vben5ElementStandard": "Vben5.0 Element Plus standard template",
+        "adminUniapp": "Admin Uniapp mobile",
+        "vben5AntdvSchema": "Vben5.0 Antdv Next Schema template",
+        "vben5AntdvStandard": "Vben5.0 Antdv Next standard template"
+      }
+    },
+    "search": {
+      "title": "Search menus",
+      "placeholder": "Search menu name or path"
+    }
+  }
+}

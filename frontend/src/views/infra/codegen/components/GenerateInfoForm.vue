@@ -7,7 +7,7 @@
             <el-option
               v-for="dict in getIntDictOptions(DICT_TYPE.INFRA_CODEGEN_TEMPLATE_TYPE)"
               :key="dict.value"
-              :label="dict.label"
+              :label="dict.displayLabel ?? dict.label"
               :value="dict.value"
             />
           </el-select>
@@ -19,7 +19,7 @@
             <el-option
               v-for="dict in getIntDictOptions(DICT_TYPE.INFRA_CODEGEN_FRONT_TYPE)"
               :key="dict.value"
-              :label="dict.label"
+              :label="dict.displayLabel ?? dict.label"
               :value="dict.value"
             />
           </el-select>
@@ -32,7 +32,7 @@
             <el-option
               v-for="dict in getIntDictOptions(DICT_TYPE.INFRA_CODEGEN_SCENE)"
               :key="dict.value"
-              :label="dict.label"
+              :label="dict.displayLabel ?? dict.label"
               :value="dict.value"
             />
           </el-select>

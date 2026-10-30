@@ -1,0 +1,206 @@
+{
+  "core": {
+    "navigation": {
+      "systemManagement": "系统管理",
+      "infrastructure": "基础设施",
+      "users": "用户管理",
+      "roles": "角色管理",
+      "menus": "菜单管理",
+      "departments": "部门管理",
+      "positions": "岗位管理",
+      "dictionaries": "字典管理",
+      "configuration": "配置管理",
+      "notices": "通知公告",
+      "auditLogs": "审计日志",
+      "tokens": "令牌管理",
+      "scheduledJobs": "定时任务",
+      "mysqlMonitoring": "MySQL 监控",
+      "javaMonitoring": "Java 监控",
+      "redisMonitoring": "Redis 监控",
+      "formBuilder": "表单构建",
+      "codeGeneration": "代码生成",
+      "apiDocumentation": "API 接口",
+      "operationLogs": "操作日志",
+      "loginLogs": "登录日志",
+      "codeGenerationExample": "代码生成案例",
+      "tracing": "链路追踪",
+      "accessLogs": "访问日志",
+      "apiLogs": "API 日志",
+      "errorLogs": "错误日志",
+      "files": "文件列表",
+      "smsManagement": "短信管理",
+      "smsChannels": "短信渠道",
+      "smsTemplates": "短信模板",
+      "smsLogs": "短信日志",
+      "tenants": "租户列表",
+      "tenantManagement": "租户管理",
+      "tenantPackages": "租户套餐",
+      "fileConfiguration": "文件配置",
+      "fileManagement": "文件管理",
+      "dataSources": "数据源配置",
+      "oauth": "OAuth 2.0",
+      "oauthApplications": "应用管理",
+      "areas": "地区管理",
+      "mailManagement": "邮箱管理",
+      "mailAccounts": "邮箱账号",
+      "mailTemplates": "邮件模版",
+      "mailLogs": "邮件记录",
+      "notifications": "站内信管理",
+      "notificationTemplates": "模板管理",
+      "notificationMessages": "消息记录",
+      "socialSignIn": "三方登录",
+      "socialClients": "三方应用",
+      "socialUsers": "三方用户",
+      "embeddedTables": "主子表（内嵌）",
+      "singleTable": "单表（增删改查）",
+      "treeTable": "树表（增删改查）",
+      "standardTables": "主子表（标准）",
+      "erpTables": "主子表（ERP）",
+      "websocket": "WebSocket",
+      "messageCenter": "消息中心",
+      "monitoringCenter": "监控中心",
+      "untitled": "未命名菜单"
+    },
+    "dictionary": {
+      "systemUserSex": {
+        "male": "男",
+        "female": "女"
+      },
+      "infraJobStatus": {
+        "active": "正常",
+        "paused": "暂停",
+        "initializing": "初始化中"
+      },
+      "infraConfigType": {
+        "builtIn": "系统内置",
+        "custom": "自定义"
+      },
+      "systemNoticeType": {
+        "notice": "通知",
+        "announcement": "公告"
+      },
+      "infraOperateType": {
+        "other": "其它",
+        "query": "查询",
+        "create": "新增",
+        "update": "修改",
+        "delete": "删除",
+        "export": "导出",
+        "import": "导入"
+      },
+      "commonStatus": {
+        "enabled": "开启",
+        "disabled": "关闭"
+      },
+      "systemMenuType": {
+        "directory": "目录",
+        "menu": "菜单",
+        "button": "按钮"
+      },
+      "systemRoleType": {
+        "builtIn": "内置",
+        "custom": "自定义"
+      },
+      "systemDataScope": {
+        "all": "全部数据权限",
+        "selectedDepartments": "指定部门数据权限",
+        "department": "本部门数据权限",
+        "departmentTree": "本部门及以下数据权限",
+        "self": "仅本人数据权限"
+      },
+      "systemLoginResult": {
+        "success": "成功",
+        "badCredentials": "账号或密码不正确",
+        "disabled": "用户被禁用",
+        "captchaMissing": "验证码不存在",
+        "captchaInvalid": "验证码不正确",
+        "unknown": "未知异常"
+      },
+      "infraBooleanString": {
+        "yes": "是",
+        "no": "否"
+      },
+      "infraCodegenTemplateType": {
+        "single": "单表（增删改查）",
+        "tree": "树表（增删改查）",
+        "detail": "子表",
+        "standard": "主表（标准模式）",
+        "erp": "主表（ERP 模式）",
+        "embedded": "主表（内嵌模式）"
+      },
+      "infraJobLogStatus": {
+        "running": "运行中",
+        "success": "成功",
+        "failure": "失败"
+      },
+      "infraApiErrorLogProcessStatus": {
+        "unprocessed": "未处理",
+        "processed": "已处理",
+        "ignored": "已忽略"
+      },
+      "systemSmsTemplateType": {
+        "verification": "验证码",
+        "notice": "通知",
+        "marketing": "营销"
+      },
+      "systemSmsSendStatus": {
+        "initializing": "初始化",
+        "sent": "发送成功",
+        "failed": "发送失败",
+        "notSending": "不发送"
+      },
+      "systemSmsReceiveStatus": {
+        "waiting": "等待结果",
+        "received": "接收成功",
+        "failed": "接收失败"
+      },
+      "systemSmsChannelCode": {
+        "debugDingTalk": "调试({brand})"
+      },
+      "systemLoginType": {
+        "account": "账号登录",
+        "social": "社交登录",
+        "signOut": "主动登出",
+        "forcedSignOut": "强制登出",
+        "sms": "短信登录"
+      },
+      "infraCodegenScene": {
+        "administration": "管理后台",
+        "userApp": "用户 APP"
+      },
+      "infraFileStorage": {
+        "database": "数据库",
+        "localDisk": "本地磁盘",
+        "ftp": "FTP 服务器",
+        "sftp": "SFTP 服务器",
+        "s3": "S3 对象存储"
+      },
+      "systemMailSendStatus": {
+        "initializing": "初始化",
+        "sent": "发送成功",
+        "failed": "发送失败",
+        "notSending": "不发送"
+      },
+      "systemNotifyTemplateType": {
+        "announcement": "通知公告",
+        "system": "系统消息"
+      },
+      "infraCodegenFrontType": {
+        "vue2Element": "Vue2 Element UI 标准模版",
+        "vue3Element": "Vue3 Element Plus 标准模版",
+        "vben2AntSchema": "Vben2.0 Ant Design Schema 模版",
+        "vben5AntSchema": "Vben5.0 Ant Design Schema 模版",
+        "vben5AntStandard": "Vben5.0 Ant Design 标准模版",
+        "vben5ElementSchema": "Vben5.0 Element Plus Schema 模版",
+        "vben5ElementStandard": "Vben5.0 Element Plus 标准模版",
+        "adminUniapp": "Admin Uniapp 移动端",
+        "vben5AntdvSchema": "Vben5.0 Antdv Next Schema 模版",
+        "vben5AntdvStandard": "Vben5.0 Antdv Next 标准模版"
+      }
+    },
+    "search": {
+      "title": "菜单搜索",
+      "placeholder": "请输入菜单内容"
+    }
+  }
+}

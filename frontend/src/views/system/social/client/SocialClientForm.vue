@@ -17,7 +17,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -28,7 +28,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -54,7 +54,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>

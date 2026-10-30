@@ -14,7 +14,7 @@ export const useRenderCheckbox = () => {
       const { ...other } = option
       return (
         <Com {...other} label={option[valueAlias || 'value']}>
-          {option[labelAlias || 'label']}
+          {labelAlias ? option[labelAlias] : option.displayLabel ?? option.label}
         </Com>
       )
     })

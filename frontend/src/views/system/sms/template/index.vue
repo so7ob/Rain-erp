@@ -20,7 +20,7 @@
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_SMS_TEMPLATE_TYPE)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>
@@ -35,7 +35,7 @@
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>
@@ -71,7 +71,7 @@
             :value="channel.id"
             :label="
               channel.signature +
-              `【 ${getDictLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code)}】`
+              `【 ${getDictDisplayLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code)}】`
             "
           />
         </el-select>
@@ -222,7 +222,7 @@
   <SmsTemplateSendForm ref="sendFormRef" />
 </template>
 <script lang="ts" setup>
-import { DICT_TYPE, getIntDictOptions, getDictLabel } from '@/utils/dict'
+import { DICT_TYPE, getIntDictOptions, getDictDisplayLabel } from '@/utils/dict'
 import { dateFormatter } from '@/utils/formatTime'
 import * as SmsTemplateApi from '@/api/system/sms/smsTemplate'
 import * as SmsChannelApi from '@/api/system/sms/smsChannel'

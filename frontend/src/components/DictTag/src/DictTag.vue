@@ -76,7 +76,7 @@ export default defineComponent({
                   color={dict?.cssClass && isHexColor(dict?.cssClass) ? dict?.cssClass : ''}
                   disableTransitions={true}
                 >
-                  {dict?.label}
+                  {dict?.displayLabel ?? dict?.label}
                 </ElTag>
               )
             }

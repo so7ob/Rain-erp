@@ -1,22 +1,23 @@
 import type { RouteMeta } from 'vue-router'
 import { Icon } from '@/components/Icon'
+import { getRouteTitle } from '@/hooks/web/useRouteTitle'
 import { useI18n } from '@/hooks/web/useI18n'
 
 export const useRenderMenuTitle = () => {
   const renderMenuTitle = (meta: RouteMeta) => {
-    const { t } = useI18n()
-    const { title = 'Please set title', icon } = meta
+    const { icon } = meta
+    const title = getRouteTitle(meta) || useI18n().t('core.navigation.untitled')
 
     return icon ? (
       <>
         <Icon icon={meta.icon}></Icon>
         <span class="v-menu__title overflow-hidden overflow-ellipsis whitespace-nowrap">
-          {t(title as string)}
+          {title}
         </span>
       </>
     ) : (
       <span class="v-menu__title overflow-hidden overflow-ellipsis whitespace-nowrap">
-        {t(title as string)}
+        {title}
       </span>
     )
   }

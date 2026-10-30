@@ -27,7 +27,7 @@
             :key="dict.label"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio-button>
         </el-radio-group>
       </el-form-item>
@@ -68,7 +68,7 @@
             :key="dict.label"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>

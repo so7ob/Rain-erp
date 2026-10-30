@@ -5,28 +5,31 @@ import { defineStore } from 'pinia'
 import { store } from '../index'
 import { findIndex } from '@/utils'
 import { useUserStoreWithOut } from './user'
+import { getAuthenticationCacheScope } from '@/hooks/web/cacheContext'
 
 export interface TagsViewState {
   visitedViews: RouteLocationNormalizedLoaded[]
   cachedViews: Set<string>
   selectedTag?: RouteLocationNormalizedLoaded
+  context: string
 }
 
 export const useTagsViewStore = defineStore('tagsView', {
   state: (): TagsViewState => ({
     visitedViews: [],
     cachedViews: new Set(),
-    selectedTag: undefined
+    selectedTag: undefined,
+    context: ''
   }),
   getters: {
     getVisitedViews(): RouteLocationNormalizedLoaded[] {
-      return this.visitedViews
+      return this.context === getAuthenticationCacheScope() ? this.visitedViews : []
     },
     getCachedViews(): string[] {
-      return Array.from(this.cachedViews)
+      return this.context === getAuthenticationCacheScope() ? Array.from(this.cachedViews) : []
     },
     getSelectedTag(): RouteLocationNormalizedLoaded | undefined {
-      return this.selectedTag
+      return this.context === getAuthenticationCacheScope() ? this.selectedTag : undefined
     }
   },
   actions: {
@@ -37,6 +40,13 @@ export const useTagsViewStore = defineStore('tagsView', {
     },
     // 新增tag
     addVisitedView(view: RouteLocationNormalizedLoaded) {
+      const context = getAuthenticationCacheScope()
+      if (this.context !== context) {
+        this.visitedViews = []
+        this.cachedViews = new Set()
+        this.selectedTag = undefined
+        this.context = context
+      }
       if (this.visitedViews.some((v) => v.fullPath === view.fullPath)) return
       if (view.meta?.noTagsView) return
       const visitedView = Object.assign({}, view, { title: view.meta?.title || 'no-name' })

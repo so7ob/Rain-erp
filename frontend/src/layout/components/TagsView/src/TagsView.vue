@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { getRouteTitle } from '@/hooks/web/useRouteTitle'
 import { computed, nextTick, ref, unref, watch } from 'vue'
 import type { RouteLocationNormalizedLoaded, RouterLinkProps } from 'vue-router'
 import { useRouter } from 'vue-router'
@@ -387,7 +388,7 @@ watch(
                     class="mr-5px"
                   />
                   {{
-                    t(item?.meta?.title as string) +
+                    getRouteTitle(item?.meta) +
                     (item?.meta?.titleSuffix ? ` (${item?.meta?.titleSuffix})` : '')
                   }}
                   <Icon

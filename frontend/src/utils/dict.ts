@@ -3,6 +3,8 @@
  */
 import { useDictStoreWithOut } from '@/store/modules/dict'
 import { ElementPlusInfoType } from '@/types/elementPlus'
+import { withDictionaryDisplay, withDictionaryValue } from '@/locales/display'
+import { useI18n } from '@/hooks/web/useI18n'
 
 const dictStore = useDictStoreWithOut()
 
@@ -15,6 +17,7 @@ const dictStore = useDictStoreWithOut()
 export interface DictDataType {
   dictType: string
   label: string
+  displayLabel?: string
   value: string | number | boolean
   colorType: ElementPlusInfoType | ''
   cssClass: string
@@ -33,7 +36,10 @@ export interface BooleanDictDataType extends DictDataType {
 }
 
 export const getDictOptions = (dictType: string) => {
-  return dictStore.getDictByType(dictType) || []
+  const { t } = useI18n()
+  return (dictStore.getDictByType(dictType) || []).map((entry: StringDictDataType) =>
+    withDictionaryDisplay({ ...entry, dictType }, t)
+  )
 }
 
 export const getIntDictOptions = (dictType: string): NumberDictDataType[] => {
@@ -43,10 +49,7 @@ export const getIntDictOptions = (dictType: string): NumberDictDataType[] => {
   // why 需要特殊转换：避免 IDEA 在 v-for="dict in getIntDictOptions(...)" 时，el-option 的 key 会告警
   const dictOption: NumberDictDataType[] = []
   dictOptions.forEach((dict: DictDataType) => {
-    dictOption.push({
-      ...dict,
-      value: parseInt(dict.value + '')
-    })
+    dictOption.push(withDictionaryValue(dict, parseInt(dict.value + '')))
   })
   return dictOption
 }
@@ -58,10 +61,7 @@ export const getStrDictOptions = (dictType: string) => {
   // why 需要特殊转换：避免 IDEA 在 v-for="dict in getStrDictOptions(...)" 时，el-option 的 key 会告警
   const dictOption: StringDictDataType[] = []
   dictOptions.forEach((dict: DictDataType) => {
-    dictOption.push({
-      ...dict,
-      value: dict.value + ''
-    })
+    dictOption.push(withDictionaryValue(dict, dict.value + ''))
   })
   return dictOption
 }
@@ -70,10 +70,7 @@ export const getBoolDictOptions = (dictType: string): BooleanDictDataType[] => {
   const dictOption: BooleanDictDataType[] = []
   const dictOptions: DictDataType[] = getDictOptions(dictType)
   dictOptions.forEach((dict: DictDataType) => {
-    dictOption.push({
-      ...dict,
-      value: dict.value + '' === 'true'
-    })
+    dictOption.push(withDictionaryValue(dict, dict.value + '' === 'true'))
   })
   return dictOption
 }
@@ -109,6 +106,14 @@ export const getDictLabel = (dictType: string, value: any): string => {
     }
   })
   return dictLabel.value
+}
+
+/** Presentation only; getDictLabel retains the original label for data/import consumers. */
+export const getDictDisplayLabel = (dictType: string, value: any): string => {
+  const entry = getDictOptions(dictType).find(
+    (dict: DictDataType) => String(dict.value) === String(value)
+  )
+  return entry?.displayLabel ?? entry?.label ?? ''
 }
 
 export enum DICT_TYPE {

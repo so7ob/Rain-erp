@@ -14,7 +14,7 @@
             :key="channel.id"
             :label="
               channel.signature +
-              `【 ${getDictLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code)}】`
+              `【 ${getDictDisplayLabel(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE, channel.code)}】`
             "
             :value="channel.id"
           />
@@ -25,7 +25,7 @@
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_SMS_TEMPLATE_TYPE)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>
@@ -46,7 +46,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>
@@ -64,7 +64,7 @@
   </Dialog>
 </template>
 <script lang="ts" setup>
-import { DICT_TYPE, getDictLabel, getIntDictOptions } from '@/utils/dict'
+import { DICT_TYPE, getDictDisplayLabel, getIntDictOptions } from '@/utils/dict'
 import * as SmsTemplateApi from '@/api/system/sms/smsTemplate'
 import * as SmsChannelApi from '@/api/system/sms/smsChannel'
 import { CommonStatusEnum } from '@/utils/constants'

@@ -18,7 +18,7 @@
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_NOTICE_TYPE)"
             :key="parseInt(dict.value as any)"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="parseInt(dict.value as any)"
           />
         </el-select>
@@ -28,7 +28,7 @@
           <el-option
             v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
             :key="parseInt(dict.value as any)"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="parseInt(dict.value as any)"
           />
         </el-select>

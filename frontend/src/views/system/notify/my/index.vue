@@ -20,7 +20,7 @@
           <el-option
             v-for="dict in getBoolDictOptions(DICT_TYPE.INFRA_BOOLEAN_STRING)"
             :key="String(dict.value)"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>
