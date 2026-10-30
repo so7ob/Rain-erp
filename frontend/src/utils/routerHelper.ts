@@ -3,6 +3,7 @@ import { defineComponent, h } from 'vue'
 import { createRouter, createWebHashHistory, RouteRecordRaw, RouterView } from 'vue-router'
 import { isUrl } from '@/utils/is'
 import { cloneDeep, omit } from 'lodash-es'
+import { getAuthenticationCacheScope } from '@/hooks/web/cacheContext'
 import {
   getExternalRoutePath,
   parseExternalRouteLocation,
@@ -75,6 +76,7 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
   const res: AppRouteRecordRaw[] = []
   const modulesRoutesKeys = Object.keys(modules)
   for (const route of routes) {
+    const menuDisplay = { id: route.id, name: route.name, path: route.path, component: route.component }
     const componentRoute = splitRoutePath(route.component)
     const pathRoute = isUrl(route.path)
       ? parseExternalRouteLocation(route.path)
@@ -88,6 +90,8 @@ export const generateRoute = (routes: AppCustomRouteRecordRaw[]): AppRouteRecord
     // 1. 生成 meta 菜单元数据
     const meta = {
       title: route.name,
+      menuDisplay,
+      menuContext: getAuthenticationCacheScope(),
       icon: route.icon,
       hidden: !route.visible,
       noCache: !route.keepAlive,

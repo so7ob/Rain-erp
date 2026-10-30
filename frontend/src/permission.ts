@@ -38,12 +38,14 @@ router.beforeEach(async (to, from, next) => {
       const permissionStore = usePermissionStoreWithOut()
       // 异步加载字典
       // 另外，间接 issue：https://gitee.com/yudaocode/yudao-ui-admin-vue3/issues/ID9FLI
-      if (!dictStore.getIsSetDict) {
-        dictStore.setDictMap().then()
-      }
       if (!userStore.getIsSetUser) {
         isRelogin.show = true
         await userStore.setUserInfoAction()
+        if (!userStore.getIsSetUser) {
+          isRelogin.show = false
+          next(false)
+          return
+        }
         isRelogin.show = false
         // 后端过滤菜单
         await permissionStore.generateRoutes()
@@ -62,6 +64,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         next()
       }
+      if (!dictStore.getIsSetDict) void dictStore.setDictMap().catch(() => {})
     }
   } else {
     if (whiteList.some((path) => to.path === path || to.path.startsWith(`${path}/`))) {
@@ -73,7 +76,7 @@ router.beforeEach(async (to, from, next) => {
 })
 
 router.afterEach((to) => {
-  useTitle(to?.meta?.title as string)
+  useTitle(() => to.meta)
   done() // 结束Progress
   loadDone()
 })

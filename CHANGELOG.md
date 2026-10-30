@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Localize contextual core menu/dictionary names without rewriting source data; isolate display state across language, user and tenant changes (#24).
+
 - Give navigation progress a valid, localized indeterminate progress role and test it while visible (#25).
 
 - Add request-scoped server languages, semantic API error identities and deferred message arguments; localize shared/authentication errors and coordinate session refresh across concurrent requests (#22).

@@ -12,7 +12,7 @@ export const useRenderSelect = (slots: Slots) => {
     return item?.componentProps?.options?.map((option) => {
       if (option?.options?.length) {
         return (
-          <ElOptionGroup label={option[labelAlias || 'label']}>
+          <ElOptionGroup label={labelAlias ? option[labelAlias] : option.displayLabel ?? option.label}>
             {() => {
               return option?.options?.map((v) => {
                 return renderSelectOptionItem(item, v)
@@ -37,7 +37,7 @@ export const useRenderSelect = (slots: Slots) => {
     return (
       <ElOption
         {...other}
-        label={labelAlias ? option[labelAlias] : label}
+        label={labelAlias ? option[labelAlias] : option.displayLabel ?? label}
         value={valueAlias ? option[valueAlias] : value}
       >
         {{

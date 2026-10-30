@@ -3,6 +3,12 @@ import { defineStore } from 'pinia'
 import { getAccessToken, removeToken } from '@/utils/auth'
 import { CACHE_KEY, useCache, deleteUserCache } from '@/hooks/web/useCache'
 import { getInfo, loginOut } from '@/api/login'
+import { watch } from 'vue'
+import {
+  getAuthenticationCacheScope,
+  getCacheLocale,
+  setCacheUserId
+} from '@/hooks/web/cacheContext'
 
 const { wsCache } = useCache()
 
@@ -53,6 +59,7 @@ export const useUserStore = defineStore('admin-user', {
         this.resetState()
         return null
       }
+      const context = getAuthenticationCacheScope()
       let userInfo = wsCache.get(CACHE_KEY.USER)
       if (!userInfo) {
         userInfo = await getInfo()
@@ -62,9 +69,11 @@ export const useUserStore = defineStore('admin-user', {
           userInfo = await getInfo()
         } catch (error) {}
       }
+      if (context !== getAuthenticationCacheScope()) return null
       this.permissions = new Set(userInfo.permissions || []) // 兜底为 [] https://t.zsxq.com/xCJew
       this.roles = userInfo.roles
       this.user = userInfo.user
+      setCacheUserId(userInfo.user.id)
       this.isSetUser = true
       wsCache.set(CACHE_KEY.USER, userInfo)
       wsCache.set(CACHE_KEY.ROLE_ROUTERS, userInfo.menus)
@@ -90,6 +99,7 @@ export const useUserStore = defineStore('admin-user', {
       this.resetState()
     },
     resetState() {
+      setCacheUserId(0)
       this.permissions = new Set<string>()
       this.roles = []
       this.isSetUser = false
@@ -106,3 +116,9 @@ export const useUserStore = defineStore('admin-user', {
 export const useUserStoreWithOut = () => {
   return useUserStore(store)
 }
+
+watch(getAuthenticationCacheScope, () => useUserStoreWithOut().resetState(), { flush: 'sync' })
+watch(getCacheLocale, () => {
+  const user = useUserStoreWithOut()
+  if (user.getIsSetUser) void user.setUserInfoAction().catch(() => {})
+})

@@ -1,15 +1,22 @@
 import { defineStore } from 'pinia'
+import { watch } from 'vue'
 import { store } from '../index'
-// @ts-ignore
-import { DictDataVO } from '@/api/system/dict/types'
+import type { DictDataVO } from '@/api/system/dict/dict.data'
 import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
-const { wsCache } = useCache('sessionStorage')
+import { getDisplayCacheScope, clearDictionaryCaches } from '@/hooks/web/cacheContext'
+import { createContextLoader } from '@/utils/cacheContextPolicy'
 import { getSimpleDictDataList } from '@/api/system/dict/dict.data'
 
+const { wsCache } = useCache('sessionStorage')
+const load = createContextLoader(getDisplayCacheScope, getSimpleDictDataList)
+let started = false
+
 export interface DictValueType {
+  dictType: string
   value: any
   label: string
-  clorType?: string
+  displayLabel?: string
+  colorType?: string
   cssClass?: string
 }
 export interface DictTypeType {
@@ -17,94 +24,62 @@ export interface DictTypeType {
   dictValue: DictValueType[]
 }
 export interface DictState {
-  dictMap: Map<string, any>
+  dictMap: Record<string, DictValueType[]>
   isSetDict: boolean
+  context: string
 }
 
 export const useDictStore = defineStore('dict', {
-  state: (): DictState => ({
-    dictMap: new Map<string, any>(),
-    isSetDict: false
-  }),
+  state: (): DictState => ({ dictMap: {}, isSetDict: false, context: '' }),
   getters: {
-    getDictMap(): Recordable {
-      const dictMap = wsCache.get(CACHE_KEY.DICT_CACHE)
-      if (dictMap) {
-        this.dictMap = dictMap
-      }
-      return this.dictMap
+    getDictMap(): Record<string, DictValueType[]> {
+      return this.context === getDisplayCacheScope() ? this.dictMap : {}
     },
     getIsSetDict(): boolean {
-      return this.isSetDict
+      return this.isSetDict && this.context === getDisplayCacheScope()
     }
   },
   actions: {
     async setDictMap() {
-      const dictMap = wsCache.get(CACHE_KEY.DICT_CACHE)
-      if (dictMap) {
-        this.dictMap = dictMap
+      started = true
+      const context = getDisplayCacheScope()
+      const cached = wsCache.get(CACHE_KEY.DICT_CACHE)
+      if (cached) {
+        this.dictMap = cached
+        this.context = context
         this.isSetDict = true
-      } else {
-        const res = await getSimpleDictDataList()
-        if (!res || res.length === 0) {
-          return
-        }
-        // 设置数据
-        const dictDataMap = new Map<string, any>()
-        res.forEach((dictData: DictDataVO) => {
-          // 获得 dictType 层级
-          const enumValueObj = dictDataMap[dictData.dictType]
-          if (!enumValueObj) {
-            dictDataMap[dictData.dictType] = []
-          }
-          // 处理 dictValue 层级
-          dictDataMap[dictData.dictType].push({
-            value: dictData.value,
-            label: dictData.label,
-            colorType: dictData.colorType,
-            cssClass: dictData.cssClass
-          })
-        })
-        this.dictMap = dictDataMap
-        this.isSetDict = true
-        wsCache.set(CACHE_KEY.DICT_CACHE, dictDataMap, { exp: 60 }) // 60 秒 过期
-      }
-    },
-    getDictByType(type: string) {
-      if (!this.isSetDict) {
-        this.setDictMap()
-      }
-      return this.dictMap[type]
-    },
-    async resetDict() {
-      wsCache.delete(CACHE_KEY.DICT_CACHE)
-      const res = await getSimpleDictDataList()
-      if (!res || res.length === 0) {
         return
       }
-      // 设置数据
-      const dictDataMap = new Map<string, any>()
-      res.forEach((dictData: DictDataVO) => {
-        // 获得 dictType 层级
-        const enumValueObj = dictDataMap[dictData.dictType]
-        if (!enumValueObj) {
-          dictDataMap[dictData.dictType] = []
+      await load((records: DictDataVO[], captured) => {
+        const dictMap: Record<string, DictValueType[]> = Object.create(null)
+        for (const entry of records || []) {
+          // Preserve canonical source fields; display labels are derived by the presentation adapter.
+          ;(dictMap[entry.dictType] ??= []).push({ ...entry })
         }
-        // 处理 dictValue 层级
-        dictDataMap[dictData.dictType].push({
-          value: dictData.value,
-          label: dictData.label,
-          colorType: dictData.colorType,
-          cssClass: dictData.cssClass
-        })
+        this.dictMap = dictMap
+        this.context = captured
+        this.isSetDict = true
+        wsCache.set(CACHE_KEY.DICT_CACHE, dictMap, { exp: 60 })
       })
-      this.dictMap = dictDataMap
-      this.isSetDict = true
-      wsCache.set(CACHE_KEY.DICT_CACHE, dictDataMap, { exp: 60 }) // 60 秒 过期
+    },
+    getDictByType(type: string) {
+      if (!this.getIsSetDict) void this.setDictMap().catch(() => {})
+      return this.getDictMap[type]
+    },
+    async resetDict() {
+      clearDictionaryCaches()
+      load.invalidate()
+      this.isSetDict = false
+      await this.setDictMap()
     }
   }
 })
 
-export const useDictStoreWithOut = () => {
-  return useDictStore(store)
-}
+export const useDictStoreWithOut = () => useDictStore(store)
+
+watch(getDisplayCacheScope, () => {
+  if (started)
+    void useDictStoreWithOut()
+      .setDictMap()
+      .catch(() => {})
+})

@@ -10,7 +10,7 @@
     <el-option
       v-for="(dict, index) in getDictOptions"
       :key="index"
-      :label="dict.label"
+      :label="dict.displayLabel ?? dict.label"
       :value="dict.value"
     />
   </el-select>
@@ -22,7 +22,7 @@
     @change="handleChange"
   >
     <el-radio v-for="(dict, index) in getDictOptions" :key="index" :value="dict.value">
-      {{ dict.label }}
+      {{ dict.displayLabel ?? dict.label }}
     </el-radio>
   </el-radio-group>
   <el-checkbox-group
@@ -35,7 +35,7 @@
     <el-checkbox
       v-for="(dict, index) in getDictOptions"
       :key="index"
-      :label="dict.label"
+      :label="dict.displayLabel ?? dict.label"
       :value="dict.value"
     />
   </el-checkbox-group>

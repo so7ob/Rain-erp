@@ -15,7 +15,7 @@
           <el-option
             v-for="dict in getStrDictOptions(DICT_TYPE.SYSTEM_SMS_CHANNEL_CODE)"
             :key="dict.value"
-            :label="dict.label"
+            :label="dict.displayLabel ?? dict.label"
             :value="dict.value"
           />
         </el-select>
@@ -27,7 +27,7 @@
             :key="dict.value"
             :value="dict.value"
           >
-            {{ dict.label }}
+            {{ dict.displayLabel ?? dict.label }}
           </el-radio>
         </el-radio-group>
       </el-form-item>

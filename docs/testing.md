@@ -60,6 +60,12 @@ All API and backend WebSocket requests in these tests are intercepted with synth
 
 Navigation progress is checked while deliberately unfinished, using the real application and intercepted permission requests for each language. A separate real-library fixture checks the full fixture document, live accessible-name updates, indeterminate semantics and removal. The visible progress is part of a polite status region so it remains accessible outside the page landmark. These checks retain every existing axe rule; they cover the transient progress element instead of waiting for it to disappear. Issue #25 corrects the invalid upstream role detected by post-merge run 40985203327.
 
+## Contextual core display verification
+
+Source checks match the complete #24 target manifest against the recorded SQL seed (58 navigation entries, 103 dictionary values). They verify all three catalogs, exact identity/text/meaning matching, custom and unknown values, the precise 16 literal exceptions, preserved original fields and reactive captured options. Cache tests cover opaque identity persistence, language/user/tenant/visited-tenant separation, shared requests, stale responses and edit-triggered invalidation.
+
+Browser fixtures cover all ten supported navigation layouts, document titles, breadcrumbs/tabs/menu search, dictionary switching with retained query drafts, custom key-shaped names, search at 375/1280 in light/dark with axe, delayed responses, user/tenant switching and ignored legacy cache entries. Browser requests remain synthetic; no real account, dictionary edit or tenant switch is performed. These checks establish this display adapter and cache behavior, not full system/infrastructure or other module acceptance.
+
 ## Server localization and session verification
 
 The shared error tests verify optional `messageKey` serialization, unchanged code/msg/data, argument preservation through copies/rethrows, duplicate numeric codes with different meanings, JSON property order, and thread/context restoration. Catalog tests read every owned main-source message bundle, including inactive modules, to reject missing Arabic, duplicate keys, parameter differences and invalid indexed templates. Separate classpath checks verify the shared and keyed system errors actually resolve from their packaged modules.

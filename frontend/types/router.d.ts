@@ -41,6 +41,13 @@ declare module 'vue-router' {
     hidden?: boolean
     alwaysShow?: boolean
     title?: string
+    menuContext?: string
+    menuDisplay?: {
+      id?: number | string
+      name: string
+      path?: string
+      component?: string | null
+    }
     titleSuffix?: string
     icon?: string
     noCache?: boolean

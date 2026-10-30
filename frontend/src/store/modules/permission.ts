@@ -4,6 +4,7 @@ import { cloneDeep } from 'lodash-es'
 import remainingRouter from '@/router/modules/remaining'
 import { flatMultiLevelRoutes, generateRoute } from '@/utils/routerHelper'
 import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
+import { getAuthenticationCacheScope } from '@/hooks/web/cacheContext'
 
 const { wsCache } = useCache()
 
@@ -12,6 +13,7 @@ export interface PermissionState {
   addRouters: AppRouteRecordRaw[]
   menuTabRouters: AppRouteRecordRaw[]
   menuRootPath: string
+  context: string
 }
 
 export const usePermissionStore = defineStore('permission', {
@@ -19,20 +21,24 @@ export const usePermissionStore = defineStore('permission', {
     routers: [],
     addRouters: [],
     menuTabRouters: [],
-    menuRootPath: ''
+    menuRootPath: '',
+    context: ''
   }),
   getters: {
     getRouters(): AppRouteRecordRaw[] {
-      return this.routers
+      return this.context === getAuthenticationCacheScope()
+        ? this.routers
+        : cloneDeep(remainingRouter)
     },
     getAddRouters(): AppRouteRecordRaw[] {
+      if (this.context !== getAuthenticationCacheScope()) return []
       return flatMultiLevelRoutes(cloneDeep(this.addRouters))
     },
     getMenuTabRouters(): AppRouteRecordRaw[] {
-      return this.menuTabRouters
+      return this.context === getAuthenticationCacheScope() ? this.menuTabRouters : []
     },
     getMenuRootPath(): string {
-      return this.menuRootPath
+      return this.context === getAuthenticationCacheScope() ? this.menuRootPath : ''
     }
   },
   actions: {
@@ -61,6 +67,7 @@ export const usePermissionStore = defineStore('permission', {
         ])
         // 渲染菜单的所有路由
         this.routers = cloneDeep(remainingRouter).concat(routerMap)
+        this.context = getAuthenticationCacheScope()
         resolve()
       })
     },

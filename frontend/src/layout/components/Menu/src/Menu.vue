@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { getRouteTitle } from '@/hooks/web/useRouteTitle'
 import { PropType, nextTick, onBeforeUnmount, onMounted } from 'vue'
 import { ElMenu, ElScrollbar } from 'element-plus'
 import type { MenuInstance } from 'element-plus'
@@ -58,7 +59,6 @@ export default defineComponent({
 
     const { push, currentRoute, resolve } = useRouter()
 
-    const { t } = useI18n()
 
     const permissionStore = usePermissionStore()
 
@@ -89,7 +89,8 @@ export default defineComponent({
           : {
               ...route.meta,
               icon: firstVisibleChild.meta?.icon,
-              title: firstVisibleChild.meta?.title
+              title: firstVisibleChild.meta?.title,
+              menuDisplay: firstVisibleChild.meta?.menuDisplay
             }
       return {
         ...route,
@@ -530,7 +531,7 @@ export default defineComponent({
                 role="menuitem"
                 onClick={() => menuSelect(getOverflowMenuIndex(route))}
               >
-                {route.meta?.title ? t(route.meta.title as string) : ''}
+                {getRouteTitle(route.meta)}
               </li>
             ))}
           </ul>

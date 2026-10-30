@@ -1,0 +1,206 @@
+{
+  "core": {
+    "navigation": {
+      "systemManagement": "إدارة النظام",
+      "infrastructure": "البنية التحتية",
+      "users": "المستخدمون",
+      "roles": "الأدوار",
+      "menus": "القوائم",
+      "departments": "الأقسام",
+      "positions": "الوظائف",
+      "dictionaries": "القواميس",
+      "configuration": "الإعدادات",
+      "notices": "الإشعارات والإعلانات",
+      "auditLogs": "سجلات التدقيق",
+      "tokens": "إدارة رموز الوصول",
+      "scheduledJobs": "المهام المجدولة",
+      "mysqlMonitoring": "مراقبة MySQL",
+      "javaMonitoring": "مراقبة Java",
+      "redisMonitoring": "مراقبة Redis",
+      "formBuilder": "منشئ النماذج",
+      "codeGeneration": "توليد الكود",
+      "apiDocumentation": "توثيق API",
+      "operationLogs": "سجلات العمليات",
+      "loginLogs": "سجلات الدخول",
+      "codeGenerationExample": "مثال توليد الكود",
+      "tracing": "تتبع العمليات الموزعة",
+      "accessLogs": "سجلات الوصول",
+      "apiLogs": "سجلات API",
+      "errorLogs": "سجلات الأخطاء",
+      "files": "الملفات",
+      "smsManagement": "إدارة الرسائل النصية",
+      "smsChannels": "قنوات الرسائل النصية",
+      "smsTemplates": "قوالب الرسائل النصية",
+      "smsLogs": "سجلات الرسائل النصية",
+      "tenants": "المنشآت",
+      "tenantManagement": "إدارة المنشآت",
+      "tenantPackages": "باقات المنشآت",
+      "fileConfiguration": "إعدادات تخزين الملفات",
+      "fileManagement": "إدارة الملفات",
+      "dataSources": "إعدادات مصادر البيانات",
+      "oauth": "OAuth 2.0",
+      "oauthApplications": "إدارة التطبيقات",
+      "areas": "المناطق",
+      "mailManagement": "إدارة البريد الإلكتروني",
+      "mailAccounts": "حسابات البريد الإلكتروني",
+      "mailTemplates": "قوالب البريد الإلكتروني",
+      "mailLogs": "سجلات البريد الإلكتروني",
+      "notifications": "الإشعارات الداخلية",
+      "notificationTemplates": "قوالب الإشعارات",
+      "notificationMessages": "سجلات الإشعارات",
+      "socialSignIn": "الدخول بحساب خارجي",
+      "socialClients": "التطبيقات الخارجية",
+      "socialUsers": "المستخدمون الخارجيون",
+      "embeddedTables": "جدول رئيسي وفرعي (مضمن)",
+      "singleTable": "جدول مفرد (إضافة وعرض وتعديل وحذف)",
+      "treeTable": "جدول شجري (إضافة وعرض وتعديل وحذف)",
+      "standardTables": "جدول رئيسي وفرعي (قياسي)",
+      "erpTables": "جدول رئيسي وفرعي (ERP)",
+      "websocket": "WebSocket",
+      "messageCenter": "مركز الرسائل",
+      "monitoringCenter": "مركز المراقبة",
+      "untitled": "قائمة بلا تسمية"
+    },
+    "dictionary": {
+      "systemUserSex": {
+        "male": "ذكر",
+        "female": "أنثى"
+      },
+      "infraJobStatus": {
+        "active": "نشط",
+        "paused": "متوقف مؤقتًا",
+        "initializing": "جارٍ التهيئة"
+      },
+      "infraConfigType": {
+        "builtIn": "مدمج في النظام",
+        "custom": "مخصص"
+      },
+      "systemNoticeType": {
+        "notice": "إشعار",
+        "announcement": "إعلان"
+      },
+      "infraOperateType": {
+        "other": "أخرى",
+        "query": "استعلام",
+        "create": "إضافة",
+        "update": "تعديل",
+        "delete": "حذف",
+        "export": "تصدير",
+        "import": "استيراد"
+      },
+      "commonStatus": {
+        "enabled": "مفعّل",
+        "disabled": "معطّل"
+      },
+      "systemMenuType": {
+        "directory": "مجموعة قوائم",
+        "menu": "قائمة",
+        "button": "زر"
+      },
+      "systemRoleType": {
+        "builtIn": "مدمج في النظام",
+        "custom": "مخصص"
+      },
+      "systemDataScope": {
+        "all": "جميع البيانات",
+        "selectedDepartments": "أقسام محددة",
+        "department": "القسم الحالي",
+        "departmentTree": "القسم الحالي والأقسام التابعة له",
+        "self": "بيانات المستخدم نفسه فقط"
+      },
+      "systemLoginResult": {
+        "success": "نجح",
+        "badCredentials": "اسم المستخدم أو كلمة المرور غير صحيحة",
+        "disabled": "المستخدم معطّل",
+        "captchaMissing": "رمز التحقق غير موجود",
+        "captchaInvalid": "رمز التحقق غير صحيح",
+        "unknown": "خطأ غير معروف"
+      },
+      "infraBooleanString": {
+        "yes": "نعم",
+        "no": "لا"
+      },
+      "infraCodegenTemplateType": {
+        "single": "جدول مفرد (إضافة وعرض وتعديل وحذف)",
+        "tree": "جدول شجري (إضافة وعرض وتعديل وحذف)",
+        "detail": "جدول فرعي",
+        "standard": "جدول رئيسي (قياسي)",
+        "erp": "جدول رئيسي (ERP)",
+        "embedded": "جدول رئيسي (مضمن)"
+      },
+      "infraJobLogStatus": {
+        "running": "قيد التشغيل",
+        "success": "نجح",
+        "failure": "فشل"
+      },
+      "infraApiErrorLogProcessStatus": {
+        "unprocessed": "غير معالج",
+        "processed": "معالج",
+        "ignored": "متجاهل"
+      },
+      "systemSmsTemplateType": {
+        "verification": "رمز تحقق",
+        "notice": "إشعار",
+        "marketing": "تسويق"
+      },
+      "systemSmsSendStatus": {
+        "initializing": "جارٍ التهيئة",
+        "sent": "تم الإرسال",
+        "failed": "فشل الإرسال",
+        "notSending": "لن تُرسل"
+      },
+      "systemSmsReceiveStatus": {
+        "waiting": "بانتظار النتيجة",
+        "received": "تم الاستلام",
+        "failed": "فشل الاستلام"
+      },
+      "systemSmsChannelCode": {
+        "debugDingTalk": "تصحيح الأخطاء ({brand})"
+      },
+      "systemLoginType": {
+        "account": "الدخول بالحساب",
+        "social": "الدخول بحساب خارجي",
+        "signOut": "تسجيل الخروج",
+        "forcedSignOut": "تسجيل خروج إجباري",
+        "sms": "الدخول برسالة نصية"
+      },
+      "infraCodegenScene": {
+        "administration": "لوحة الإدارة",
+        "userApp": "تطبيق المستخدم"
+      },
+      "infraFileStorage": {
+        "database": "قاعدة البيانات",
+        "localDisk": "القرص المحلي",
+        "ftp": "خادم FTP",
+        "sftp": "خادم SFTP",
+        "s3": "تخزين كائنات S3"
+      },
+      "systemMailSendStatus": {
+        "initializing": "جارٍ التهيئة",
+        "sent": "تم الإرسال",
+        "failed": "فشل الإرسال",
+        "notSending": "لن تُرسل"
+      },
+      "systemNotifyTemplateType": {
+        "announcement": "إشعارات وإعلانات",
+        "system": "رسالة نظام"
+      },
+      "infraCodegenFrontType": {
+        "vue2Element": "قالب Vue2 Element UI القياسي",
+        "vue3Element": "قالب Vue3 Element Plus القياسي",
+        "vben2AntSchema": "قالب Vben2.0 Ant Design Schema",
+        "vben5AntSchema": "قالب Vben5.0 Ant Design Schema",
+        "vben5AntStandard": "قالب Vben5.0 Ant Design القياسي",
+        "vben5ElementSchema": "قالب Vben5.0 Element Plus Schema",
+        "vben5ElementStandard": "قالب Vben5.0 Element Plus القياسي",
+        "adminUniapp": "تطبيق Admin Uniapp للجوال",
+        "vben5AntdvSchema": "قالب Vben5.0 Antdv Next Schema",
+        "vben5AntdvStandard": "قالب Vben5.0 Antdv Next القياسي"
+      }
+    },
+    "search": {
+      "title": "البحث في القوائم",
+      "placeholder": "ابحث باسم القائمة أو مسارها"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 <script lang="tsx">
+import { getRouteTitle } from '@/hooks/web/useRouteTitle'
 import { ElBreadcrumb, ElBreadcrumbItem } from 'element-plus'
 import { ref, watch, computed, unref, defineComponent, TransitionGroup } from 'vue'
 import { useRouter } from 'vue-router'
@@ -25,7 +26,6 @@ export default defineComponent({
   setup() {
     const { currentRoute } = useRouter()
 
-    const { t } = useI18n()
 
     const levelList = ref<AppRouteRecordRaw[]>([])
 
@@ -54,10 +54,10 @@ export default defineComponent({
             {meta?.icon && breadcrumbIcon.value ? (
               <div class="flex items-center">
                 <Icon icon={meta.icon} class="mr-[2px]" svgClass="inline-block"></Icon>
-                {t(v?.meta?.title)}
+                {getRouteTitle(v?.meta)}
               </div>
             ) : (
-              t(v?.meta?.title)
+              getRouteTitle(v?.meta)
             )}
           </ElBreadcrumbItem>
         )

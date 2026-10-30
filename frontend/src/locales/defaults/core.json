@@ -1,0 +1,1035 @@
+{
+  "schemaVersion": 1,
+  "seed": "sql/mysql/ruoyi-vue-pro.sql",
+  "menus": [
+    {
+      "id": 1,
+      "name": "系统管理",
+      "path": "/system",
+      "component": null,
+      "key": "core.navigation.systemManagement"
+    },
+    {
+      "id": 2,
+      "name": "基础设施",
+      "path": "/infra",
+      "component": null,
+      "key": "core.navigation.infrastructure"
+    },
+    {
+      "id": 4,
+      "name": "用户管理",
+      "path": "user",
+      "component": "system/user/index",
+      "key": "core.navigation.users"
+    },
+    {
+      "id": 5,
+      "name": "角色管理",
+      "path": "role",
+      "component": "system/role/index",
+      "key": "core.navigation.roles"
+    },
+    {
+      "id": 6,
+      "name": "菜单管理",
+      "path": "menu",
+      "component": "system/menu/index",
+      "key": "core.navigation.menus"
+    },
+    {
+      "id": 7,
+      "name": "部门管理",
+      "path": "dept",
+      "component": "system/dept/index",
+      "key": "core.navigation.departments"
+    },
+    {
+      "id": 8,
+      "name": "岗位管理",
+      "path": "post",
+      "component": "system/post/index",
+      "key": "core.navigation.positions"
+    },
+    {
+      "id": 9,
+      "name": "字典管理",
+      "path": "dict",
+      "component": "system/dict/index",
+      "key": "core.navigation.dictionaries"
+    },
+    {
+      "id": 10,
+      "name": "配置管理",
+      "path": "config",
+      "component": "infra/config/index",
+      "key": "core.navigation.configuration"
+    },
+    {
+      "id": 11,
+      "name": "通知公告",
+      "path": "notice",
+      "component": "system/notice/index",
+      "key": "core.navigation.notices"
+    },
+    {
+      "id": 12,
+      "name": "审计日志",
+      "path": "log",
+      "component": "",
+      "key": "core.navigation.auditLogs"
+    },
+    {
+      "id": 13,
+      "name": "令牌管理",
+      "path": "token",
+      "component": "system/oauth2/token/index",
+      "key": "core.navigation.tokens"
+    },
+    {
+      "id": 14,
+      "name": "定时任务",
+      "path": "job",
+      "component": "infra/job/index",
+      "key": "core.navigation.scheduledJobs"
+    },
+    {
+      "id": 15,
+      "name": "MySQL 监控",
+      "path": "druid",
+      "component": "infra/druid/index",
+      "key": "core.navigation.mysqlMonitoring"
+    },
+    {
+      "id": 16,
+      "name": "Java 监控",
+      "path": "admin-server",
+      "component": "infra/server/index",
+      "key": "core.navigation.javaMonitoring"
+    },
+    {
+      "id": 17,
+      "name": "Redis 监控",
+      "path": "redis",
+      "component": "infra/redis/index",
+      "key": "core.navigation.redisMonitoring"
+    },
+    {
+      "id": 18,
+      "name": "表单构建",
+      "path": "build",
+      "component": "infra/build/index",
+      "key": "core.navigation.formBuilder"
+    },
+    {
+      "id": 19,
+      "name": "代码生成",
+      "path": "codegen",
+      "component": "infra/codegen/index",
+      "key": "core.navigation.codeGeneration"
+    },
+    {
+      "id": 20,
+      "name": "API 接口",
+      "path": "swagger",
+      "component": "infra/swagger/index",
+      "key": "core.navigation.apiDocumentation"
+    },
+    {
+      "id": 21,
+      "name": "操作日志",
+      "path": "operate-log",
+      "component": "system/operatelog/index",
+      "key": "core.navigation.operationLogs"
+    },
+    {
+      "id": 22,
+      "name": "登录日志",
+      "path": "login-log",
+      "component": "system/loginlog/index",
+      "key": "core.navigation.loginLogs"
+    },
+    {
+      "id": 83,
+      "name": "代码生成案例",
+      "path": "demo",
+      "component": "infra/testDemo/index",
+      "key": "core.navigation.codeGenerationExample"
+    },
+    {
+      "id": 85,
+      "name": "链路追踪",
+      "path": "skywalking",
+      "component": "infra/skywalking/index",
+      "key": "core.navigation.tracing"
+    },
+    {
+      "id": 86,
+      "name": "访问日志",
+      "path": "api-access-log",
+      "component": "infra/apiAccessLog/index",
+      "key": "core.navigation.accessLogs"
+    },
+    {
+      "id": 88,
+      "name": "API 日志",
+      "path": "log",
+      "component": null,
+      "key": "core.navigation.apiLogs"
+    },
+    {
+      "id": 89,
+      "name": "错误日志",
+      "path": "api-error-log",
+      "component": "infra/apiErrorLog/index",
+      "key": "core.navigation.errorLogs"
+    },
+    {
+      "id": 95,
+      "name": "文件列表",
+      "path": "file",
+      "component": "infra/file/index",
+      "key": "core.navigation.files"
+    },
+    {
+      "id": 98,
+      "name": "短信管理",
+      "path": "sms",
+      "component": null,
+      "key": "core.navigation.smsManagement"
+    },
+    {
+      "id": 99,
+      "name": "短信渠道",
+      "path": "sms-channel",
+      "component": "system/sms/channel/index",
+      "key": "core.navigation.smsChannels"
+    },
+    {
+      "id": 104,
+      "name": "短信模板",
+      "path": "sms-template",
+      "component": "system/sms/template/index",
+      "key": "core.navigation.smsTemplates"
+    },
+    {
+      "id": 111,
+      "name": "短信日志",
+      "path": "sms-log",
+      "component": "system/sms/log/index",
+      "key": "core.navigation.smsLogs"
+    },
+    {
+      "id": 129,
+      "name": "租户列表",
+      "path": "list",
+      "component": "system/tenant/index",
+      "key": "core.navigation.tenants"
+    },
+    {
+      "id": 181,
+      "name": "租户管理",
+      "path": "tenant",
+      "component": null,
+      "key": "core.navigation.tenantManagement"
+    },
+    {
+      "id": 182,
+      "name": "租户套餐",
+      "path": "package",
+      "component": "system/tenantPackage/index",
+      "key": "core.navigation.tenantPackages"
+    },
+    {
+      "id": 187,
+      "name": "文件配置",
+      "path": "file-config",
+      "component": "infra/fileConfig/index",
+      "key": "core.navigation.fileConfiguration"
+    },
+    {
+      "id": 193,
+      "name": "文件管理",
+      "path": "file",
+      "component": null,
+      "key": "core.navigation.fileManagement"
+    },
+    {
+      "id": 195,
+      "name": "数据源配置",
+      "path": "data-source-config",
+      "component": "infra/dataSourceConfig/index",
+      "key": "core.navigation.dataSources"
+    },
+    {
+      "id": 201,
+      "name": "OAuth 2.0",
+      "path": "oauth2",
+      "component": null,
+      "key": "core.navigation.oauth"
+    },
+    {
+      "id": 202,
+      "name": "应用管理",
+      "path": "oauth2/application",
+      "component": "system/oauth2/client/index",
+      "key": "core.navigation.oauthApplications"
+    },
+    {
+      "id": 271,
+      "name": "地区管理",
+      "path": "area",
+      "component": "system/area/index",
+      "key": "core.navigation.areas"
+    },
+    {
+      "id": 318,
+      "name": "邮箱管理",
+      "path": "mail",
+      "component": null,
+      "key": "core.navigation.mailManagement"
+    },
+    {
+      "id": 319,
+      "name": "邮箱账号",
+      "path": "mail-account",
+      "component": "system/mail/account/index",
+      "key": "core.navigation.mailAccounts"
+    },
+    {
+      "id": 324,
+      "name": "邮件模版",
+      "path": "mail-template",
+      "component": "system/mail/template/index",
+      "key": "core.navigation.mailTemplates"
+    },
+    {
+      "id": 329,
+      "name": "邮件记录",
+      "path": "mail-log",
+      "component": "system/mail/log/index",
+      "key": "core.navigation.mailLogs"
+    },
+    {
+      "id": 332,
+      "name": "站内信管理",
+      "path": "notify",
+      "component": null,
+      "key": "core.navigation.notifications"
+    },
+    {
+      "id": 333,
+      "name": "模板管理",
+      "path": "notify-template",
+      "component": "system/notify/template/index",
+      "key": "core.navigation.notificationTemplates"
+    },
+    {
+      "id": 339,
+      "name": "消息记录",
+      "path": "notify-message",
+      "component": "system/notify/message/index",
+      "key": "core.navigation.notificationMessages"
+    },
+    {
+      "id": 529,
+      "name": "三方登录",
+      "path": "social",
+      "component": "",
+      "key": "core.navigation.socialSignIn"
+    },
+    {
+      "id": 530,
+      "name": "三方应用",
+      "path": "client",
+      "component": "system/social/client/index.vue",
+      "key": "core.navigation.socialClients"
+    },
+    {
+      "id": 535,
+      "name": "三方用户",
+      "path": "user",
+      "component": "system/social/user/index.vue",
+      "key": "core.navigation.socialUsers"
+    },
+    {
+      "id": 536,
+      "name": "主子表（内嵌）",
+      "path": "demo03-inner",
+      "component": "infra/demo/demo03/inner/index",
+      "key": "core.navigation.embeddedTables"
+    },
+    {
+      "id": 537,
+      "name": "单表（增删改查）",
+      "path": "demo01-contact",
+      "component": "infra/demo/demo01/index",
+      "key": "core.navigation.singleTable"
+    },
+    {
+      "id": 543,
+      "name": "树表（增删改查）",
+      "path": "demo02-category",
+      "component": "infra/demo/demo02/index",
+      "key": "core.navigation.treeTable"
+    },
+    {
+      "id": 549,
+      "name": "主子表（标准）",
+      "path": "demo03-normal",
+      "component": "infra/demo/demo03/normal/index",
+      "key": "core.navigation.standardTables"
+    },
+    {
+      "id": 555,
+      "name": "主子表（ERP）",
+      "path": "demo03-erp",
+      "component": "infra/demo/demo03/erp/index",
+      "key": "core.navigation.erpTables"
+    },
+    {
+      "id": 565,
+      "name": "WebSocket",
+      "path": "websocket",
+      "component": "infra/webSocket/index",
+      "key": "core.navigation.websocket"
+    },
+    {
+      "id": 772,
+      "name": "消息中心",
+      "path": "messages",
+      "component": "",
+      "key": "core.navigation.messageCenter"
+    },
+    {
+      "id": 773,
+      "name": "监控中心",
+      "path": "monitors",
+      "component": "",
+      "key": "core.navigation.monitoringCenter"
+    }
+  ],
+  "dictionaries": [
+    {
+      "dictType": "system_user_sex",
+      "value": "1",
+      "label": "男",
+      "key": "core.dictionary.systemUserSex.male"
+    },
+    {
+      "dictType": "system_user_sex",
+      "value": "2",
+      "label": "女",
+      "key": "core.dictionary.systemUserSex.female"
+    },
+    {
+      "dictType": "infra_job_status",
+      "value": "1",
+      "label": "正常",
+      "key": "core.dictionary.infraJobStatus.active"
+    },
+    {
+      "dictType": "infra_job_status",
+      "value": "2",
+      "label": "暂停",
+      "key": "core.dictionary.infraJobStatus.paused"
+    },
+    {
+      "dictType": "infra_config_type",
+      "value": "1",
+      "label": "系统内置",
+      "key": "core.dictionary.infraConfigType.builtIn"
+    },
+    {
+      "dictType": "infra_config_type",
+      "value": "2",
+      "label": "自定义",
+      "key": "core.dictionary.infraConfigType.custom"
+    },
+    {
+      "dictType": "system_notice_type",
+      "value": "1",
+      "label": "通知",
+      "key": "core.dictionary.systemNoticeType.notice"
+    },
+    {
+      "dictType": "system_notice_type",
+      "value": "2",
+      "label": "公告",
+      "key": "core.dictionary.systemNoticeType.announcement"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "0",
+      "label": "其它",
+      "key": "core.dictionary.infraOperateType.other"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "1",
+      "label": "查询",
+      "key": "core.dictionary.infraOperateType.query"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "2",
+      "label": "新增",
+      "key": "core.dictionary.infraOperateType.create"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "3",
+      "label": "修改",
+      "key": "core.dictionary.infraOperateType.update"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "4",
+      "label": "删除",
+      "key": "core.dictionary.infraOperateType.delete"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "5",
+      "label": "导出",
+      "key": "core.dictionary.infraOperateType.export"
+    },
+    {
+      "dictType": "infra_operate_type",
+      "value": "6",
+      "label": "导入",
+      "key": "core.dictionary.infraOperateType.import"
+    },
+    {
+      "dictType": "common_status",
+      "value": "0",
+      "label": "开启",
+      "key": "core.dictionary.commonStatus.enabled"
+    },
+    {
+      "dictType": "common_status",
+      "value": "1",
+      "label": "关闭",
+      "key": "core.dictionary.commonStatus.disabled"
+    },
+    {
+      "dictType": "system_menu_type",
+      "value": "1",
+      "label": "目录",
+      "key": "core.dictionary.systemMenuType.directory"
+    },
+    {
+      "dictType": "system_menu_type",
+      "value": "2",
+      "label": "菜单",
+      "key": "core.dictionary.systemMenuType.menu"
+    },
+    {
+      "dictType": "system_menu_type",
+      "value": "3",
+      "label": "按钮",
+      "key": "core.dictionary.systemMenuType.button"
+    },
+    {
+      "dictType": "system_role_type",
+      "value": "1",
+      "label": "内置",
+      "key": "core.dictionary.systemRoleType.builtIn"
+    },
+    {
+      "dictType": "system_role_type",
+      "value": "2",
+      "label": "自定义",
+      "key": "core.dictionary.systemRoleType.custom"
+    },
+    {
+      "dictType": "system_data_scope",
+      "value": "1",
+      "label": "全部数据权限",
+      "key": "core.dictionary.systemDataScope.all"
+    },
+    {
+      "dictType": "system_data_scope",
+      "value": "2",
+      "label": "指定部门数据权限",
+      "key": "core.dictionary.systemDataScope.selectedDepartments"
+    },
+    {
+      "dictType": "system_data_scope",
+      "value": "3",
+      "label": "本部门数据权限",
+      "key": "core.dictionary.systemDataScope.department"
+    },
+    {
+      "dictType": "system_data_scope",
+      "value": "4",
+      "label": "本部门及以下数据权限",
+      "key": "core.dictionary.systemDataScope.departmentTree"
+    },
+    {
+      "dictType": "system_data_scope",
+      "value": "5",
+      "label": "仅本人数据权限",
+      "key": "core.dictionary.systemDataScope.self"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "0",
+      "label": "成功",
+      "key": "core.dictionary.systemLoginResult.success"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "10",
+      "label": "账号或密码不正确",
+      "key": "core.dictionary.systemLoginResult.badCredentials"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "20",
+      "label": "用户被禁用",
+      "key": "core.dictionary.systemLoginResult.disabled"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "30",
+      "label": "验证码不存在",
+      "key": "core.dictionary.systemLoginResult.captchaMissing"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "31",
+      "label": "验证码不正确",
+      "key": "core.dictionary.systemLoginResult.captchaInvalid"
+    },
+    {
+      "dictType": "system_login_result",
+      "value": "100",
+      "label": "未知异常",
+      "key": "core.dictionary.systemLoginResult.unknown"
+    },
+    {
+      "dictType": "infra_boolean_string",
+      "value": "true",
+      "label": "是",
+      "key": "core.dictionary.infraBooleanString.yes"
+    },
+    {
+      "dictType": "infra_boolean_string",
+      "value": "false",
+      "label": "否",
+      "key": "core.dictionary.infraBooleanString.no"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "1",
+      "label": "单表（增删改查）",
+      "key": "core.dictionary.infraCodegenTemplateType.single"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "2",
+      "label": "树表（增删改查）",
+      "key": "core.dictionary.infraCodegenTemplateType.tree"
+    },
+    {
+      "dictType": "infra_job_status",
+      "value": "0",
+      "label": "初始化中",
+      "key": "core.dictionary.infraJobStatus.initializing"
+    },
+    {
+      "dictType": "infra_job_log_status",
+      "value": "0",
+      "label": "运行中",
+      "key": "core.dictionary.infraJobLogStatus.running"
+    },
+    {
+      "dictType": "infra_job_log_status",
+      "value": "1",
+      "label": "成功",
+      "key": "core.dictionary.infraJobLogStatus.success"
+    },
+    {
+      "dictType": "infra_job_log_status",
+      "value": "2",
+      "label": "失败",
+      "key": "core.dictionary.infraJobLogStatus.failure"
+    },
+    {
+      "dictType": "infra_api_error_log_process_status",
+      "value": "0",
+      "label": "未处理",
+      "key": "core.dictionary.infraApiErrorLogProcessStatus.unprocessed"
+    },
+    {
+      "dictType": "infra_api_error_log_process_status",
+      "value": "1",
+      "label": "已处理",
+      "key": "core.dictionary.infraApiErrorLogProcessStatus.processed"
+    },
+    {
+      "dictType": "infra_api_error_log_process_status",
+      "value": "2",
+      "label": "已忽略",
+      "key": "core.dictionary.infraApiErrorLogProcessStatus.ignored"
+    },
+    {
+      "dictType": "system_sms_channel_code",
+      "value": "ALIYUN",
+      "label": "阿里云",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_sms_template_type",
+      "value": "1",
+      "label": "验证码",
+      "key": "core.dictionary.systemSmsTemplateType.verification"
+    },
+    {
+      "dictType": "system_sms_template_type",
+      "value": "2",
+      "label": "通知",
+      "key": "core.dictionary.systemSmsTemplateType.notice"
+    },
+    {
+      "dictType": "system_sms_template_type",
+      "value": "3",
+      "label": "营销",
+      "key": "core.dictionary.systemSmsTemplateType.marketing"
+    },
+    {
+      "dictType": "system_sms_send_status",
+      "value": "0",
+      "label": "初始化",
+      "key": "core.dictionary.systemSmsSendStatus.initializing"
+    },
+    {
+      "dictType": "system_sms_send_status",
+      "value": "10",
+      "label": "发送成功",
+      "key": "core.dictionary.systemSmsSendStatus.sent"
+    },
+    {
+      "dictType": "system_sms_send_status",
+      "value": "20",
+      "label": "发送失败",
+      "key": "core.dictionary.systemSmsSendStatus.failed"
+    },
+    {
+      "dictType": "system_sms_send_status",
+      "value": "30",
+      "label": "不发送",
+      "key": "core.dictionary.systemSmsSendStatus.notSending"
+    },
+    {
+      "dictType": "system_sms_receive_status",
+      "value": "0",
+      "label": "等待结果",
+      "key": "core.dictionary.systemSmsReceiveStatus.waiting"
+    },
+    {
+      "dictType": "system_sms_receive_status",
+      "value": "10",
+      "label": "接收成功",
+      "key": "core.dictionary.systemSmsReceiveStatus.received"
+    },
+    {
+      "dictType": "system_sms_receive_status",
+      "value": "20",
+      "label": "接收失败",
+      "key": "core.dictionary.systemSmsReceiveStatus.failed"
+    },
+    {
+      "dictType": "system_sms_channel_code",
+      "value": "DEBUG_DING_TALK",
+      "label": "调试(钉钉)",
+      "key": "core.dictionary.systemSmsChannelCode.debugDingTalk",
+      "parameters": {
+        "brand": "钉钉"
+      }
+    },
+    {
+      "dictType": "system_login_type",
+      "value": "100",
+      "label": "账号登录",
+      "key": "core.dictionary.systemLoginType.account"
+    },
+    {
+      "dictType": "system_login_type",
+      "value": "101",
+      "label": "社交登录",
+      "key": "core.dictionary.systemLoginType.social"
+    },
+    {
+      "dictType": "system_login_type",
+      "value": "200",
+      "label": "主动登出",
+      "key": "core.dictionary.systemLoginType.signOut"
+    },
+    {
+      "dictType": "system_login_type",
+      "value": "202",
+      "label": "强制登出",
+      "key": "core.dictionary.systemLoginType.forcedSignOut"
+    },
+    {
+      "dictType": "infra_codegen_scene",
+      "value": "1",
+      "label": "管理后台",
+      "key": "core.dictionary.infraCodegenScene.administration"
+    },
+    {
+      "dictType": "infra_codegen_scene",
+      "value": "2",
+      "label": "用户 APP",
+      "key": "core.dictionary.infraCodegenScene.userApp"
+    },
+    {
+      "dictType": "infra_file_storage",
+      "value": "1",
+      "label": "数据库",
+      "key": "core.dictionary.infraFileStorage.database"
+    },
+    {
+      "dictType": "infra_file_storage",
+      "value": "10",
+      "label": "本地磁盘",
+      "key": "core.dictionary.infraFileStorage.localDisk"
+    },
+    {
+      "dictType": "infra_file_storage",
+      "value": "11",
+      "label": "FTP 服务器",
+      "key": "core.dictionary.infraFileStorage.ftp"
+    },
+    {
+      "dictType": "infra_file_storage",
+      "value": "12",
+      "label": "SFTP 服务器",
+      "key": "core.dictionary.infraFileStorage.sftp"
+    },
+    {
+      "dictType": "infra_file_storage",
+      "value": "20",
+      "label": "S3 对象存储",
+      "key": "core.dictionary.infraFileStorage.s3"
+    },
+    {
+      "dictType": "system_login_type",
+      "value": "103",
+      "label": "短信登录",
+      "key": "core.dictionary.systemLoginType.sms"
+    },
+    {
+      "dictType": "system_oauth2_grant_type",
+      "value": "password",
+      "label": "password",
+      "literalReason": "programmatic grant identifier"
+    },
+    {
+      "dictType": "system_oauth2_grant_type",
+      "value": "authorization_code",
+      "label": "authorization_code",
+      "literalReason": "programmatic grant identifier"
+    },
+    {
+      "dictType": "system_oauth2_grant_type",
+      "value": "implicit",
+      "label": "implicit",
+      "literalReason": "programmatic grant identifier"
+    },
+    {
+      "dictType": "system_oauth2_grant_type",
+      "value": "client_credentials",
+      "label": "client_credentials",
+      "literalReason": "programmatic grant identifier"
+    },
+    {
+      "dictType": "system_oauth2_grant_type",
+      "value": "refresh_token",
+      "label": "refresh_token",
+      "literalReason": "programmatic grant identifier"
+    },
+    {
+      "dictType": "system_mail_send_status",
+      "value": "0",
+      "label": "初始化",
+      "key": "core.dictionary.systemMailSendStatus.initializing"
+    },
+    {
+      "dictType": "system_mail_send_status",
+      "value": "10",
+      "label": "发送成功",
+      "key": "core.dictionary.systemMailSendStatus.sent"
+    },
+    {
+      "dictType": "system_mail_send_status",
+      "value": "20",
+      "label": "发送失败",
+      "key": "core.dictionary.systemMailSendStatus.failed"
+    },
+    {
+      "dictType": "system_mail_send_status",
+      "value": "30",
+      "label": "不发送",
+      "key": "core.dictionary.systemMailSendStatus.notSending"
+    },
+    {
+      "dictType": "system_notify_template_type",
+      "value": "1",
+      "label": "通知公告",
+      "key": "core.dictionary.systemNotifyTemplateType.announcement"
+    },
+    {
+      "dictType": "system_notify_template_type",
+      "value": "2",
+      "label": "系统消息",
+      "key": "core.dictionary.systemNotifyTemplateType.system"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "10",
+      "label": "Vue2 Element UI 标准模版",
+      "key": "core.dictionary.infraCodegenFrontType.vue2Element"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "20",
+      "label": "Vue3 Element Plus 标准模版",
+      "key": "core.dictionary.infraCodegenFrontType.vue3Element"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "30",
+      "label": "Vben2.0 Ant Design Schema 模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben2AntSchema"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "10",
+      "label": "Gitee",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "20",
+      "label": "钉钉",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "30",
+      "label": "企业微信",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "31",
+      "label": "微信公众平台",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "32",
+      "label": "微信开放平台",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "34",
+      "label": "微信小程序",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "15",
+      "label": "子表",
+      "key": "core.dictionary.infraCodegenTemplateType.detail"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "10",
+      "label": "主表（标准模式）",
+      "key": "core.dictionary.infraCodegenTemplateType.standard"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "11",
+      "label": "主表（ERP 模式）",
+      "key": "core.dictionary.infraCodegenTemplateType.erp"
+    },
+    {
+      "dictType": "infra_codegen_template_type",
+      "value": "12",
+      "label": "主表（内嵌模式）",
+      "key": "core.dictionary.infraCodegenTemplateType.embedded"
+    },
+    {
+      "dictType": "system_sms_channel_code",
+      "value": "TENCENT",
+      "label": "腾讯云",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_sms_channel_code",
+      "value": "HUAWEI",
+      "label": "华为云",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "system_sms_channel_code",
+      "value": "QINIU",
+      "label": "七牛云",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "40",
+      "label": "Vben5.0 Ant Design Schema 模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5AntSchema"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "41",
+      "label": "Vben5.0 Ant Design 标准模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5AntStandard"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "50",
+      "label": "Vben5.0 Element Plus Schema 模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5ElementSchema"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "51",
+      "label": "Vben5.0 Element Plus 标准模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5ElementStandard"
+    },
+    {
+      "dictType": "system_social_type",
+      "value": "40",
+      "label": "支付宝小程序",
+      "literalReason": "product or brand name"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "60",
+      "label": "Admin Uniapp 移动端",
+      "key": "core.dictionary.infraCodegenFrontType.adminUniapp"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "42",
+      "label": "Vben5.0 Antdv Next Schema 模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5AntdvSchema"
+    },
+    {
+      "dictType": "infra_codegen_front_type",
+      "value": "43",
+      "label": "Vben5.0 Antdv Next 标准模版",
+      "key": "core.dictionary.infraCodegenFrontType.vben5AntdvStandard"
+    }
+  ]
+}
