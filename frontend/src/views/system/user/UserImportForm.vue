@@ -43,7 +43,7 @@
             :aria-label="t('system.user.import.removeFile', { name: file.name })"
             @click="uploadRef?.handleRemove(file)"
           >
-            {{ t('common.del') }}
+            {{ t('action.del') }}
           </el-button>
         </div>
       </template>
