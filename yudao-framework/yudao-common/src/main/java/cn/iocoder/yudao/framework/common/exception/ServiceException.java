@@ -1,8 +1,10 @@
 package cn.iocoder.yudao.framework.common.exception;
 
 import cn.iocoder.yudao.framework.common.exception.enums.ServiceErrorCodeRange;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 /**
  * 业务逻辑异常 Exception
@@ -22,6 +24,12 @@ public final class ServiceException extends RuntimeException {
      */
     private String message;
 
+    private String messageKey;
+
+    @JsonIgnore
+    @ToString.Exclude
+    private Object[] messageArguments;
+
     /**
      * 空构造方法，避免反序列化问题
      */
@@ -31,6 +39,7 @@ public final class ServiceException extends RuntimeException {
     public ServiceException(ErrorCode errorCode) {
         this.code = errorCode.getCode();
         this.message = errorCode.getMsg();
+        this.messageKey = errorCode.getMessageKey();
     }
 
     public ServiceException(Integer code, String message) {
@@ -54,6 +63,18 @@ public final class ServiceException extends RuntimeException {
 
     public ServiceException setMessage(String message) {
         this.message = message;
+        this.messageKey = null;
+        this.messageArguments = null;
+        return this;
+    }
+
+    @JsonIgnore
+    public Object[] getMessageArguments() {
+        return messageArguments == null ? null : messageArguments.clone();
+    }
+
+    public ServiceException setMessageArguments(Object... arguments) {
+        this.messageArguments = arguments == null ? null : arguments.clone();
         return this;
     }
 

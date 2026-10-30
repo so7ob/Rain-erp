@@ -2,6 +2,7 @@ import axios, { AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestCo
 
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
 import qs from 'qs'
+import { h } from 'vue'
 import { config } from '@/config/axios/config'
 import {
   getAccessToken,
@@ -11,7 +12,8 @@ import {
   removeToken,
   setToken
 } from '@/utils/auth'
-import errorCode from './errorCode'
+import { getErrorMessage } from './errorCode'
+import { createSingleRefresh, isSilentRefreshError, isSessionAuthenticationError } from './session'
 
 import { resetRouter } from '@/router'
 import { deleteUserCache } from '@/hooks/web/useCache'
@@ -21,18 +23,40 @@ import { useLocaleStoreWithOut } from '@/store/modules/locale'
 const tenantEnable = import.meta.env.VITE_APP_TENANT_ENABLE
 const { result_code, base_url, request_timeout } = config
 
-// 需要忽略的提示。忽略后，自动 Promise.reject('error')
-const ignoreMsgs = [
-  '无效的刷新令牌', // 刷新令牌被删除时，不用提示
-  '刷新令牌已过期' // 使用刷新令牌，刷新获取新的访问令牌时，结果因为过期失败，此时需要忽略。否则，会导致继续 401，无法跳转到登出界面
-]
 // 是否显示重新登录
 export const isRelogin = { show: false }
-// Axios 无感知刷新令牌，参考 https://www.dashingdog.cn/article/11 与 https://segmentfault.com/a/1190000020210980 实现
-// 请求队列
-let requestList: any[] = []
-// 是否正在刷新中
-let isRefreshToken = false
+let activeSession:
+  | {
+      credential: ReturnType<typeof getRefreshToken> | ReturnType<typeof getAccessToken>
+      tenantId: ReturnType<typeof getTenantId>
+      id: symbol
+    }
+  | undefined
+const sessionIdentity = () => {
+  const credential = getRefreshToken() || getAccessToken()
+  const tenantId = getTenantId()
+  if (
+    !activeSession ||
+    activeSession.credential !== credential ||
+    activeSession.tenantId !== tenantId
+  ) {
+    activeSession = { credential, tenantId, id: Symbol('session') }
+  }
+  return { id: activeSession.id, tenantId }
+}
+type SessionIdentity = ReturnType<typeof sessionIdentity>
+type RefreshAwareConfig = InternalAxiosRequestConfig & {
+  _rainRefreshAttempted?: boolean
+  _rainSession?: SessionIdentity
+}
+const sameSession = (session: SessionIdentity) => {
+  return session.id === sessionIdentity().id
+}
+class SessionChangedError extends Error {
+  constructor() {
+    super(useI18n().t('api.session.changed'))
+  }
+}
 // 请求白名单，无须 token 的接口
 const whiteList: string[] = ['/login', '/refresh-token']
 
@@ -47,6 +71,24 @@ const service: AxiosInstance = axios.create({
   }
 })
 
+const refreshSession = createSingleRefresh(
+  async (session: SessionIdentity) => {
+    if (!sameSession(session)) throw new SessionChangedError()
+    const { data } = await refreshToken(session)
+    if (!sameSession(session)) throw new SessionChangedError()
+    if (
+      (data.code !== 0 && data.code !== 200) ||
+      !data.data?.accessToken ||
+      !data.data?.refreshToken
+    ) {
+      return Promise.reject(data)
+    }
+    setToken(data.data)
+    return sessionIdentity()
+  },
+  (session) => session.id
+)
+
 // request拦截器
 service.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
@@ -60,6 +102,10 @@ service.interceptors.request.use(
       isToken = false
     }
     if (getAccessToken() && isToken) {
+      const guarded = config as RefreshAwareConfig
+      if (guarded._rainSession && !sameSession(guarded._rainSession))
+        throw new SessionChangedError()
+      guarded._rainSession ??= sessionIdentity()
       config.headers.Authorization = 'Bearer ' + getAccessToken() // 让每个请求携带自定义 token
     }
     // 设置租户
@@ -105,7 +151,6 @@ service.interceptors.request.use(
   },
   (error: AxiosError) => {
     // Do something with request error
-    console.log(error) // for debug
     return Promise.reject(error)
   }
 )
@@ -114,7 +159,9 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   async (response: AxiosResponse<any>) => {
     let { data } = response
-    const config = response.config
+    const config = response.config as RefreshAwareConfig
+    if (config._rainSession && !sameSession(config._rainSession))
+      return Promise.reject(new SessionChangedError())
     if (!data) {
       // 返回“[HTTP]请求没有返回值”;
       throw new Error()
@@ -131,7 +178,9 @@ service.interceptors.response.use(
         data = ApiEncrypt.decryptResponse(data)
       } catch (error) {
         console.error('响应数据解密失败:', error)
-        throw new Error('响应数据解密失败: ' + (error as Error).message)
+        throw new Error(
+          useI18n().t('api.response.decryptFailed', { reason: (error as Error).message })
+        )
       }
     }
 
@@ -150,52 +199,33 @@ service.interceptors.response.use(
     }
     const code = data.code ?? result_code
     // 获取错误信息
-    const msg = data.msg || errorCode[code] || errorCode['default']
-    if (ignoreMsgs.indexOf(msg) !== -1) {
+    const msg = data.msg || getErrorMessage(code)
+    if (code !== 0 && code !== 200 && isSilentRefreshError(data.messageKey)) {
       // 如果是忽略的错误码，直接返回 msg 异常
       return Promise.reject(msg)
-    } else if (code === 401) {
-      // 如果未认证，并且未进行刷新令牌，说明可能是访问令牌过期了
-      if (!isRefreshToken) {
-        isRefreshToken = true
-        // 1. 如果获取不到刷新令牌，则只能执行登出操作
-        if (!getRefreshToken()) {
-          return handleAuthorized()
+    } else if (isSessionAuthenticationError(code, data.messageKey)) {
+      if (config._rainRefreshAttempted || isRelogin.show || !getRefreshToken()) {
+        return handleAuthorized()
+      }
+      config._rainRefreshAttempted = true
+      const session = config._rainSession || sessionIdentity()
+      try {
+        if (config.headers.Authorization !== 'Bearer ' + getAccessToken()) {
+          // Another response already renewed this same session while this 401 was in flight.
+          config._rainSession = sessionIdentity()
+        } else {
+          config._rainSession = await refreshSession(session)
         }
-        // 2. 进行刷新访问令牌
-        try {
-          const refreshTokenRes = await refreshToken()
-          // 2.1 刷新成功，则回放队列的请求 + 当前请求
-          setToken((await refreshTokenRes).data.data)
-          config.headers!.Authorization = 'Bearer ' + getAccessToken()
-          requestList.forEach((cb: any) => {
-            cb()
-          })
-          requestList = []
-          if ((config!.headers || {}).isEncrypt) {
-            ;(config!.headers || {}).isEncrypted = true
-          }
-          return service(config)
-        } catch (e) {
-          // 为什么需要 catch 异常呢？刷新失败时，请求因为 Promise.reject 触发异常。
-          // 2.2 刷新失败，只回放队列的请求
-          requestList.forEach((cb: any) => {
-            cb()
-          })
-          // 提示是否要登出。即不回放当前请求！不然会形成递归
-          return handleAuthorized()
-        } finally {
-          requestList = []
-          isRefreshToken = false
+        if (!sameSession(config._rainSession)) throw new SessionChangedError()
+        config.headers.Authorization = 'Bearer ' + getAccessToken()
+        if (config.headers.isEncrypt) {
+          config.headers.isEncrypted = true
         }
-      } else {
-        // 添加到队列，等待刷新获取到新的令牌
-        return new Promise((resolve) => {
-          requestList.push(() => {
-            config.headers!.Authorization = 'Bearer ' + getAccessToken() // 让每个请求携带自定义token 请根据实际情况自行修改
-            resolve(service(config))
-          })
-        })
+        return service(config)
+      } catch (error) {
+        if (error instanceof SessionChangedError || !sameSession(config._rainSession || session))
+          return Promise.reject(new SessionChangedError())
+        return handleAuthorized()
       }
     } else if (code === 500) {
       ElMessage.error(t('sys.api.errMsg500'))
@@ -203,55 +233,50 @@ service.interceptors.response.use(
     } else if (code === 901) {
       ElMessage.error({
         offset: 300,
-        dangerouslyUseHTMLString: true,
-        message:
-          '<div>' +
-          t('sys.api.errMsg901') +
-          '</div>' +
-          '<div> &nbsp; </div>' +
-          '<div>参考 https://doc.iocoder.cn/ 教程</div>' +
-          '<div> &nbsp; </div>' +
-          '<div>5 分钟搭建本地环境</div>'
+        message: h('div', [
+          h('div', t('sys.api.errMsg901')),
+          h('p', [
+            h(
+              'a',
+              { href: 'https://doc.iocoder.cn/', target: '_blank', rel: 'noopener noreferrer' },
+              t('api.demo.documentation')
+            )
+          ]),
+          h('div', t('api.demo.setupHint'))
+        ])
       })
       return Promise.reject(new Error(msg))
     } else if (code !== 0 && code !== 200) {
-      if (msg === '无效的刷新令牌') {
-        // hard coding：忽略这个提示，直接登出
-        console.log(msg)
-        return handleAuthorized()
-      } else {
-        ElNotification.error({ title: msg })
-      }
+      ElNotification.error({ title: msg })
       return Promise.reject('error')
     } else {
       return data
     }
   },
   (error: AxiosError) => {
-    console.log('err' + error) // for debug
     let { message } = error
     const { t } = useI18n()
-    if (message === 'Network Error') {
+    if (error.code === 'ERR_NETWORK') {
       message = t('sys.api.errorMessage')
-    } else if (message.includes('timeout')) {
+    } else if (error.code === 'ECONNABORTED' || error.code === 'ETIMEDOUT') {
       message = t('sys.api.apiTimeoutMessage')
-    } else if (message.includes('Request failed with status code')) {
-      message = t('sys.api.apiRequestFailed') + message.substr(message.length - 3)
+    } else if (error.response?.status) {
+      message = t('sys.api.apiRequestFailed') + error.response.status
     }
     ElMessage.error(message)
     return Promise.reject(error)
   }
 )
 
-const refreshToken = async () => {
-  axios.defaults.headers.common['tenant-id'] = getTenantId()
-  return await axios.post(
-    base_url + '/system/auth/refresh-token?refreshToken=' + getRefreshToken(),
-    undefined,
-    {
-      headers: { 'Accept-Language': useLocaleStoreWithOut().getCurrentLocale.lang }
+const refreshToken = async (session: SessionIdentity) => {
+  return await axios.post(base_url + '/system/auth/refresh-token', undefined, {
+    timeout: request_timeout,
+    params: { refreshToken: getRefreshToken() },
+    headers: {
+      'Accept-Language': useLocaleStoreWithOut().getCurrentLocale.lang,
+      'tenant-id': session.tenantId
     }
-  )
+  })
 }
 const handleAuthorized = () => {
   const { t } = useI18n()

@@ -5,13 +5,13 @@
   "scannerLimits": "Vue visible text/attributes/expressions and contextual JS/TS display literals are detected. Runtime-generated strings, CSS content, third-party UIs, images, backend dynamic outputs and user-authored data need separate review. Java counts are inventory only, not a proof of extraction.",
   "catalogs": {
     "ar": {
-      "keys": 447
+      "keys": 455
     },
     "en": {
-      "keys": 447
+      "keys": 455
     },
     "zh-CN": {
-      "keys": 447
+      "keys": 455
     }
   },
   "frontend": {
@@ -666,7 +666,7 @@
     },
     "shared": {
       "status": "pending-acceptance",
-      "files": 1000,
+      "files": 1001,
       "vueFiles": 206,
       "visibleLiteralCandidates": 1955,
       "templateParseErrors": 0,
@@ -771,8 +771,8 @@
       "status": "pending-acceptance"
     },
     "yudao-framework": {
-      "javaFiles": 353,
-      "businessErrorConstants": 14,
+      "javaFiles": 360,
+      "businessErrorConstants": 38,
       "excelHeaders": 1,
       "validationMessages": 74,
       "status": "pending-acceptance"
@@ -905,7 +905,7 @@
     },
     "yudao-module-system": {
       "javaFiles": 427,
-      "businessErrorConstants": 113,
+      "businessErrorConstants": 118,
       "excelHeaders": 93,
       "validationMessages": 274,
       "status": "pending-acceptance"

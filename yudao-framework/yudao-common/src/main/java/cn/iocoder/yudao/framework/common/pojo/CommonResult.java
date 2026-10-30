@@ -5,8 +5,12 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants;
 import cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil;
+import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -17,6 +21,8 @@ import java.util.Objects;
  * @param <T> 数据泛型
  */
 @Data
+@EqualsAndHashCode(doNotUseGetters = true)
+@ToString(doNotUseGetters = true)
 public class CommonResult<T> implements Serializable {
 
     /**
@@ -36,6 +42,27 @@ public class CommonResult<T> implements Serializable {
      */
     private T data;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String messageKey;
+
+    @JsonIgnore
+    @ToString.Exclude
+    private Object[] messageArguments;
+
+    public String getMsg() {
+        return ErrorMessageContext.resolve(messageKey, messageArguments, msg);
+    }
+
+    @JsonIgnore
+    public Object[] getMessageArguments() {
+        return messageArguments == null ? null : messageArguments.clone();
+    }
+
+    public CommonResult<T> setMessageArguments(Object... arguments) {
+        this.messageArguments = arguments == null ? null : arguments.clone();
+        return this;
+    }
+
     /**
      * 将传入的 result 对象，转换成另外一个泛型结果的对象
      *
@@ -46,7 +73,10 @@ public class CommonResult<T> implements Serializable {
      * @return 新的 CommonResult 对象
      */
     public static <T> CommonResult<T> error(CommonResult<?> result) {
-        return error(result.getCode(), result.getMsg());
+        CommonResult<T> copy = error(result.getCode(), result.msg);
+        copy.messageKey = result.messageKey;
+        copy.setMessageArguments(result.messageArguments);
+        return copy;
     }
 
     public static <T> CommonResult<T> error(Integer code, String message) {
@@ -62,11 +92,15 @@ public class CommonResult<T> implements Serializable {
         CommonResult<T> result = new CommonResult<>();
         result.code = errorCode.getCode();
         result.msg = ServiceExceptionUtil.doFormat(errorCode.getCode(), errorCode.getMsg(), params);
+        result.messageKey = errorCode.getMessageKey();
+        result.setMessageArguments(params);
         return result;
     }
 
     public static <T> CommonResult<T> error(ErrorCode errorCode) {
-        return error(errorCode.getCode(), errorCode.getMsg());
+        CommonResult<T> result = error(errorCode.getCode(), errorCode.getMsg());
+        result.messageKey = errorCode.getMessageKey();
+        return result;
     }
 
     public static <T> CommonResult<T> success(T data) {
@@ -101,7 +135,7 @@ public class CommonResult<T> implements Serializable {
             return;
         }
         // 业务异常
-        throw new ServiceException(code, msg);
+        throw new ServiceException(code, msg).setMessageKey(messageKey).setMessageArguments(messageArguments);
     }
 
     /**
@@ -115,7 +149,10 @@ public class CommonResult<T> implements Serializable {
     }
 
     public static <T> CommonResult<T> error(ServiceException serviceException) {
-        return error(serviceException.getCode(), serviceException.getMessage());
+        CommonResult<T> result = error(serviceException.getCode(), serviceException.getMessage());
+        result.messageKey = serviceException.getMessageKey();
+        result.setMessageArguments(serviceException.getMessageArguments());
+        return result;
     }
 
 }

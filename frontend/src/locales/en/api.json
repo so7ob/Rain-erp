@@ -1,0 +1,20 @@
+{
+  "api": {
+    "error": {
+      "unauthorized": "Authentication failed. System resources are unavailable",
+      "forbidden": "You do not have permission for this action",
+      "notFound": "The requested resource was not found",
+      "unknown": "An unknown system error occurred. Contact your administrator"
+    },
+    "response": {
+      "decryptFailed": "Could not decrypt the response: {reason}"
+    },
+    "demo": {
+      "documentation": "Read the local environment setup guide",
+      "setupHint": "Set up a local environment in 5 minutes"
+    },
+    "session": {
+      "changed": "The session changed before the request completed"
+    }
+  }
+}

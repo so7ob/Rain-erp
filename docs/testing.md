@@ -58,6 +58,23 @@ The suite covers Arabic defaults, all three languages, saved preferences, reques
 
 All API and backend WebSocket requests in these tests are intercepted with synthetic fixtures. The suite sends no real login, SMS, profile update, upload or authorization request. It does not establish backend translation, security or external provider integration coverage. CI retains screenshots, failure traces and the HTML report under its localization browser artifact for 14 days; local reports stay ignored in `.runtime/`.
 
+## Server localization and session verification
+
+The shared error tests verify optional `messageKey` serialization, unchanged code/msg/data, argument preservation through copies/rethrows, duplicate numeric codes with different meanings, JSON property order, and thread/context restoration. Catalog tests read every owned main-source message bundle, including inactive modules, to reject missing Arabic, duplicate keys, parameter differences and invalid indexed templates. Separate classpath checks verify the shared and keyed system errors actually resolve from their packaged modules.
+
+MockMvc exercises the real locale filter, MessageSource, validator, JSON serializers and exception handler with Arabic/English/Chinese, weighted/regional preferences, unsupported/malformed/absent language, validation cache ordering, named constraint arguments, upload errors and numeric financial values. Security tests execute the actual authentication/denial handlers before MVC. These tests use isolated contexts and synthetic data; they do not call the running API or external providers. Unconverted module/annotation/provider messages remain outside full #15 acceptance.
+
+`corepack pnpm test` also verifies refresh coordination: one attempt per session identity, rejected waiters settling, retry after failure and independent user/tenant identities. Browser session cases exercise concurrent and late 401 responses, terminal failures, failed connections, bounded retry, preserved language after re-login and a delayed response after a user/tenant change. A deliberate fixture reuses an old Chinese session string for a business error with a different key to prove behavior follows identity. All transport is intercepted; no actual token, SMS or live database operation is involved. Intentional terminal/stale request rejections are observed separately from successful-page smoke tests.
+
+Focused commands are available while developing:
+
+```bash
+mvn -B -ntp -pl yudao-framework/yudao-spring-boot-starter-web -am test -s .github/maven-settings.xml
+mvn -B -ntp -pl yudao-module-system -am test -s .github/maven-settings.xml
+```
+
+They supplement the complete required gate, rather than replacing verification of the active reactor or optional-module acceptance.
+
 ## Local source preview
 
 Use [the local development guide](local-development.md) to serve the authoritative frontend through Vite on the existing local port 3085, verify HMR/API routing, or restore the original static output. Runtime overrides remain ignored; this workflow does not publish an application release.

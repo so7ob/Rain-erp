@@ -10,14 +10,14 @@ import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 public interface ErrorCodeConstants {
 
     // ========== AUTH 模块 1-002-000-000 ==========
-    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1_002_000_000, "登录失败，账号密码不正确");
-    ErrorCode AUTH_LOGIN_USER_DISABLED = new ErrorCode(1_002_000_001, "登录失败，账号被禁用");
-    ErrorCode AUTH_LOGIN_CAPTCHA_CODE_ERROR = new ErrorCode(1_002_000_004, "验证码不正确，原因：{}");
-    ErrorCode AUTH_THIRD_LOGIN_NOT_BIND = new ErrorCode(1_002_000_005, "未绑定账号，需要进行绑定");
-    ErrorCode AUTH_MOBILE_NOT_EXISTS = new ErrorCode(1_002_000_007, "手机号不存在");
-    ErrorCode AUTH_REGISTER_CAPTCHA_CODE_ERROR = new ErrorCode(1_002_000_008, "验证码不正确，原因：{}");
-    ErrorCode AUTH_QRCODE_INVALID = new ErrorCode(1_002_000_009, "二维码已失效或领取凭证不正确，请重新扫码");
-    ErrorCode AUTH_QRCODE_ALREADY_CONFIRMED = new ErrorCode(1_002_000_010, "二维码已被其他用户确认，请重新扫码");
+    ErrorCode AUTH_LOGIN_BAD_CREDENTIALS = new ErrorCode(1_002_000_000, "登录失败，账号密码不正确", "system.auth.login.badCredentials");
+    ErrorCode AUTH_LOGIN_USER_DISABLED = new ErrorCode(1_002_000_001, "登录失败，账号被禁用", "system.auth.login.userDisabled");
+    ErrorCode AUTH_LOGIN_CAPTCHA_CODE_ERROR = new ErrorCode(1_002_000_004, "验证码不正确，原因：{}", "system.auth.login.captchaInvalid");
+    ErrorCode AUTH_THIRD_LOGIN_NOT_BIND = new ErrorCode(1_002_000_005, "未绑定账号，需要进行绑定", "system.auth.social.accountNotLinked");
+    ErrorCode AUTH_MOBILE_NOT_EXISTS = new ErrorCode(1_002_000_007, "手机号不存在", "system.auth.mobile.notFound");
+    ErrorCode AUTH_REGISTER_CAPTCHA_CODE_ERROR = new ErrorCode(1_002_000_008, "验证码不正确，原因：{}", "system.auth.register.captchaInvalid");
+    ErrorCode AUTH_QRCODE_INVALID = new ErrorCode(1_002_000_009, "二维码已失效或领取凭证不正确，请重新扫码", "system.auth.qr.invalid");
+    ErrorCode AUTH_QRCODE_ALREADY_CONFIRMED = new ErrorCode(1_002_000_010, "二维码已被其他用户确认，请重新扫码", "system.auth.qr.confirmedByAnotherUser");
 
     // ========== 菜单模块 1-002-001-000 ==========
     ErrorCode MENU_NAME_DUPLICATE = new ErrorCode(1_002_001_000, "已经存在该名字的菜单");
@@ -40,13 +40,13 @@ public interface ErrorCodeConstants {
     ErrorCode USER_USERNAME_EXISTS = new ErrorCode(1_002_003_000, "用户账号已经存在");
     ErrorCode USER_MOBILE_EXISTS = new ErrorCode(1_002_003_001, "手机号已经存在");
     ErrorCode USER_EMAIL_EXISTS = new ErrorCode(1_002_003_002, "邮箱已经存在");
-    ErrorCode USER_NOT_EXISTS = new ErrorCode(1_002_003_003, "用户不存在");
+    ErrorCode USER_NOT_EXISTS = new ErrorCode(1_002_003_003, "用户不存在", "system.user.notFound");
     ErrorCode USER_IMPORT_LIST_IS_EMPTY = new ErrorCode(1_002_003_004, "导入用户数据不能为空！");
     ErrorCode USER_PASSWORD_FAILED = new ErrorCode(1_002_003_005, "用户密码校验失败");
     ErrorCode USER_IS_DISABLE = new ErrorCode(1_002_003_006, "名字为【{}】的用户已被禁用");
     ErrorCode USER_COUNT_MAX = new ErrorCode(1_002_003_008, "创建用户失败，原因：超过租户最大租户配额({})！");
     ErrorCode USER_IMPORT_INIT_PASSWORD = new ErrorCode(1_002_003_009, "初始密码不能为空");
-    ErrorCode USER_MOBILE_NOT_EXISTS = new ErrorCode(1_002_003_010, "该手机号尚未注册");
+    ErrorCode USER_MOBILE_NOT_EXISTS = new ErrorCode(1_002_003_010, "该手机号尚未注册", "system.user.mobileNotRegistered");
     ErrorCode USER_REGISTER_DISABLED = new ErrorCode(1_002_003_011, "注册功能已关闭");
     ErrorCode USER_ADMIN_NOT_ALLOW_DISABLE = new ErrorCode(1_002_003_012, "超级管理员或租户管理员账号不能禁用");
     ErrorCode USER_ADMIN_NOT_ALLOW_DELETE = new ErrorCode(1_002_003_013, "超级管理员或租户管理员账号不能删除");
@@ -172,5 +172,13 @@ public interface ErrorCodeConstants {
 
     // ========== 站内信发送 1-002-028-000 ==========
     ErrorCode NOTIFY_SEND_TEMPLATE_PARAM_MISS = new ErrorCode(1_002_028_000, "模板参数({})缺失");
+
+
+    // Stable token meanings retain the original legacy numeric codes and messages.
+    ErrorCode OAUTH2_REFRESH_TOKEN_INVALID = new ErrorCode(400, "无效的刷新令牌", "system.oauth2.refreshToken.invalid");
+    ErrorCode OAUTH2_REFRESH_TOKEN_CLIENT_INVALID = new ErrorCode(400, "刷新令牌的客户端编号不正确", "system.oauth2.refreshToken.clientInvalid");
+    ErrorCode OAUTH2_REFRESH_TOKEN_EXPIRED = new ErrorCode(401, "刷新令牌已过期", "system.oauth2.refreshToken.expired");
+    ErrorCode OAUTH2_ACCESS_TOKEN_MISSING = new ErrorCode(401, "访问令牌不存在", "system.oauth2.accessToken.missing");
+    ErrorCode OAUTH2_ACCESS_TOKEN_EXPIRED = new ErrorCode(401, "访问令牌已过期", "system.oauth2.accessToken.expired");
 
 }

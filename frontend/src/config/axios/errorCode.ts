@@ -1,6 +1,11 @@
-export default {
-  '401': '认证失败，无法访问系统资源',
-  '403': '当前操作没有权限',
-  '404': '访问资源不存在',
-  default: '系统未知错误，请反馈给管理员'
+import { useI18n } from '@/hooks/web/useI18n'
+
+const keys: Record<string, string> = {
+  '401': 'api.error.unauthorized',
+  '403': 'api.error.forbidden',
+  '404': 'api.error.notFound',
+  default: 'api.error.unknown'
 }
+
+export const getErrorMessage = (code: string | number): string =>
+  useI18n().t(keys[String(code)] || keys.default)

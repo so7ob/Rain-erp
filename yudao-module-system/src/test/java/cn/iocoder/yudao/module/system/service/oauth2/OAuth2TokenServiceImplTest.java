@@ -2,7 +2,7 @@ package cn.iocoder.yudao.module.system.service.oauth2;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
-import cn.iocoder.yudao.framework.common.exception.ErrorCode;
+import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.date.DateUtils;
 import cn.iocoder.yudao.framework.tenant.core.context.TenantContextHolder;
@@ -28,7 +28,6 @@ import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.cloneIgnoreId;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertPojoEquals;
-import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -113,8 +112,10 @@ public class OAuth2TokenServiceImplTest extends BaseDbAndRedisUnitTest {
         // mock 方法
 
         // 调用，并断言
-        assertServiceException(() -> oauth2TokenService.refreshAccessToken(refreshToken, clientId),
-                new ErrorCode(400, "无效的刷新令牌"));
+        ServiceException error = assertThrows(ServiceException.class, () -> oauth2TokenService.refreshAccessToken(refreshToken, clientId));
+        assertEquals(400, error.getCode());
+        assertEquals("无效的刷新令牌", error.getMessage());
+        assertEquals("system.oauth2.refreshToken.invalid", error.getMessageKey());
     }
 
     @Test
@@ -131,8 +132,10 @@ public class OAuth2TokenServiceImplTest extends BaseDbAndRedisUnitTest {
         oauth2RefreshTokenMapper.insert(refreshTokenDO);
 
         // 调用，并断言
-        assertServiceException(() -> oauth2TokenService.refreshAccessToken(refreshToken, clientId),
-                new ErrorCode(400, "刷新令牌的客户端编号不正确"));
+        ServiceException error = assertThrows(ServiceException.class, () -> oauth2TokenService.refreshAccessToken(refreshToken, clientId));
+        assertEquals(400, error.getCode());
+        assertEquals("刷新令牌的客户端编号不正确", error.getMessage());
+        assertEquals("system.oauth2.refreshToken.clientInvalid", error.getMessageKey());
     }
 
     @Test
@@ -150,8 +153,10 @@ public class OAuth2TokenServiceImplTest extends BaseDbAndRedisUnitTest {
         oauth2RefreshTokenMapper.insert(refreshTokenDO);
 
         // 调用，并断言
-        assertServiceException(() -> oauth2TokenService.refreshAccessToken(refreshToken, clientId),
-                new ErrorCode(401, "刷新令牌已过期"));
+        ServiceException error = assertThrows(ServiceException.class, () -> oauth2TokenService.refreshAccessToken(refreshToken, clientId));
+        assertEquals(401, error.getCode());
+        assertEquals("刷新令牌已过期", error.getMessage());
+        assertEquals("system.oauth2.refreshToken.expired", error.getMessageKey());
         assertEquals(0, oauth2AccessTokenMapper.selectCount());
     }
 
@@ -224,8 +229,10 @@ public class OAuth2TokenServiceImplTest extends BaseDbAndRedisUnitTest {
     @Test
     public void testCheckAccessToken_null() {
         // 调研，并断言
-        assertServiceException(() -> oauth2TokenService.checkAccessToken(randomString()),
-                new ErrorCode(401, "访问令牌不存在"));
+        ServiceException error = assertThrows(ServiceException.class, () -> oauth2TokenService.checkAccessToken(randomString()));
+        assertEquals(401, error.getCode());
+        assertEquals("访问令牌不存在", error.getMessage());
+        assertEquals("system.oauth2.accessToken.missing", error.getMessageKey());
     }
 
     @Test
@@ -238,8 +245,10 @@ public class OAuth2TokenServiceImplTest extends BaseDbAndRedisUnitTest {
         String accessToken = accessTokenDO.getAccessToken();
 
         // 调研，并断言
-        assertServiceException(() -> oauth2TokenService.checkAccessToken(accessToken),
-                new ErrorCode(401, "访问令牌已过期"));
+        ServiceException error = assertThrows(ServiceException.class, () -> oauth2TokenService.checkAccessToken(accessToken));
+        assertEquals(401, error.getCode());
+        assertEquals("访问令牌已过期", error.getMessage());
+        assertEquals("system.oauth2.accessToken.expired", error.getMessageKey());
     }
 
     @Test

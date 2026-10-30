@@ -1,0 +1,20 @@
+{
+  "api": {
+    "error": {
+      "unauthorized": "认证失败，无法访问系统资源",
+      "forbidden": "当前操作没有权限",
+      "notFound": "访问资源不存在",
+      "unknown": "系统未知错误，请反馈给管理员"
+    },
+    "response": {
+      "decryptFailed": "响应数据解密失败: {reason}"
+    },
+    "demo": {
+      "documentation": "参考本地环境配置教程",
+      "setupHint": "5 分钟搭建本地环境"
+    },
+    "session": {
+      "changed": "请求完成前登录会话已更改"
+    }
+  }
+}
