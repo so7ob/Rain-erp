@@ -16,7 +16,8 @@
         "filename": "User import template.xls",
         "createdCount": "Created {count} user | Created {count} users",
         "updatedCount": "Updated {count} user | Updated {count} users",
-        "failedCount": "Failed to import {count} record | Failed to import {count} records"
+        "failedCount": "Failed to import {count} record | Failed to import {count} records",
+        "remove": "Remove"
       },
       "export": {
         "action": "Export",

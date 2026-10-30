@@ -16,7 +16,8 @@
         "filename": "用户导入模板.xls",
         "createdCount": "创建成功：{count} 个用户",
         "updatedCount": "更新成功：{count} 个用户",
-        "failedCount": "导入失败：{count} 条记录"
+        "failedCount": "导入失败：{count} 条记录",
+        "remove": "移除"
       },
       "export": {
         "action": "导出",

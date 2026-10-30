@@ -77,7 +77,7 @@ public final class ExcelLocaleCatalog {
             translations(item.key());
         }
         // Fail before opening an export stream if any registered column lacks a supported language.
-        for (Class<?> owner = type; owner != Object.class; owner = owner.getSuperclass()) {
+        for (Class<?> owner = type; owner != null && owner != Object.class; owner = owner.getSuperclass()) {
             for (Field field : owner.getDeclaredFields()) {
                 if (field.isSynthetic() || Modifier.isTransient(field.getModifiers())
                         || (Modifier.isStatic(field.getModifiers()) && Modifier.isFinal(field.getModifiers()))

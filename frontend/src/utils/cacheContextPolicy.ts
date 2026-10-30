@@ -36,13 +36,23 @@ export function createCacheIdentity(storage: IdentityStorage, randomId: () => st
       return 'public'
     }
     const saved = storage.read()
-    const receipt = storage.continuation?.() as { identity?: unknown; nonce?: unknown } | undefined
+    const receipt = storage.continuation?.() as
+      | { identity?: unknown; nonce?: unknown; pending?: unknown }
+      | undefined
+    // Another tab can read between the credential writes, including on its first read.
+    if (
+      receipt?.pending === true &&
+      receipt.identity === saved &&
+      valid(receipt.nonce) &&
+      valid(saved)
+    )
+      return saved
     const continued =
       receipt?.identity === saved && valid(receipt?.nonce) && receipt.nonce !== previousContinuation
     if ((previous !== unseen && previous !== credential && !continued) || !valid(saved))
       return rotate()
+    if (previous === unseen || previous !== credential) previousContinuation = receipt?.nonce
     previous = credential
-    previousContinuation = receipt?.nonce
     return saved
   }
   return { current, rotate }

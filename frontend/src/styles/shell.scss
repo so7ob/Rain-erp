@@ -1,5 +1,12 @@
 // Shared overlays are teleported outside the page's contrast adapter.
-:is(.rain-settings, .rain-table-select, .v-lock-dialog, .rain-error, .rain-notifications) {
+:is(
+  .rain-settings,
+  .rain-table-select,
+  .v-lock-dialog,
+  .rain-error,
+  .rain-notifications,
+  .rain-user-import
+) {
   font-family: var(--el-font-family);
   .el-button--primary {
     --el-button-bg-color: #2554ca;
@@ -10,6 +17,17 @@
     --el-button-hover-text-color: #fff;
     --el-button-active-bg-color: #1943b0;
     --el-button-active-border-color: #1943b0;
+  }
+}
+.rain-user-import {
+  --el-color-primary: #2554ca;
+  --el-color-error: #b91c1c;
+}
+.dark .rain-user-import {
+  --el-color-primary: #93c5fd;
+  --el-color-error: #fca5a5;
+  .el-checkbox {
+    --el-checkbox-checked-icon-color: #111827;
   }
 }
 .rain-settings .el-button--danger {

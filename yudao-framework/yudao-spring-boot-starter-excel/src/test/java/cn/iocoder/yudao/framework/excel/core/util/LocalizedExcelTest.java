@@ -10,6 +10,8 @@ import cn.iocoder.yudao.framework.excel.core.annotations.ExcelColumnSelect;
 import cn.iocoder.yudao.framework.excel.core.annotations.ExcelLocale;
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 import cn.iocoder.yudao.framework.excel.core.i18n.ExcelLocaleCatalog;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.apache.fesod.sheet.FesodSheet;
@@ -17,6 +19,7 @@ import org.apache.fesod.sheet.annotation.ExcelProperty;
 import org.apache.fesod.sheet.annotation.format.DateTimeFormat;
 import org.apache.fesod.sheet.annotation.format.NumberFormat;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -71,7 +75,8 @@ class LocalizedExcelTest {
             assertEquals(CellType.NUMERIC, sheet.getRow(1).getCell(1).getCellType());
             assertEquals(123456.7891, sheet.getRow(1).getCell(1).getNumericCellValue());
             assertEquals("0.0000", sheet.getRow(1).getCell(1).getCellStyle().getDataFormatString());
-            assertEquals("2026-10-31 14:05:06", sheet.getRow(1).getCell(2).getStringCellValue());
+            assertEquals(CellType.NUMERIC, sheet.getRow(1).getCell(2).getCellType());
+            assertEquals(original.getAt(), DateUtil.getLocalDateTime(sheet.getRow(1).getCell(2).getNumericCellValue()));
             assertEquals("تخصيص 01", sheet.getRow(1).getCell(3).getStringCellValue());
             assertEquals(original.getText(), sheet.getRow(1).getCell(4).getStringCellValue());
         }
@@ -132,12 +137,42 @@ class LocalizedExcelTest {
         assertThrows(IllegalStateException.class, () -> ExcelLocaleCatalog.of(MissingArabic.class));
     }
 
+    @Test
+    void downloadMetadataIsAvailableBeforeTheServletReceivesTheFirstWorkbookByte() throws Exception {
+        AtomicBoolean verified = new AtomicBoolean();
+        MockHttpServletResponse response = new MockHttpServletResponse() {
+            @Override
+            public ServletOutputStream getOutputStream() {
+                ServletOutputStream delegate = super.getOutputStream();
+                return new ServletOutputStream() {
+                    @Override
+                    public boolean isReady() { return delegate.isReady(); }
+                    @Override
+                    public void setWriteListener(WriteListener listener) { delegate.setWriteListener(listener); }
+                    @Override
+                    public void write(int value) throws java.io.IOException {
+                        if (verified.compareAndSet(false, true)) {
+                            assertTrue(getHeader("Content-Disposition").contains("filename*=UTF-8''"));
+                            assertTrue(getContentType().startsWith("application/vnd.ms-excel"));
+                        }
+                        delegate.write(value);
+                    }
+                };
+            }
+        };
+        write("ar", AmountRow.class, List.of(new AmountRow().setId(Long.MAX_VALUE)), response);
+        assertTrue(verified.get());
+    }
+
     private <T> byte[] write(String language, Class<T> type, List<T> data) throws Exception {
+        return write(language, type, data, new MockHttpServletResponse());
+    }
+
+    private <T> byte[] write(String language, Class<T> type, List<T> data, MockHttpServletResponse response) throws Exception {
         Locale locale = Locale.forLanguageTag(language);
         var previous = LocaleContextHolder.getLocaleContext();
         LocaleContextHolder.setLocale(locale);
         try (var ignored = ErrorMessageContext.open((key, arguments, original) -> messages.getMessage(key, arguments, original, locale))) {
-            MockHttpServletResponse response = new MockHttpServletResponse();
             ExcelUtils.write(response, "原始.xls", "原始", type, data);
             assertNotNull(response.getHeader("Content-Disposition"));
             return response.getContentAsByteArray();

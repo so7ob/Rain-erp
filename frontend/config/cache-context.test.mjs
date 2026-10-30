@@ -51,10 +51,17 @@ test('a verified credential continuation preserves both tabs while stale receipt
   const other = createCacheIdentity(port, randomId)
   const login = first.current()
   assert.equal(other.current(), login)
-  receipt = { identity: login, nonce: randomId() }
+  receipt = { identity: login, nonce: randomId(), pending: true }
+  const newObserver = createCacheIdentity(port, randomId)
+  assert.equal(newObserver.current(), login)
+  // Another tab may read between the receipt write and the synchronous credential writes.
+  assert.equal(other.current(), login)
   credential = 'fixture-refreshed-credential'
+  assert.equal(newObserver.current(), login)
+  receipt = { ...receipt, pending: false }
   assert.equal(first.current(), login)
   assert.equal(other.current(), login)
+  assert.equal(newObserver.current(), login)
   assert.equal(JSON.stringify(receipt).includes('fixture'), false)
   credential = 'fixture-other-user-credential'
   assert.notEqual(first.current(), login)

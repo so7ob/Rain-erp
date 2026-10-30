@@ -68,16 +68,21 @@ export const notifyCacheMutation = (key: string, before: unknown, after: unknown
 /** Only a refresh verified against the current session may replace credentials without starting a new login. */
 export const continueAuthenticationContext = (writeCredentials: () => void) => {
   const captured = identity.current()
-  raw().set('rain.auth.credential-update', {
+  const receipt = {
     identity: captured,
     nonce: randomCacheIdentity(crypto)
-  })
+  }
+  raw().set('rain.auth.credential-update', { ...receipt, pending: true })
   continuingAuthentication = true
   try {
     writeCredentials()
   } finally {
     continuingAuthentication = false
-    revision.value++
+    try {
+      raw().set('rain.auth.credential-update', { ...receipt, pending: false })
+    } finally {
+      revision.value++
+    }
   }
 }
 

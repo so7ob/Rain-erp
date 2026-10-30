@@ -255,6 +255,7 @@ service.interceptors.response.use(
     }
   },
   (error: AxiosError) => {
+    if (axios.isCancel(error)) return Promise.reject(error)
     let { message } = error
     const { t } = useI18n()
     if (error.code === 'ERR_NETWORK') {

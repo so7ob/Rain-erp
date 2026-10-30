@@ -1,5 +1,11 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="t('system.user.import.title')" width="480" show-locale>
+  <Dialog
+    v-model="dialogVisible"
+    :title="t('system.user.import.title')"
+    width="480"
+    class="rain-user-import"
+    show-locale
+  >
     <el-alert
       v-if="uploadFailed"
       :title="t('system.user.import.failed')"
@@ -11,6 +17,7 @@
       ref="uploadRef"
       v-model:file-list="fileList"
       :auto-upload="false"
+      :show-file-list="false"
       :disabled="formLoading"
       :aria-busy="formLoading"
       :http-request="uploadFile"
@@ -29,25 +36,27 @@
             {{ t('system.user.import.updateExisting') }}
           </el-checkbox>
           <p>{{ t('system.user.import.formats') }}</p>
-          <el-button link type="primary" :disabled="formLoading" @click="importTemplate">
+          <el-button link :disabled="formLoading" @click="importTemplate">
             {{ t('system.user.import.downloadTemplate') }}
           </el-button>
         </div>
       </template>
-      <template #file="{ file }">
+    </el-upload>
+    <ul v-if="fileList.length" class="user-import-files">
+      <li v-for="file in fileList" :key="file.uid">
         <div class="user-import-file">
           <bdi dir="auto">{{ file.name }}</bdi>
           <el-button
             text
             :disabled="formLoading"
             :aria-label="t('system.user.import.removeFile', { name: file.name })"
-            @click="uploadRef?.handleRemove(file)"
+            @click="removeFile"
           >
-            {{ t('action.del') }}
+            {{ t('system.user.import.remove') }}
           </el-button>
         </div>
-      </template>
-    </el-upload>
+      </li>
+    </ul>
     <template #footer>
       <el-button :loading="formLoading" type="primary" @click="submitForm">{{
         t('common.ok')
@@ -55,7 +64,13 @@
       <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
-  <Dialog v-model="resultsVisible" :title="t('system.user.import.results')" width="560" show-locale>
+  <Dialog
+    v-model="resultsVisible"
+    :title="t('system.user.import.results')"
+    width="560"
+    class="rain-user-import"
+    show-locale
+  >
     <div v-if="result" class="user-import-results">
       <section>
         <h3>{{
@@ -147,6 +162,10 @@ const resetForm = () => {
   fileList.value = []
   uploadRef.value?.clearFiles()
 }
+const removeFile = () => {
+  fileList.value = []
+  uploadRef.value?.clearFiles()
+}
 const open = () => {
   resetForm()
   updateSupport.value = false
@@ -234,11 +253,21 @@ watch(context, () => {
   templateGeneration++
   resetForm()
 })
-onBeforeUnmount(() => controller?.abort())
+onBeforeUnmount(() => {
+  uploadGeneration++
+  templateGeneration++
+  controller?.abort()
+})
 </script>
 <style scoped>
 .user-import-options {
   text-align: start;
+}
+.user-import-files {
+  list-style: none;
+  padding: 0;
+  margin-block: 8px;
+  margin-inline: 0;
 }
 .user-import-options .el-checkbox {
   height: auto;

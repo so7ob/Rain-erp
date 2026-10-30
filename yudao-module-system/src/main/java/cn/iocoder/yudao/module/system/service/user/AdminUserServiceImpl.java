@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
@@ -573,7 +574,12 @@ public class AdminUserServiceImpl implements AdminUserService {
             } catch (ConstraintViolationException ex) {
                 String key = StrUtil.blankToDefault(importUser.getUsername(), ErrorMessageContext.resolve("system.user.import.row",
                         new Object[]{currentIndex}, "第 " + currentIndex + " 行"));
-                respVO.getFailureUsernames().put(key, ex.getMessage());
+                String validationMessage = ErrorMessageContext.isLocalizedRequest()
+                        ? ex.getConstraintViolations().stream()
+                        .sorted(Comparator.comparing(violation -> violation.getPropertyPath().toString()))
+                        .map(violation -> violation.getMessage()).distinct().collect(Collectors.joining("; "))
+                        : ex.getMessage();
+                respVO.getFailureUsernames().put(key, validationMessage);
                 return;
             }
             // 2.1.2 校验，判断是否有不符合的原因

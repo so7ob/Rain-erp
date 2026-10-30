@@ -7,7 +7,10 @@ import { arabicPluralRule } from '../src/locales/policy.ts'
 
 test('the complete user import dialog extracts display literals and every used key exists in all catalogs', () => {
   const path = 'views/system/user/UserImportForm.vue'
-  const scanned = scanSource(fs.readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8'), path)
+  const scanned = scanSource(
+    fs.readFileSync(new URL(`../src/${path}`, import.meta.url), 'utf8'),
+    path
+  )
   assert.deepEqual(scanned.errors, [])
   assert.deepEqual(scanned.findings, [])
   const catalogs = readCatalogs(new URL('../src/locales/', import.meta.url))
@@ -31,17 +34,76 @@ test('import summaries cover all six Arabic count forms and client filenames mat
     assert.equal(catalogs.ar.get(key).split('|').length, 6)
     const values = [0, 1, 2, 3, 11, 102].map((count) => composer.t(key, { count }, count))
     assert.equal(new Set(values).size, 6)
-    assert.equal(values.some((value) => /[٠-٩۰-۹]/u.test(value)), false)
+    assert.equal(
+      values.some((value) => /[٠-٩۰-۹]/u.test(value)),
+      false
+    )
   }
-  for (const [locale, suffix] of [['en', ''], ['ar', '_ar'], ['zh-CN', '_zh_CN']]) {
-    const text = fs.readFileSync(new URL(`../../yudao-module-system/src/main/resources/i18n/system/messages${suffix}.properties`, import.meta.url), 'utf8')
-    const server = new Map(text.split('\n').filter((line) => line.includes('=')).map((line) => {
-      const separator = line.indexOf('=')
-      return [line.slice(0, separator), line.slice(separator + 1)]
-    }))
+  for (const [locale, suffix] of [
+    ['en', ''],
+    ['ar', '_ar'],
+    ['zh-CN', '_zh_CN']
+  ]) {
+    const text = fs.readFileSync(
+      new URL(
+        `../../yudao-module-system/src/main/resources/i18n/system/messages${suffix}.properties`,
+        import.meta.url
+      ),
+      'utf8'
+    )
+    const server = new Map(
+      text
+        .split('\n')
+        .filter((line) => line.includes('='))
+        .map((line) => {
+          const separator = line.indexOf('=')
+          return [line.slice(0, separator), line.slice(separator + 1)]
+        })
+    )
     for (const schema of ['import', 'export']) {
       const key = `system.user.${schema}.filename`
       assert.equal(catalogs[locale].get(key), server.get(key), `${locale} ${key}`)
+    }
+  }
+})
+
+test('spreadsheet dictionary defaults retain the source identities and the established terminology', () => {
+  const catalogs = readCatalogs(new URL('../src/locales/', import.meta.url))
+  const defaults = JSON.parse(
+    fs.readFileSync(new URL('../src/locales/defaults/core.json', import.meta.url), 'utf8')
+  ).dictionaries
+  const entries = JSON.parse(
+    fs.readFileSync(
+      new URL(
+        '../../yudao-module-system/src/main/resources/i18n/system/excel-defaults.json',
+        import.meta.url
+      ),
+      'utf8'
+    )
+  )
+  assert.equal(entries.length, 4)
+  for (const entry of entries) {
+    const original = defaults.find(
+      (item) =>
+        item.dictType === entry.type && item.value === entry.value && item.label === entry.label
+    )
+    assert.ok(
+      original,
+      `Unknown source dictionary identity: ${entry.type}/${entry.value}/${entry.label}`
+    )
+    for (const [locale, suffix] of [
+      ['en', ''],
+      ['ar', '_ar'],
+      ['zh-CN', '_zh_CN']
+    ]) {
+      const text = fs.readFileSync(
+        new URL(
+          `../../yudao-module-system/src/main/resources/i18n/system/messages${suffix}.properties`,
+          import.meta.url
+        ),
+        'utf8'
+      )
+      assert.ok(text.split('\n').includes(entry.key + '=' + catalogs[locale].get(original.key)))
     }
   }
 })
