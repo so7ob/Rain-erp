@@ -13,11 +13,14 @@ const selection = ref<any[]>([])
 const selector = ref<InstanceType<typeof TableSelectForm>>()
 const requested = ref<number[]>([])
 const customTitle = ref('')
-const open = () =>
-  selector.value?.open(async ({ pageNo }: { pageNo: number }) => {
+const selectionEntered = ref(false)
+const open = () => {
+  selectionEntered.value = false
+  return selector.value?.open(async ({ pageNo }: { pageNo: number }) => {
     requested.value.push(pageNo)
     return { total: 20, list: [{ id: pageNo, name: `عميل Test 00${pageNo}` }] }
   })
+}
 </script>
 
 <template>
@@ -29,7 +32,14 @@ const open = () =>
       <label>Fixture title <input v-model="customTitle" /></label>
       <output aria-label="Fixture selection">{{ JSON.stringify(selection) }}</output>
       <output aria-label="Fixture requested pages">{{ JSON.stringify(requested) }}</output>
-      <TableSelectForm ref="selector" v-model="selection" :title="customTitle">
+      <output aria-label="Fixture selection entered">{{ selectionEntered }}</output>
+      <TableSelectForm
+        ref="selector"
+        v-model="selection"
+        :title="customTitle"
+        @opened="selectionEntered = true"
+        @closed="selectionEntered = false"
+      >
         <el-table-column prop="id" label="ID" />
         <el-table-column prop="name" label="Fixture name" />
       </TableSelectForm>

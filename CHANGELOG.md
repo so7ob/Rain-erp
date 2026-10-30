@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Respect reduced motion in shared overlays, wait for actual entry before accessibility measurements, and increase selection table header contrast (#32).
+
 - Localize shared shell controls and overlays, synchronize language across tabs without losing drafts, guard notification contexts, and preserve tenant visit/selection behavior with responsive keyboard and axe coverage (#28).
 
 - Localize contextual core menu/dictionary names without rewriting source data; isolate display state across language, user and tenant changes (#24).
