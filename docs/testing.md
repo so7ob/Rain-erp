@@ -58,7 +58,7 @@ The suite covers Arabic defaults, all three languages, saved preferences, reques
 
 All API and backend WebSocket requests in these tests are intercepted with synthetic fixtures. The suite sends no real login, SMS, profile update, upload or authorization request. It does not establish backend translation, security or external provider integration coverage. CI retains screenshots, failure traces and the HTML report under its localization browser artifact for 14 days; local reports stay ignored in `.runtime/`.
 
-Navigation progress is checked while deliberately unfinished, using the real application and intercepted permission requests for each language. A separate real-library fixture checks live accessible-name updates, indeterminate semantics and removal. These checks retain every existing axe rule; they cover the transient progress element instead of waiting for it to disappear. Issue #25 corrects the invalid upstream role detected by post-merge run 40985203327.
+Navigation progress is checked while deliberately unfinished, using the real application and intercepted permission requests for each language. A separate real-library fixture checks the full fixture document, live accessible-name updates, indeterminate semantics and removal. The visible progress is part of a polite status region so it remains accessible outside the page landmark. These checks retain every existing axe rule; they cover the transient progress element instead of waiting for it to disappear. Issue #25 corrects the invalid upstream role detected by post-merge run 40985203327.
 
 ## Server localization and session verification
 

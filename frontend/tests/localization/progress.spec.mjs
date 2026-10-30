@@ -58,7 +58,7 @@ test('visible navigation progress has valid, localized indeterminate semantics u
 }) => {
   // Exercise the real library and the shipped adapter while the progress is deliberately visible.
   await page.setContent(
-    '<!doctype html><html lang="ar" dir="rtl"><head><title>Progress fixture</title></head><body><main>اختبار التحميل</main></body></html>'
+    '<!doctype html><html lang="ar" dir="rtl"><head><title>Progress fixture</title></head><body><main><h1>اختبار التحميل</h1></main></body></html>'
   )
   await page.addStyleTag({ path: require.resolve('nprogress/nprogress.css') })
   await page.addScriptTag({ path: require.resolve('nprogress/nprogress.js') })
@@ -80,7 +80,7 @@ test('visible navigation progress has valid, localized indeterminate semantics u
     const progress = page.getByRole('progressbar', { name: label, exact: true })
     await expect(progress).toBeVisible()
     await expect(progress).not.toHaveAttribute('aria-valuenow')
-    const result = await new AxeBuilder({ page }).include('#nprogress').analyze()
+    const result = await new AxeBuilder({ page }).analyze()
     expect(result.violations).toEqual([])
   }
   await page.evaluate(() => window.fixtureProgress.done())
