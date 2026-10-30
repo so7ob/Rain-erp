@@ -1,8 +1,6 @@
 import { useI18n } from '@/hooks/web/useI18n'
 import { FormItemRule } from 'element-plus'
 
-const { t } = useI18n()
-
 interface LengthRange {
   min: number
   max: number
@@ -13,7 +11,9 @@ export const useValidator = () => {
   const required = (message?: string): FormItemRule => {
     return {
       required: true,
-      message: message || t('common.required')
+      get message() {
+        return message || useI18n().t('common.required')
+      }
     }
   }
 
@@ -23,7 +23,9 @@ export const useValidator = () => {
     return {
       min,
       max,
-      message: message || t('common.lengthRange', { min, max })
+      get message() {
+        return message || useI18n().t('common.lengthRange', { min, max })
+      }
     }
   }
 
@@ -31,7 +33,7 @@ export const useValidator = () => {
     return {
       validator: ((_, val) => {
         if (val?.indexOf(' ') !== -1) {
-          return Promise.reject(new Error(message || t('common.notSpace')))
+          return Promise.reject(new Error(message || useI18n().t('common.notSpace')))
         }
         return Promise.resolve()
       }) as any
@@ -42,7 +44,7 @@ export const useValidator = () => {
     return {
       validator: ((_, val) => {
         if (/[`~!@#$%^&*()_+<>?:"{},.\/;'[\]]/gi.test(val)) {
-          return Promise.reject(new Error(message || t('common.notSpecialCharacters')))
+          return Promise.reject(new Error(message || useI18n().t('common.notSpecialCharacters')))
         }
         return Promise.resolve()
       }) as any

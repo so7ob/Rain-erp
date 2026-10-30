@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Localize shared shell controls and overlays, synchronize language across tabs without losing drafts, guard notification contexts, and preserve tenant visit/selection behavior with responsive keyboard and axe coverage (#28).
+
 - Localize contextual core menu/dictionary names without rewriting source data; isolate display state across language, user and tenant changes (#24).
 
 - Give navigation progress a valid, localized indeterminate progress role and test it while visible (#25).

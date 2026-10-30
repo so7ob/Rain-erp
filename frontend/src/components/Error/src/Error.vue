@@ -14,9 +14,7 @@ interface ErrorMap {
 
 const { t } = useI18n()
 
-const errorMap: {
-  [key: string]: ErrorMap
-} = {
+const errorMap = computed<Record<string, ErrorMap>>(() => ({
   '404': {
     url: pageError,
     message: t('error.pageError'),
@@ -32,7 +30,7 @@ const errorMap: {
     message: t('error.noPermission'),
     buttonText: t('error.returnToHome')
   }
-}
+}))
 
 const props = defineProps({
   type: propTypes.string.validate((v: string) => ['404', '500', '403'].includes(v)).def('404')
@@ -46,10 +44,15 @@ const btnClick = () => {
 </script>
 
 <template>
-  <div class="flex justify-center">
+  <div class="rain-error flex justify-center">
     <div class="text-center">
-      <img :src="errorMap[type].url" alt="" width="350" />
-      <div class="text-14px text-[var(--el-color-info)]">{{ errorMap[type].message }}</div>
+      <img
+        :src="errorMap[type].url"
+        alt=""
+        width="350"
+        style="max-inline-size: 100%; block-size: auto"
+      />
+      <h1 class="text-18px text-[var(--el-text-color-primary)]">{{ errorMap[type].message }}</h1>
       <div class="mt-20px">
         <el-button type="primary" @click="btnClick">{{ errorMap[type].buttonText }}</el-button>
       </div>

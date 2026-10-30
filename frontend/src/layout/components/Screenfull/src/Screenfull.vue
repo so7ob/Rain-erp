@@ -15,6 +15,7 @@ defineProps({
 })
 
 const { toggle, isFullscreen } = useFullscreen()
+const { t } = useI18n()
 
 const toggleFullscreen = () => {
   toggle()
@@ -22,11 +23,18 @@ const toggleFullscreen = () => {
 </script>
 
 <template>
-  <div :class="prefixCls" @click="toggleFullscreen">
+  <button
+    type="button"
+    :class="prefixCls"
+    class="inline-flex items-center justify-center border-0 bg-transparent p-8px text-inherit"
+    :aria-label="isFullscreen ? t('shell.exitFullscreen') : t('shell.enterFullscreen')"
+    :aria-pressed="isFullscreen"
+    @click="toggleFullscreen"
+  >
     <Icon
       :color="color"
       :icon="isFullscreen ? 'zmdi:fullscreen-exit' : 'zmdi:fullscreen'"
       :size="18"
     />
-  </div>
+  </button>
 </template>

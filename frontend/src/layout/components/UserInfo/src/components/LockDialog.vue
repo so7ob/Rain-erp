@@ -4,6 +4,7 @@ import { useDesign } from '@/hooks/web/useDesign'
 import { useLockStore } from '@/store/modules/lock'
 import avatarImg from '@/assets/imgs/avatar.gif'
 import { useUserStore } from '@/store/modules/user'
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 
 const { getPrefixCls } = useDesign()
 const prefixCls = getPrefixCls('lock-dialog')
@@ -29,21 +30,21 @@ const emit = defineEmits(['update:modelValue'])
 const dialogVisible = computed({
   get: () => props.modelValue,
   set: (val) => {
-    console.log('set: ', val)
     emit('update:modelValue', val)
   }
 })
 
-const dialogTitle = ref(t('lock.lockScreen'))
+const dialogTitle = computed(() => t('lock.lockScreen'))
 
 const formData = ref({
   password: undefined
 })
-const formRules = reactive({
+const formRules = computed(() => ({
   password: [required()]
-})
+}))
 
 const formRef = ref() // 表单 Ref
+useLocalizedForm(() => formRef.value)
 const handleLock = async () => {
   // 校验表单
   if (!formRef) return
@@ -65,19 +66,26 @@ const handleLock = async () => {
     max-height="170px"
     :class="prefixCls"
     :title="dialogTitle"
+    show-locale
   >
     <div class="flex flex-col items-center">
       <img :src="avatar" alt="" class="w-70px h-70px rounded-[50%]" />
-      <span class="text-14px my-10px text-[var(--top-header-text-color)]">
+      <span class="text-14px my-10px text-[var(--el-text-color-primary)]">
         {{ userName }}
       </span>
     </div>
-    <el-form ref="formRef" :model="formData" :rules="formRules" label-width="80px">
+    <el-form
+      ref="formRef"
+      :model="formData"
+      :rules="formRules"
+      :validate-on-rule-change="false"
+      label-position="top"
+    >
       <el-form-item :label="t('lock.lockPassword')" prop="password">
         <el-input
           type="password"
           v-model="formData.password"
-          :placeholder="'请输入' + t('lock.lockPassword')"
+          :placeholder="t('shell.lockPasswordPlaceholder')"
           clearable
           show-password
         />
@@ -88,11 +96,3 @@ const handleLock = async () => {
     </template>
   </Dialog>
 </template>
-
-<style lang="scss" scoped>
-:global(.v-lock-dialog) {
-  @media (width <= 767px) {
-    max-width: calc(100vw - 16px);
-  }
-}
-</style>

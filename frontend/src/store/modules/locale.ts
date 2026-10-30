@@ -6,6 +6,7 @@ import ar from 'element-plus/es/locale/lang/ar'
 import { normalizeLocale } from '@/locales/policy'
 import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
 import { LocaleDropdownType } from '@/types/localeDropdown'
+import { setCacheLocale } from '@/hooks/web/cacheContext'
 
 const { wsCache } = useCache()
 
@@ -53,10 +54,11 @@ export const useLocaleStore = defineStore('locales', {
     }
   },
   actions: {
-    setCurrentLocale(localeMap: LocaleDropdownType) {
+    setCurrentLocale(localeMap: LocaleDropdownType, persist = true) {
       const lang = normalizeLocale(localeMap?.lang)
       this.currentLocale = { lang, elLocale: elLocaleMap[lang] }
-      wsCache.set(CACHE_KEY.LANG, lang)
+      setCacheLocale(lang)
+      if (persist) wsCache.set(CACHE_KEY.LANG, lang)
     }
   }
 })

@@ -2,19 +2,22 @@
 import { PropType } from 'vue'
 import { propTypes } from '@/utils/propTypes'
 import { useDesign } from '@/hooks/web/useDesign'
+import { colorIsDark } from '@/utils/color'
 
 defineOptions({ name: 'ColorRadioPicker' })
 
 const { getPrefixCls } = useDesign()
 
 const prefixCls = getPrefixCls('color-radio-picker')
+const { t } = useI18n()
 
 const props = defineProps({
   schema: {
     type: Array as PropType<string[]>,
     default: () => []
   },
-  modelValue: propTypes.string.def('')
+  modelValue: propTypes.string.def(''),
+  label: propTypes.string.def('')
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
@@ -40,19 +43,27 @@ watch(
 </script>
 
 <template>
-  <div :class="prefixCls" class="flex flex-wrap space-x-14px">
-    <span
+  <div :class="prefixCls" class="flex flex-wrap gap-12px" role="group" :aria-label="label">
+    <button
+      type="button"
       v-for="(item, i) in schema"
       :key="`radio-${i}`"
       :class="{ 'is-active': colorVal === item }"
+      :aria-label="t('shell.colorOption', { color: item })"
+      :aria-pressed="colorVal === item"
       :style="{
         background: item
       }"
-      class="mb-5px h-20px w-20px cursor-pointer border-2px border-gray-300 rounded-2px border-solid text-center leading-20px"
+      class="mb-5px h-28px w-28px cursor-pointer border-2px border-gray-300 rounded-2px border-solid p-0 text-center leading-20px"
       @click="colorVal = item"
     >
-      <Icon v-if="colorVal === item" :size="16" color="#fff" icon="ep:check" />
-    </span>
+      <Icon
+        v-if="colorVal === item"
+        :size="16"
+        :color="colorIsDark(item) ? 'var(--el-color-white)' : 'var(--el-color-black)'"
+        icon="ep:check"
+      />
+    </button>
   </div>
 </template>
 

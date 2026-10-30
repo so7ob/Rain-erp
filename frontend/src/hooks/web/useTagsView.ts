@@ -24,8 +24,8 @@ export const useTagsView = () => {
     callback?.()
   }
 
-  const closeOther = (callback?: Fn) => {
-    tagsViewStore.delOthersViews(unref(selectedTag) as RouteLocationNormalizedLoaded)
+  const closeOther = (callback?: Fn, view?: RouteLocationNormalizedLoaded) => {
+    tagsViewStore.delOthersViews(view || unref(selectedTag) || unref(currentRoute))
     callback?.()
   }
 

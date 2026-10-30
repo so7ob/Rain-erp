@@ -1,6 +1,7 @@
 <!-- 基于 ruoyi-vue3 的 Pagination 重构，核心是简化无用的属性，并使用 ts 重写 -->
 <template>
   <el-pagination
+    v-pagination-names="{ size: t('shell.pageSize'), page: t('shell.pageNumber') }"
     v-show="total > 0"
     v-model:current-page="currentPage"
     v-model:page-size="pageSize"
@@ -9,17 +10,51 @@
     :pager-count="pagerCount"
     :total="total"
     :small="isSmall"
-    class="float-right mb-15px mt-15px"
+    class="rain-pagination mb-15px mt-15px"
     layout="total, sizes, prev, pager, next, jumper"
     @size-change="handleSizeChange"
     @current-change="handleCurrentChange"
   />
 </template>
+<style scoped>
+.rain-pagination {
+  float: inline-end;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  gap: 8px;
+  --el-text-color-regular: var(--el-text-color-primary);
+  --el-pagination-text-color: var(--el-text-color-primary);
+}
+.rain-pagination.is-background :deep(.el-pager li.is-active) {
+  background-color: #2554ca;
+  color: #fff;
+}
+</style>
 <script lang="ts" setup>
 import { computed, watchEffect } from 'vue'
+import type { Directive, DirectiveBinding } from 'vue'
 import { useAppStore } from '@/store/modules/app'
 
 defineOptions({ name: 'Pagination' })
+const { t } = useI18n()
+
+// Element Plus does not expose names for the size selector and hardcodes the jumper name.
+// Keep this version-specific DOM adapter here; browser tests guard both selectors.
+const applyNames = (
+  element: HTMLElement,
+  binding: DirectiveBinding<{ size: string; page: string }>
+) => {
+  element
+    .querySelector('.el-pagination__sizes [role="combobox"]')
+    ?.setAttribute('aria-label', binding.value.size)
+  element
+    .querySelector('.el-pagination__editor input')
+    ?.setAttribute('aria-label', binding.value.page)
+}
+const vPaginationNames: Directive<HTMLElement, { size: string; page: string }> = {
+  mounted: applyNames,
+  updated: applyNames
+}
 
 // 此处解决了当全局size为small的时候分页组件样式太大的问题
 const appStore = useAppStore()

@@ -55,7 +55,10 @@
     "copy": "نسخ",
     "copySuccess": "تم النسخ بنجاح",
     "copyError": "تعذر النسخ",
-    "navigationLoading": "جار تحميل الصفحة"
+    "navigationLoading": "جار تحميل الصفحة",
+    "lengthRange": "يجب أن يتراوح الطول بين {min} و{max}",
+    "notSpace": "لا يسمح بالمسافات",
+    "notSpecialCharacters": "لا يسمح بالرموز الخاصة"
   },
   "lock": {
     "lockScreen": "قفل الشاشة",

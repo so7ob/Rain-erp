@@ -56,25 +56,29 @@ const toDocument = () => {
 
 <template>
   <ElDropdown class="custom-hover" :class="prefixCls" trigger="click">
-    <div class="flex items-center">
+    <button
+      type="button"
+      class="flex items-center border-0 bg-transparent p-5px text-inherit"
+      :aria-label="t('shell.userMenu')"
+    >
       <ElAvatar :src="avatar" alt="" class="w-[calc(var(--logo-height)-25px)] rounded-[50%]" />
       <span class="pl-[5px] text-14px text-[var(--top-header-text-color)] <lg:hidden">
         {{ userName }}
       </span>
-    </div>
+    </button>
     <template #dropdown>
       <ElDropdownMenu>
-        <ElDropdownItem>
+        <ElDropdownItem @click="toProfile">
           <Icon icon="ep:tools" />
-          <div @click="toProfile">{{ t('common.profile') }}</div>
+          <span>{{ t('common.profile') }}</span>
         </ElDropdownItem>
-        <ElDropdownItem>
+        <ElDropdownItem @click="toDocument">
           <Icon icon="ep:menu" />
-          <div @click="toDocument">{{ t('common.document') }}</div>
+          <span>{{ t('common.document') }}</span>
         </ElDropdownItem>
-        <ElDropdownItem divided>
+        <ElDropdownItem divided @click="lockScreen">
           <Icon icon="ep:lock" />
-          <div @click="lockScreen">{{ t('lock.lockScreen') }}</div>
+          <span>{{ t('lock.lockScreen') }}</span>
         </ElDropdownItem>
         <ElDropdownItem divided @click="loginOut">
           <Icon icon="ep:switch-button" />

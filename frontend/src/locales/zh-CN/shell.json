@@ -1,0 +1,33 @@
+{
+  "shell": {
+    "collapseNavigation": "收起导航",
+    "expandNavigation": "展开导航",
+    "enterFullscreen": "进入全屏",
+    "exitFullscreen": "退出全屏",
+    "dialog": "对话框",
+    "selectRows": "选择记录",
+    "lockPasswordPlaceholder": "请输入锁屏密码",
+    "myNotifications": "我的站内信",
+    "viewAll": "查看全部",
+    "selectTenant": "请选择租户",
+    "visitingTenant": "切换当前租户为: {name}",
+    "colorOption": "颜色 {color}",
+    "menuBorder": "菜单边框",
+    "menuBackground": "菜单背景",
+    "menuLightBackground": "菜单浅色背景",
+    "menuActiveBackground": "菜单选中背景",
+    "menuCollapsedBackground": "菜单收起选中背景",
+    "menuText": "菜单字体",
+    "menuActiveText": "菜单选中字体",
+    "logoText": "标志字体",
+    "logoBorder": "标志边框",
+    "headerBackground": "头部背景",
+    "headerText": "头部字体",
+    "headerHover": "头部悬停背景",
+    "headerBorder": "头部边框",
+    "unreadNotifications": "没有未读通知 | {count} 条未读通知 | {count} 条未读通知",
+    "userMenu": "用户菜单",
+    "pageSize": "每页条数",
+    "pageNumber": "页码"
+  }
+}

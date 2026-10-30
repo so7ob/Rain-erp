@@ -55,7 +55,10 @@
     "copy": "Copy",
     "copySuccess": "Copy Success",
     "copyError": "Copy Error",
-    "navigationLoading": "Loading page"
+    "navigationLoading": "Loading page",
+    "lengthRange": "Length must be between {min} and {max}",
+    "notSpace": "Spaces are not allowed",
+    "notSpecialCharacters": "Special characters are not allowed"
   },
   "lock": {
     "lockScreen": "Lock screen",

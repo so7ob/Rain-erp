@@ -52,7 +52,7 @@ corepack pnpm exec playwright install --with-deps chromium
 corepack pnpm test:browser
 ```
 
-Playwright starts an isolated production preview on `127.0.0.1:4173`. `RAIN_BROWSER_BASE_URL` selects an already running local development server instead; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects an installed Chromium binary. CI installs the matching Playwright browser and tests the production build.
+Playwright starts an isolated production preview on `127.0.0.1:4173` and a separate Vite source fixture server on `127.0.0.1:4174`. Application cases use the production preview. The isolated `tests/components/index.html` fixture exercises the exported, currently unused TableSelectForm and shared Error components with synthetic data; it is outside the production build entry. It uses the real locale/store/component code and does not activate a business module. `RAIN_BROWSER_BASE_URL` selects an already running local Vite development server for both kinds of cases instead; `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` optionally selects an installed Chromium binary. CI installs the matching Playwright browser.
 
 The suite covers Arabic defaults, all three languages, saved preferences, request language headers, live page titles, preserved login/profile/password drafts and validation limits, SMS countdown, QR help, SSO scope selection, keyboard language selection and keyboard avatar-dialog opening/closing. Login and the owned profile content are checked with axe at 375/1280 in light/dark modes. Profile checks include mixed Arabic/Latin customer values, visible mobile tabs/language controls, and document overflow after responsive layout settles. The profile axe scope is `.profile-layout`, scanned before and after scrolling to the form; shell-wide accessibility and the remaining shared widgets remain part of #15 acceptance.
 
@@ -82,6 +82,14 @@ mvn -B -ntp -pl yudao-module-system -am test -s .github/maven-settings.xml
 ```
 
 They supplement the complete required gate, rather than replacing verification of the active reactor or optional-module acceptance.
+
+## Shared shell and overlay localization
+
+Issue #28 adds literal guards for the owned controls, notification plural cases, external-load cancellation and delayed-startup preference tests. Browser cases cover cross-tab preferences and headers with retained drafts and one write per user choice, native navigation/fullscreen/menu actions, reactive lock validation, tenant selection, and obsolete notification responses across login/tenant/visited-tenant identities. All account/tenant/API values are fixtures; no runtime writes occur.
+
+Settings, lock validation, notification popovers, and isolated selection/error content have 375/1280 light/dark axe matrices. Settings scans cover the initial viewport and bottom actions after scrolling. The picker is operated by keyboard, and original mixed text/selection/confirm/cancel/pagination/custom titles are asserted. The TableSelectForm cases use the isolated source fixture described above; they do not establish acceptance of an enabled module. The Element Plus pagination naming adapter is exercised after language changes. Source and browser checks keep failures visible and add no exclusions or retries.
+
+Local #28 acceptance passed 40 configuration/catalog cases, 70 Chromium cases (65 production application cases and five isolated source-component cases), 50 workflow cases, and 956 Maven cases with the unchanged 18-test disabled baseline. The initial plain Maven gate and a clean retry failed five MQ cases with missing generated classes while VS Code's Java builder was active. A standard `mvn -B -ntp -s .github/maven-settings.xml -pl yudao-server -am clean verify` succeeded with the verified Java language server temporarily paused; it was resumed afterward. Keep IDE and Maven writers apart when diagnosing disappearing outputs, for example by checking the same commit in an isolated worktree. No test or compiler configuration was weakened for the successful gate.
 
 ## Local source preview
 

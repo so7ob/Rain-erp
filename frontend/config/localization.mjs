@@ -27,6 +27,18 @@ const displayProperties = new Set([
   'unit'
 ])
 const readable = (value) => typeof value === 'string' && /\p{L}/u.test(value)
+// These JSX attributes carry CSS, icon IDs or DOM semantics rather than display text.
+const technicalJsxAttributes = new Set([
+  'id',
+  'class',
+  'className',
+  'style',
+  'icon',
+  'color',
+  'hover-color',
+  'type',
+  'role'
+])
 const translatedCall = (node) =>
   ts.isCallExpression(node) &&
   (node.expression.getText() === 't' || node.expression.getText().endsWith('.t'))
@@ -139,7 +151,12 @@ export function scanSource(source, filename) {
         let ancestor = parent
         while (ancestor && !ts.isJsxExpression(ancestor) && !ts.isStatement(ancestor))
           ancestor = ancestor.parent
-        const jsxExpression = ancestor && ts.isJsxExpression(ancestor)
+        const jsxExpression =
+          ancestor &&
+          ts.isJsxExpression(ancestor) &&
+          !technicalJsxAttributes.has(attribute) &&
+          (!ts.isJsxAttribute(ancestor.parent) ||
+            !technicalJsxAttributes.has(ancestor.parent.name.getText(ast)))
         const isMessageCall =
           ts.isCallExpression(parent) &&
           /(?:message|Message|notification|Notification|alert|confirm)(?:\.(?:error|success|warning|info|confirm|alert))?$/u.test(
