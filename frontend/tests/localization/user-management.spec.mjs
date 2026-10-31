@@ -3,6 +3,20 @@ import AxeBuilder from '@axe-core/playwright'
 import { userFixtures, userFixtureUrl, chooseUserLanguage, sampleUser } from './user-fixtures.mjs'
 import { waitForOverlaySettled } from './overlays.mjs'
 
+async function expectUnclippedFilterControls(form) {
+  expect(
+    await form.evaluate((element) => {
+      const card = element.closest('.el-card').getBoundingClientRect()
+      return [
+        ...element.querySelectorAll('.el-input__wrapper, .el-select__wrapper, .el-button')
+      ].every((control) => {
+        const box = control.getBoundingClientRect()
+        return box.top >= card.top - 1 && box.bottom <= card.bottom + 1
+      })
+    })
+  ).toBe(true)
+}
+
 test('user create/edit validation follows language changes and retains the original model', async ({
   page
 }) => {
@@ -273,6 +287,11 @@ for (const width of [375, 1280])
       const box = await picker.boundingBox()
       expect(box.x).toBeGreaterThanOrEqual(0)
       expect(box.x + box.width).toBeLessThanOrEqual(width + 1)
+      expect(
+        await picker
+          .locator('.el-date-range-picker')
+          .evaluate((panel) => panel.scrollWidth <= panel.clientWidth + 1)
+      ).toBe(true)
       const month = picker.locator('.el-date-range-picker__content').first()
       await month
         .locator('td.available:not(.prev-month):not(.next-month)')
@@ -460,6 +479,7 @@ for (const width of [375, 1280])
       await expect(
         dialog.locator('thead').getByRole('checkbox', { name: 'تحديد جميع الصفوف', exact: true })
       ).toHaveJSProperty('indeterminate', true)
+      await expectUnclippedFilterControls(dialog.locator('.el-form'))
       await waitForOverlaySettled(dialog)
       expect(
         (await new AxeBuilder({ page }).include('.rain-user-management').analyze()).violations
@@ -471,6 +491,9 @@ for (const width of [375, 1280])
       await expect(
         page.getByRole('switch', { name: 'حالة حساب user0001', exact: true })
       ).toBeEnabled()
+      await expectUnclippedFilterControls(
+        page.locator('section.rain-user-management .el-form').first()
+      )
       expect(
         (await new AxeBuilder({ page }).include('.rain-user-management').analyze()).violations
       ).toEqual([])

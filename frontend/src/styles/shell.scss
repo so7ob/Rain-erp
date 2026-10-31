@@ -134,13 +134,20 @@
 }
 .rain-user-date-filter {
   --el-color-primary: #2554ca;
+  .el-date-table th {
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    padding-inline: 1px;
+  }
   .el-date-range-picker {
     box-sizing: border-box;
     inline-size: min(646px, calc(100vw - 32px));
     max-block-size: min(65vh, 620px);
     overflow: auto;
   }
-  .el-picker-panel__body {
+  .el-date-range-picker .el-picker-panel__body {
+    min-width: 0;
     min-inline-size: 0;
   }
 }
@@ -151,6 +158,37 @@
   }
 }
 @media (max-width: 600px) {
+  .rain-user-management .el-date-editor.el-range-editor {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) 20px;
+    row-gap: 4px;
+    block-size: auto;
+    min-block-size: 64px;
+    padding-block: 4px;
+    .el-range-input {
+      grid-column: 2;
+      inline-size: 100%;
+      direction: ltr;
+      text-align: start;
+    }
+    .el-range-input:first-of-type {
+      grid-row: 1;
+    }
+    .el-range-input:last-of-type {
+      grid-row: 2;
+    }
+    .el-range__icon {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+    .el-range__close-icon {
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+    .el-range-separator {
+      display: none;
+    }
+  }
   .rain-user-management .el-form--inline .el-form-item {
     width: 100%;
   }

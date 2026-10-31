@@ -32,7 +32,7 @@
       <!-- 右侧：搜索表单 + 用户表格 -->
       <el-col class="rain-user-selector-content" :span="19" :xs="24">
         <ContentWrap>
-          <el-form class="-mb-[15px]" :inline="true" :model="queryParams" label-position="top">
+          <el-form :inline="true" :model="queryParams" label-position="top">
             <el-form-item :label="t('system.user.fields.username')">
               <el-input
                 v-model="queryParams.username"

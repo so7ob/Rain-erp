@@ -23,13 +23,7 @@
       <el-col :span="20" :xs="24">
         <!-- 搜索 -->
         <ContentWrap>
-          <el-form
-            class="-mb-15px"
-            :model="queryParams"
-            ref="queryFormRef"
-            :inline="true"
-            label-position="top"
-          >
+          <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-position="top">
             <el-form-item :label="t('system.user.fields.username')" prop="username">
               <el-input
                 v-model="queryParams.username"
@@ -72,7 +66,7 @@
                 type="datetimerange"
                 :start-placeholder="t('system.user.placeholders.startDate')"
                 :end-placeholder="t('system.user.placeholders.endDate')"
-                class="!w-240px"
+                class="!w-400px max-w-full"
               />
             </el-form-item>
             <el-form-item>
