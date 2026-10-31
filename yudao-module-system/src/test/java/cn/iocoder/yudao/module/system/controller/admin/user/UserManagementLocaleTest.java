@@ -12,6 +12,7 @@ import cn.iocoder.yudao.framework.web.core.i18n.RequestMessageInterpolator;
 import cn.iocoder.yudao.module.system.controller.admin.permission.PermissionController;
 import cn.iocoder.yudao.module.system.service.permission.PermissionService;
 import cn.iocoder.yudao.module.system.service.user.AdminUserService;
+import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserUpdateStatusReqVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,14 +20,21 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.anyOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -37,10 +45,12 @@ class UserManagementLocaleTest {
     private AdminUserService users;
     private PermissionService permissions;
     private LocalValidatorFactoryBean validator;
+    private RequestLocaleFilter localeFilter;
 
     @BeforeEach
     void setup() throws Exception {
         var messages = ModuleMessageSources.create(new PathMatchingResourcePatternResolver());
+        localeFilter = new RequestLocaleFilter(messages);
         validator = new LocalValidatorFactoryBean();
         validator.setMessageInterpolator(new RequestMessageInterpolator(messages));
         validator.afterPropertiesSet();
@@ -56,7 +66,7 @@ class UserManagementLocaleTest {
         ReflectUtil.setFieldValue(permissionController, "permissionService", permissions);
         mvc = MockMvcBuilders.standaloneSetup(userController, permissionController)
                 .setValidator(validator)
-                .addFilters(new RequestLocaleFilter(messages))
+                .addFilters(localeFilter)
                 .setControllerAdvice(new GlobalExceptionHandler("user-management-fixture", mock(ApiErrorLogCommonApi.class)))
                 .build();
     }
@@ -78,8 +88,17 @@ class UserManagementLocaleTest {
                 : isEnglish(language) ? "Account status must be within [0, 1]" : "必须在指定范围 [0, 1]";
         mvc.perform(localized(put("/system/user/update-status"), language, "{\"id\":1,\"status\":2}"))
                 .andExpect(jsonPath("$.code").value(400))
-                .andExpect(jsonPath("$.msg", containsString(invalidStatus)))
-                .andExpect(jsonPath("$.msg", containsString(invalidDictionary)));
+                // The existing API contract exposes the first field error, whose constraint order is unspecified.
+                .andExpect(jsonPath("$.msg", anyOf(containsString(invalidStatus), containsString(invalidDictionary))));
+        var request = new MockHttpServletRequest();
+        if (language != null) request.addHeader("Accept-Language", language);
+        var invalid = new UserUpdateStatusReqVO();
+        invalid.setId(1L);
+        invalid.setStatus(2);
+        var allViolations = new AtomicReference<Set<String>>();
+        localeFilter.doFilter(request, new MockHttpServletResponse(), (ignoredRequest, ignoredResponse) ->
+                allViolations.set(validator.validate(invalid).stream().map(jakarta.validation.ConstraintViolation::getMessage).collect(Collectors.toSet())));
+        assertEquals(Set.of(invalidStatus, invalidDictionary), allViolations.get());
         mvc.perform(localized(put("/system/user/update-status"), language, "{\"id\":1,\"status\":1}"))
                 .andExpect(jsonPath("$.code").value(0)).andExpect(jsonPath("$.data").value(true));
         verify(users).updateUserStatus(1L, 1);
