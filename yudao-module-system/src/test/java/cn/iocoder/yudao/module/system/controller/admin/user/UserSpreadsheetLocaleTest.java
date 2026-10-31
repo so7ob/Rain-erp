@@ -204,6 +204,19 @@ class UserSpreadsheetLocaleTest {
                 .andExpect(jsonPath("$.messageKey").value("excel.import.unknownDictionary"));
     }
 
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1})
+    void numericDictionaryCellsFailAsStructuredValidationWithoutGuessingACode(int number) throws Exception {
+        mvc.perform(multipart("/system/user/import").file(new MockMultipartFile("file",
+                        workbook(List.of("Username", "Account status"), List.of("yunai", number))))
+                        .header("Accept-Language", "ar"))
+                .andExpect(jsonPath("$.code").value(400))
+                .andExpect(jsonPath("$.messageKey").value("excel.import.unknownDictionary"))
+                .andExpect(jsonPath("$.msg").value(messages.getMessage("excel.import.unknownDictionary",
+                        new Object[]{"حالة الحساب", String.valueOf(number)}, Locale.forLanguageTag("ar"))));
+        verify(users, never()).importUserList(any(), anyBoolean());
+    }
+
     private static DictDataRespDTO dictionary(String type, String value, String label) {
         return new DictDataRespDTO().setDictType(type).setValue(value).setLabel(label);
     }
@@ -214,7 +227,7 @@ class UserSpreadsheetLocaleTest {
         return "zh-CN";
     }
 
-    private static byte[] workbook(List<String> headers, List<String> values) {
+    private static byte[] workbook(List<String> headers, List<?> values) {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         List<List<String>> head = new ArrayList<>();
         headers.forEach(value -> head.add(List.of(value)));

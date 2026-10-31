@@ -47,7 +47,7 @@ public class DictConvert implements Converter<Object> {
         } else {
             Set<String> candidates = new LinkedHashSet<>();
             DictFrameworkUtils.getDictDataList(type).forEach(data -> {
-                if (catalog.dictionaryAliases(type, data).contains(label)) {
+                if (label != null && catalog.dictionaryAliases(type, data).contains(label)) {
                     candidates.add(data.getValue());
                 }
             });
@@ -56,8 +56,10 @@ public class DictConvert implements Converter<Object> {
                         catalog.fieldLabel(contentProperty.getField()), label);
             }
             if (candidates.isEmpty()) {
+                Object supplied = label != null ? label : readCellData.getNumberValue() != null
+                        ? readCellData.getNumberValue() : readCellData.getBooleanValue();
                 throw ExcelImportErrors.error("unknownDictionary", "列“{}”中的字典标签“{}”无效",
-                        catalog.fieldLabel(contentProperty.getField()), label);
+                        catalog.fieldLabel(contentProperty.getField()), supplied);
             }
             value = candidates.iterator().next();
         }
