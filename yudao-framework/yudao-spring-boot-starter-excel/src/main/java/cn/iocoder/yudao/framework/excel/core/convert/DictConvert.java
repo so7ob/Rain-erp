@@ -3,6 +3,8 @@ package cn.iocoder.yudao.framework.excel.core.convert;
 import cn.hutool.core.convert.Convert;
 import cn.iocoder.yudao.framework.dict.core.DictFrameworkUtils;
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
+import cn.iocoder.yudao.framework.excel.core.i18n.ExcelImportErrors;
+import cn.iocoder.yudao.framework.excel.core.i18n.ExcelLocaleCatalog;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.fesod.sheet.converters.Converter;
 import org.apache.fesod.sheet.enums.CellDataTypeEnum;
@@ -10,6 +12,9 @@ import org.apache.fesod.sheet.metadata.GlobalConfiguration;
 import org.apache.fesod.sheet.metadata.data.ReadCellData;
 import org.apache.fesod.sheet.metadata.data.WriteCellData;
 import org.apache.fesod.sheet.metadata.property.ExcelContentProperty;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Excel 数据字典转换器
@@ -35,7 +40,29 @@ public class DictConvert implements Converter<Object> {
         // 使用字典解析
         String type = getType(contentProperty);
         String label = readCellData.getStringValue();
-        String value = DictFrameworkUtils.parseDictDataValue(type, label);
+        ExcelLocaleCatalog catalog = ExcelLocaleCatalog.of(contentProperty.getField().getDeclaringClass());
+        String value;
+        if (catalog == null) {
+            value = DictFrameworkUtils.parseDictDataValue(type, label);
+        } else {
+            Set<String> candidates = new LinkedHashSet<>();
+            DictFrameworkUtils.getDictDataList(type).forEach(data -> {
+                if (label != null && catalog.dictionaryAliases(type, data).contains(label)) {
+                    candidates.add(data.getValue());
+                }
+            });
+            if (candidates.size() > 1) {
+                throw ExcelImportErrors.error("ambiguousDictionary", "列“{}”中的字典标签“{}”存在歧义",
+                        catalog.fieldLabel(contentProperty.getField()), label);
+            }
+            if (candidates.isEmpty()) {
+                Object supplied = label != null ? label : readCellData.getNumberValue() != null
+                        ? readCellData.getNumberValue() : readCellData.getBooleanValue();
+                throw ExcelImportErrors.error("unknownDictionary", "列“{}”中的字典标签“{}”无效",
+                        catalog.fieldLabel(contentProperty.getField()), supplied);
+            }
+            value = candidates.iterator().next();
+        }
         if (value == null) {
             log.error("[convertToJavaData][type({}) 解析不掉 label({})]", type, label);
             return null;
@@ -62,7 +89,8 @@ public class DictConvert implements Converter<Object> {
             return new WriteCellData<>("");
         }
         // 生成 Excel 小表格
-        return new WriteCellData<>(label);
+        ExcelLocaleCatalog catalog = ExcelLocaleCatalog.of(contentProperty.getField().getDeclaringClass());
+        return new WriteCellData<>(catalog == null ? label : catalog.dictionaryLabel(type, value, label));
     }
 
     private static String getType(ExcelContentProperty contentProperty) {

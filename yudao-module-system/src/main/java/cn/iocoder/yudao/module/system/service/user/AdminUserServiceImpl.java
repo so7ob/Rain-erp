@@ -8,6 +8,7 @@ import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
+import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
@@ -41,6 +42,7 @@ import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.annotation.LogRecord;
 import jakarta.annotation.Resource;
+import jakarta.validation.Validator;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
@@ -51,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.*;
@@ -69,6 +72,9 @@ public class AdminUserServiceImpl implements AdminUserService {
     static final String USER_INIT_PASSWORD_KEY = "system.user.init-password";
 
     static final String USER_REGISTER_ENABLED_KEY = "system.user.register-enabled";
+
+    @Resource
+    private Validator validator;
 
     @Resource
     private AdminUserMapper userMapper;
@@ -564,10 +570,16 @@ public class AdminUserServiceImpl implements AdminUserService {
             int currentIndex = index.getAndIncrement();
             // 2.1.1 校验字段是否符合要求
             try {
-                ValidationUtils.validate(BeanUtils.toBean(importUser, UserSaveReqVO.class).setPassword(initPassword));
+                ValidationUtils.validate(validator, BeanUtils.toBean(importUser, UserSaveReqVO.class).setPassword(initPassword));
             } catch (ConstraintViolationException ex) {
-                String key = StrUtil.blankToDefault(importUser.getUsername(), "第 " + currentIndex + " 行");
-                respVO.getFailureUsernames().put(key, ex.getMessage());
+                String key = StrUtil.blankToDefault(importUser.getUsername(), ErrorMessageContext.resolve("system.user.import.row",
+                        new Object[]{currentIndex}, "第 " + currentIndex + " 行"));
+                String validationMessage = ErrorMessageContext.isLocalizedRequest()
+                        ? ex.getConstraintViolations().stream()
+                        .sorted(Comparator.comparing(violation -> violation.getPropertyPath().toString()))
+                        .map(violation -> violation.getMessage()).distinct().collect(Collectors.joining("; "))
+                        : ex.getMessage();
+                respVO.getFailureUsernames().put(key, validationMessage);
                 return;
             }
             // 2.1.2 校验，判断是否有不符合的原因
@@ -575,7 +587,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                 validateUserForCreateOrUpdate(null, null, importUser.getMobile(), importUser.getEmail(),
                         importUser.getDeptId(), null);
             } catch (ServiceException ex) {
-                respVO.getFailureUsernames().put(importUser.getUsername(), ex.getMessage());
+                respVO.getFailureUsernames().put(importUser.getUsername(), ErrorMessageContext.resolve(
+                        ex.getMessageKey(), ex.getMessageArguments(), ex.getMessage()));
                 return;
             }
 
@@ -589,7 +602,8 @@ public class AdminUserServiceImpl implements AdminUserService {
             }
             // 2.2.2 如果存在，判断是否允许更新
             if (!isUpdateSupport) {
-                respVO.getFailureUsernames().put(importUser.getUsername(), USER_USERNAME_EXISTS.getMsg());
+                respVO.getFailureUsernames().put(importUser.getUsername(), ErrorMessageContext.resolve(
+                        USER_USERNAME_EXISTS.getMessageKey(), null, USER_USERNAME_EXISTS.getMsg()));
                 return;
             }
             // 2.2.3 校验管理员不能禁用
@@ -597,7 +611,8 @@ public class AdminUserServiceImpl implements AdminUserService {
                 try {
                     validateUserNotAdmin(existUser.getId(), USER_ADMIN_NOT_ALLOW_DISABLE);
                 } catch (ServiceException ex) {
-                    respVO.getFailureUsernames().put(importUser.getUsername(), ex.getMessage());
+                    respVO.getFailureUsernames().put(importUser.getUsername(), ErrorMessageContext.resolve(
+                        ex.getMessageKey(), ex.getMessageArguments(), ex.getMessage()));
                     return;
                 }
             }

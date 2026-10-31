@@ -2,6 +2,7 @@ interface IdentityStorage {
   credential(): unknown
   read(): unknown
   write(identity: string): void
+  continuation?(): unknown
 }
 
 export function randomCacheIdentity(cryptography: Pick<Crypto, 'getRandomValues'>) {
@@ -17,22 +18,40 @@ export function randomCacheIdentity(cryptography: Pick<Crypto, 'getRandomValues'
 export function createCacheIdentity(storage: IdentityStorage, randomId: () => string) {
   const unseen = Symbol('unseen')
   let previous: unknown = unseen
+  let previousContinuation: unknown = unseen
   const valid = (value: unknown): value is string =>
     typeof value === 'string' && /^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(value)
   const rotate = () => {
     const identity = randomId()
     storage.write(identity)
     previous = storage.credential()
+    previousContinuation = (storage.continuation?.() as { nonce?: unknown } | undefined)?.nonce
     return identity
   }
   const current = () => {
     const credential = storage.credential()
     if (!credential) {
       previous = credential
+      previousContinuation = (storage.continuation?.() as { nonce?: unknown } | undefined)?.nonce
       return 'public'
     }
     const saved = storage.read()
-    if ((previous !== unseen && previous !== credential) || !valid(saved)) return rotate()
+    const receipt = storage.continuation?.() as
+      | { identity?: unknown; nonce?: unknown; pending?: unknown }
+      | undefined
+    // Another tab can read between the credential writes, including on its first read.
+    if (
+      receipt?.pending === true &&
+      receipt.identity === saved &&
+      valid(receipt.nonce) &&
+      valid(saved)
+    )
+      return saved
+    const continued =
+      receipt?.identity === saved && valid(receipt?.nonce) && receipt.nonce !== previousContinuation
+    if ((previous !== unseen && previous !== credential && !continued) || !valid(saved))
+      return rotate()
+    if (previous === unseen || previous !== credential) previousContinuation = receipt?.nonce
     previous = credential
     return saved
   }

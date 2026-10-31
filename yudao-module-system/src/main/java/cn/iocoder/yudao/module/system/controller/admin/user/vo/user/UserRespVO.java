@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.system.controller.admin.user.vo.user;
 
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
+import cn.iocoder.yudao.framework.excel.core.annotations.ExcelLocale;
 import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 import cn.iocoder.yudao.module.system.enums.DictTypeConstants;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Schema(description = "管理后台 - 用户信息 Response VO")
 @Data
 @ExcelIgnoreUnannotated
+@ExcelLocale(module = "system", value = "system.user.export")
 public class UserRespVO{
 
     @Schema(description = "用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")

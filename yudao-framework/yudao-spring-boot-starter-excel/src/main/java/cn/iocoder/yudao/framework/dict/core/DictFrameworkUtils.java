@@ -48,6 +48,12 @@ public class DictFrameworkUtils {
         GET_DICT_DATA_CACHE.invalidateAll();
     }
 
+    /** Original dictionary identities for contextual presentation; callers must not modify the records. */
+    @SneakyThrows
+    public static List<DictDataRespDTO> getDictDataList(String dictType) {
+        return List.copyOf(GET_DICT_DATA_CACHE.get(dictType));
+    }
+
     @SneakyThrows
     public static String parseDictDataLabel(String dictType, Integer value) {
         if (value == null) {

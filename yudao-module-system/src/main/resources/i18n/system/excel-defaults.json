@@ -1,0 +1,26 @@
+[
+  {
+    "type": "common_status",
+    "value": "0",
+    "label": "开启",
+    "key": "system.user.excel.dictionary.enabled"
+  },
+  {
+    "type": "common_status",
+    "value": "1",
+    "label": "关闭",
+    "key": "system.user.excel.dictionary.disabled"
+  },
+  {
+    "type": "system_user_sex",
+    "value": "1",
+    "label": "男",
+    "key": "system.user.excel.dictionary.male"
+  },
+  {
+    "type": "system_user_sex",
+    "value": "2",
+    "label": "女",
+    "key": "system.user.excel.dictionary.female"
+  }
+]

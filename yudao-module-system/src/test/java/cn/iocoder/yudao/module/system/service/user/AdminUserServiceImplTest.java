@@ -2,6 +2,8 @@ package cn.iocoder.yudao.module.system.service.user;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
+import cn.iocoder.yudao.framework.web.config.YudaoI18nAutoConfiguration;
+import cn.iocoder.yudao.framework.web.core.i18n.RequestLocaleFilter;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
@@ -36,6 +38,12 @@ import cn.iocoder.yudao.module.system.service.tenant.TenantService;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.context.MessageSource;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.mockito.stubbing.Answer;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,6 +52,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Locale;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import static cn.hutool.core.util.RandomUtil.randomEle;
@@ -63,11 +73,13 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@Import(AdminUserServiceImpl.class)
+@Import({AdminUserServiceImpl.class, YudaoI18nAutoConfiguration.class})
 public class AdminUserServiceImplTest extends BaseDbUnitTest {
 
     @Resource
     private AdminUserServiceImpl userService;
+    @Resource
+    private MessageSource messages;
 
     @Resource
     private AdminUserMapper userMapper;
@@ -99,6 +111,39 @@ public class AdminUserServiceImplTest extends BaseDbUnitTest {
     public void before() {
         // mock 初始化密码
         when(configApi.getConfigValueByKey(USER_INIT_PASSWORD_KEY)).thenReturn("yudaoyuanma");
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"ar", "en", "zh-CN"})
+    void importFailuresUseTheRequestLanguageAndKeepLegacyMessagesWithoutAHeader(String language) throws Exception {
+        userMapper.insert(randomAdminUserDO(user -> user.setUsername("duplicate0001")));
+        String originalName = "Custom قسم 00123";
+        doThrow(cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception(DEPT_NOT_ENABLE, originalName))
+                .when(deptService).validateDeptList(eq(CollectionUtils.singleton(99L)));
+        List<UserImportExcelVO> rows = List.of(
+                UserImportExcelVO.builder().nickname("Missing username").build(),
+                UserImportExcelVO.builder().username("duplicate0001").nickname("عميل ACME 00123").deptId(1L).build(),
+                UserImportExcelVO.builder().username("department0001").nickname("عميل ACME 00123").deptId(99L).build());
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        if (language != null) request.addHeader("Accept-Language", language);
+        AtomicReference<UserImportRespVO> captured = new AtomicReference<>();
+        new RequestLocaleFilter(messages).doFilter(request, new MockHttpServletResponse(),
+                (ignoredRequest, ignoredResponse) -> captured.set(userService.importUserList(rows, false)));
+        UserImportRespVO result = captured.get();
+        assertTrue(result.getCreateUsernames().isEmpty());
+        assertTrue(result.getUpdateUsernames().isEmpty());
+        assertEquals(3, result.getFailureUsernames().size());
+        Locale locale = language == null ? Locale.SIMPLIFIED_CHINESE : Locale.forLanguageTag(language);
+        String row = messages.getMessage("system.user.import.row", new Object[]{"1"}, locale);
+        assertTrue(result.getFailureUsernames().get(row).contains(
+                messages.getMessage("system.user.validation.usernameRequired", null, locale)));
+        if (language != null) assertFalse(result.getFailureUsernames().get(row).contains("username:"));
+        assertEquals(messages.getMessage("system.user.usernameExists", null, locale),
+                result.getFailureUsernames().get("duplicate0001"));
+        assertEquals(messages.getMessage("system.department.disabled", new Object[]{originalName}, locale),
+                result.getFailureUsernames().get("department0001"));
+        assertEquals(1L, userMapper.selectCount());
     }
 
     @Test

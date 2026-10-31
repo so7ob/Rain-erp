@@ -33,6 +33,46 @@ test('cache identities survive reloads, rotate across users and never contain cr
   assert.match(identity.current(), /^[0-9a-f-]{36}$/)
 })
 
+test('a verified credential continuation preserves both tabs while stale receipts cannot adopt a different login', () => {
+  let credential = 'fixture-old-credential'
+  let saved
+  let receipt
+  let counter = 0
+  const randomId = () => `00000000-0000-4000-8000-${String(++counter).padStart(12, '0')}`
+  const port = {
+    credential: () => credential,
+    read: () => saved,
+    write: (id) => {
+      saved = id
+    },
+    continuation: () => receipt
+  }
+  const first = createCacheIdentity(port, randomId)
+  const other = createCacheIdentity(port, randomId)
+  const login = first.current()
+  assert.equal(other.current(), login)
+  receipt = { identity: login, nonce: randomId(), pending: true }
+  const newObserver = createCacheIdentity(port, randomId)
+  assert.equal(newObserver.current(), login)
+  // Another tab may read between the receipt write and the synchronous credential writes.
+  assert.equal(other.current(), login)
+  credential = 'fixture-refreshed-credential'
+  assert.equal(newObserver.current(), login)
+  receipt = { ...receipt, pending: false }
+  assert.equal(first.current(), login)
+  assert.equal(other.current(), login)
+  assert.equal(newObserver.current(), login)
+  assert.equal(JSON.stringify(receipt).includes('fixture'), false)
+  credential = 'fixture-other-user-credential'
+  assert.notEqual(first.current(), login)
+  assert.notEqual(other.current(), login)
+  credential = undefined
+  first.current()
+  const afterLogout = saved
+  credential = 'fixture-unrelated-login'
+  assert.notEqual(first.current(), afterLogout)
+})
+
 test('display caches separate languages, users, tenant and visited-tenant context', () => {
   const auth = authenticationCacheScope('opaque', 1, undefined)
   const base = displayCacheScope(auth, 1, 'ar')

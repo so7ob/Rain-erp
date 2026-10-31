@@ -98,3 +98,21 @@ export const updateUserStatus = (id: number, status: number) => {
   }
   return request.put({ url: '/system/user/update-status', data: data })
 }
+
+export interface UserImportResult {
+  createUsernames: string[]
+  updateUsernames: string[]
+  failureUsernames: Record<string, string>
+}
+
+export const importUsers = (file: File, updateSupport: boolean, signal?: AbortSignal) => {
+  const data = new FormData()
+  data.append('file', file)
+  return request.post<UserImportResult>({
+    url: '/system/user/import',
+    params: { updateSupport },
+    data,
+    signal,
+    headersType: 'multipart/form-data'
+  })
+}

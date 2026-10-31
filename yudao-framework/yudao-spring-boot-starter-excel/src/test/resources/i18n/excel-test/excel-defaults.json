@@ -1,0 +1,8 @@
+[
+  {
+    "type": "test_status",
+    "value": "0",
+    "label": "开启",
+    "key": "excelTest.dict.enabled"
+  }
+]

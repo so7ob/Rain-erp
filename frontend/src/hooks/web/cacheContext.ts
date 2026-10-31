@@ -12,11 +12,13 @@ const revision = shallowRef(0)
 const userId = shallowRef(0)
 const effectiveLocale = shallowRef<ReturnType<typeof normalizeLocale>>()
 let storage: WebStorageCache | undefined
+let continuingAuthentication = false
 const raw = () => (storage ??= new WebStorageCache({ storage: 'localStorage' }))
 const identity = createCacheIdentity(
   {
     credential: () => raw().get('REFRESH_TOKEN') || raw().get('ACCESS_TOKEN'),
     read: () => raw().get('rain.auth.identity'),
+    continuation: () => raw().get('rain.auth.credential-update'),
     write: (value) => raw().set('rain.auth.identity', value)
   },
   () => randomCacheIdentity(crypto)
@@ -54,10 +56,34 @@ export const scopedCacheKey = (key: string) => {
 
 export const notifyCacheMutation = (key: string, before: unknown, after: unknown) => {
   if (before === after) return
-  if (key === 'REFRESH_TOKEN' || (key === 'ACCESS_TOKEN' && !raw().get('REFRESH_TOKEN')))
+  if (
+    !continuingAuthentication &&
+    (key === 'REFRESH_TOKEN' || (key === 'ACCESS_TOKEN' && !raw().get('REFRESH_TOKEN')))
+  )
     identity.rotate()
   if (['REFRESH_TOKEN', 'ACCESS_TOKEN', 'tenantId', 'visitTenantId', 'lang'].includes(key))
     revision.value++
+}
+
+/** Only a refresh verified against the current session may replace credentials without starting a new login. */
+export const continueAuthenticationContext = (writeCredentials: () => void) => {
+  const captured = identity.current()
+  const receipt = {
+    identity: captured,
+    nonce: randomCacheIdentity(crypto)
+  }
+  raw().set('rain.auth.credential-update', { ...receipt, pending: true })
+  continuingAuthentication = true
+  try {
+    writeCredentials()
+  } finally {
+    continuingAuthentication = false
+    try {
+      raw().set('rain.auth.credential-update', { ...receipt, pending: false })
+    } finally {
+      revision.value++
+    }
+  }
 }
 
 export const clearContextCaches = () => {
@@ -68,7 +94,7 @@ export const clearContextCaches = () => {
       if (
         key &&
         (cachePrefixes.some((prefix) => key.startsWith(prefix)) ||
-          ['user', 'roleRouters', 'dictCache'].includes(key))
+          ['user', 'roleRouters', 'dictCache', 'rain.auth.credential-update'].includes(key))
       )
         source.removeItem(key)
     }

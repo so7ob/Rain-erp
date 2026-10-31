@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Localize registered user spreadsheet filenames, sheets, headers, dictionary labels and import failures; accept Arabic/English/legacy templates, preserve typed data and custom labels, and retain import drafts across language changes and verified session renewal (#34).
+
 - Respect reduced motion in shared overlays, wait for actual entry before accessibility measurements, and increase selection table header contrast (#32).
 
 - Localize shared shell controls and overlays, synchronize language across tabs without losing drafts, guard notification contexts, and preserve tenant visit/selection behavior with responsive keyboard and axe coverage (#28).
