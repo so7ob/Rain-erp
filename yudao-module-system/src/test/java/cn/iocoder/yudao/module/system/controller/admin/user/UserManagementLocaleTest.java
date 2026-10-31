@@ -39,7 +39,7 @@ class UserManagementLocaleTest {
     private LocalValidatorFactoryBean validator;
 
     @BeforeEach
-    void setup() {
+    void setup() throws Exception {
         var messages = ModuleMessageSources.create(new PathMatchingResourcePatternResolver());
         validator = new LocalValidatorFactoryBean();
         validator.setMessageInterpolator(new RequestMessageInterpolator(messages));
