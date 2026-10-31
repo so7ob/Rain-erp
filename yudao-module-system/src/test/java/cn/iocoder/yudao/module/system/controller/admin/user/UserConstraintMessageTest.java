@@ -1,7 +1,5 @@
 package cn.iocoder.yudao.module.system.controller.admin.user;
 
-import cn.iocoder.yudao.framework.common.biz.system.dict.DictDataCommonApi;
-import cn.iocoder.yudao.framework.common.biz.system.dict.dto.DictDataRespDTO;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import cn.iocoder.yudao.framework.common.validation.InEnum;
@@ -21,10 +19,10 @@ import static org.mockito.Mockito.*;
 class UserConstraintMessageTest {
     @Test
     void scalarAndCollectionArgumentsAreResolvedOnlyForOptedInConstraints() {
-        var dictionaries = mock(DictDataCommonApi.class);
-        when(dictionaries.getDictDataList("common_status")).thenReturn(List.of(dictionary("0"), dictionary("1")));
-        DictFrameworkUtils.init(dictionaries);
-        try (var factory = Validation.buildDefaultValidatorFactory()) {
+        try (var dictionaries = mockStatic(DictFrameworkUtils.class);
+             var factory = Validation.buildDefaultValidatorFactory()) {
+            dictionaries.when(() -> DictFrameworkUtils.getDictDataValueList("common_status"))
+                    .thenReturn(List.of("0", "1"));
             var validator = factory.getValidator();
             var fixture = new Values();
             Map<String, String> legacy = messages(validator.validate(fixture));
@@ -57,14 +55,6 @@ class UserConstraintMessageTest {
 
     private static Map<String, String> messages(java.util.Set<jakarta.validation.ConstraintViolation<Values>> violations) {
         return violations.stream().collect(Collectors.toMap(item -> item.getPropertyPath().toString(), jakarta.validation.ConstraintViolation::getMessage));
-    }
-
-    private static DictDataRespDTO dictionary(String value) {
-        var result = new DictDataRespDTO();
-        result.setDictType("common_status");
-        result.setValue(value);
-        result.setLabel(value);
-        return result;
     }
 
     static class Values {

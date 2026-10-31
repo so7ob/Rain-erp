@@ -2,8 +2,6 @@ package cn.iocoder.yudao.module.system.controller.admin.user;
 
 import cn.hutool.core.util.ReflectUtil;
 import cn.iocoder.yudao.framework.common.biz.infra.logger.ApiErrorLogCommonApi;
-import cn.iocoder.yudao.framework.common.biz.system.dict.DictDataCommonApi;
-import cn.iocoder.yudao.framework.common.biz.system.dict.dto.DictDataRespDTO;
 import cn.iocoder.yudao.framework.dict.core.DictFrameworkUtils;
 import cn.iocoder.yudao.framework.web.core.handler.GlobalExceptionHandler;
 import cn.iocoder.yudao.framework.web.core.i18n.ModuleMessageSources;
@@ -18,6 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -46,6 +45,7 @@ class UserManagementLocaleTest {
     private PermissionService permissions;
     private LocalValidatorFactoryBean validator;
     private RequestLocaleFilter localeFilter;
+    private MockedStatic<DictFrameworkUtils> dictionaries;
 
     @BeforeEach
     void setup() throws Exception {
@@ -56,10 +56,9 @@ class UserManagementLocaleTest {
         validator.afterPropertiesSet();
         users = mock(AdminUserService.class);
         permissions = mock(PermissionService.class);
-        var dictionaries = mock(DictDataCommonApi.class);
-        when(dictionaries.getDictDataList("common_status")).thenReturn(List.of(
-                dictionary("0"), dictionary("1")));
-        DictFrameworkUtils.init(dictionaries);
+        dictionaries = mockStatic(DictFrameworkUtils.class);
+        dictionaries.when(() -> DictFrameworkUtils.getDictDataValueList("common_status"))
+                .thenReturn(List.of("0", "1"));
         var userController = new UserController();
         ReflectUtil.setFieldValue(userController, "userService", users);
         var permissionController = new PermissionController();
@@ -72,7 +71,10 @@ class UserManagementLocaleTest {
     }
 
     @AfterEach
-    void closeValidator() { validator.close(); }
+    void closeValidator() {
+        validator.close();
+        dictionaries.close();
+    }
 
     @ParameterizedTest
     @NullSource
@@ -132,11 +134,4 @@ class UserManagementLocaleTest {
 
     private static boolean isArabic(String language) { return "ar".equals(language); }
     private static boolean isEnglish(String language) { return "en".equals(language); }
-    private static DictDataRespDTO dictionary(String value) {
-        var result = new DictDataRespDTO();
-        result.setDictType("common_status");
-        result.setValue(value);
-        result.setLabel(value.equals("0") ? "开启" : "关闭");
-        return result;
-    }
 }
