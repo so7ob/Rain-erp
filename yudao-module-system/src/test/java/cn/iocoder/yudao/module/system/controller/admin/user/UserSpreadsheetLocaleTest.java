@@ -213,7 +213,7 @@ class UserSpreadsheetLocaleTest {
                 .andExpect(jsonPath("$.code").value(400))
                 .andExpect(jsonPath("$.messageKey").value("excel.import.unknownDictionary"))
                 .andExpect(jsonPath("$.msg").value(messages.getMessage("excel.import.unknownDictionary",
-                        new Object[]{"حالة الحساب", String.valueOf(number)}, Locale.forLanguageTag("ar"))));
+                        new Object[]{"حالة الحساب", Double.toString(number)}, Locale.forLanguageTag("ar"))));
         verify(users, never()).importUserList(any(), anyBoolean());
     }
 
