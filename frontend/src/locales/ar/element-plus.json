@@ -1,0 +1,38 @@
+{
+  "common": {
+    "elementPlus": {
+      "datepicker": {
+        "selectedDate": "التاريخ المحدد",
+        "weeksFull": {
+          "sun": "الأحد",
+          "mon": "الاثنين",
+          "tue": "الثلاثاء",
+          "wed": "الأربعاء",
+          "thu": "الخميس",
+          "fri": "الجمعة",
+          "sat": "السبت"
+        }
+      },
+      "pagination": {
+        "page": "الصفحة",
+        "prev": "الانتقال إلى الصفحة السابقة",
+        "next": "الانتقال إلى الصفحة التالية",
+        "currentPage": "الصفحة {pager}",
+        "prevPages": "صفحات سابقة؛ العدد: {pager}",
+        "nextPages": "صفحات تالية؛ العدد: {pager}",
+        "deprecationWarning": "اكتُشف استخدام قديم؛ راجع توثيق el-pagination للتفاصيل"
+      },
+      "table": {
+        "selectAllLabel": "تحديد جميع الصفوف",
+        "selectRowLabel": "تحديد هذا الصف",
+        "expandRowLabel": "توسيع هذا الصف",
+        "collapseRowLabel": "طي هذا الصف",
+        "sortLabel": "الترتيب حسب {column}",
+        "filterLabel": "التصفية حسب {column}"
+      },
+      "tag": {
+        "close": "إزالة هذا الوسم"
+      }
+    }
+  }
+}

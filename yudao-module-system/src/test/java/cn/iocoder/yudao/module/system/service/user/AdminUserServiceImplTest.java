@@ -472,6 +472,25 @@ public class AdminUserServiceImplTest extends BaseDbUnitTest {
         assertPojoEquals(dbUser, pageResult.getList().get(0));
     }
 
+    @Test
+    void displayNameFilterMatchesOriginalMixedTextAndComposesWithExistingFilters() {
+        AdminUserDO selected = randomAdminUserDO(user -> {
+            user.setUsername("custom0001");
+            user.setNickname("عميل ACME 00123");
+            user.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        });
+        userMapper.insert(selected);
+        userMapper.insert(cloneIgnoreId(selected, user -> user.setNickname("عميل ACME 00456")));
+        userMapper.insert(cloneIgnoreId(selected, user -> user.setStatus(CommonStatusEnum.DISABLE.getStatus())));
+        UserPageReqVO query = new UserPageReqVO();
+        query.setNickname("ACME 00123");
+        query.setStatus(CommonStatusEnum.ENABLE.getStatus());
+        PageResult<AdminUserDO> result = userService.getUserPage(query);
+        assertEquals(1, result.getTotal());
+        assertEquals(selected.getId(), result.getList().get(0).getId());
+        assertEquals("عميل ACME 00123", result.getList().get(0).getNickname());
+    }
+
     /**
      * 初始化 getUserPage 方法的测试数据
      */

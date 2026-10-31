@@ -5,13 +5,13 @@
   "scannerLimits": "Vue visible text/attributes/expressions and contextual JS/TS display literals are detected. Runtime-generated strings, CSS content, third-party UIs, images, backend dynamic outputs and user-authored data need separate review. Java counts are inventory only, not a proof of extraction.",
   "catalogs": {
     "ar": {
-      "keys": 654
+      "keys": 745
     },
     "en": {
-      "keys": 654
+      "keys": 745
     },
     "zh-CN": {
-      "keys": 654
+      "keys": 745
     }
   },
   "frontend": {
@@ -666,12 +666,12 @@
     },
     "shared": {
       "status": "pending-acceptance",
-      "files": 1005,
+      "files": 1008,
       "vueFiles": 206,
-      "visibleLiteralCandidates": 1808,
+      "visibleLiteralCandidates": 1807,
       "templateParseErrors": 0,
       "kinds": {
-        "script": 690,
+        "script": 689,
         "attribute": 675,
         "template": 443
       },
@@ -698,14 +698,14 @@
     },
     "system": {
       "status": "pending-acceptance",
-      "files": 68,
-      "vueFiles": 68,
-      "visibleLiteralCandidates": 1169,
+      "files": 69,
+      "vueFiles": 69,
+      "visibleLiteralCandidates": 1082,
       "templateParseErrors": 0,
       "kinds": {
-        "script": 156,
-        "attribute": 785,
-        "template": 225,
+        "script": 146,
+        "attribute": 729,
+        "template": 204,
         "jsx": 3
       },
       "examples": [

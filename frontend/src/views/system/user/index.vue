@@ -1,216 +1,273 @@
 <template>
-  <doc-alert title="用户体系" url="https://doc.iocoder.cn/user-center/" />
-  <doc-alert title="三方登陆" url="https://doc.iocoder.cn/social-user/" />
-  <doc-alert title="Excel 导入导出" url="https://doc.iocoder.cn/excel-import-and-export/" />
+  <section class="rain-user-management">
+    <doc-alert
+      :title="t('system.user.docs.userCenter')"
+      url="https://doc.iocoder.cn/user-center/"
+    />
+    <doc-alert
+      :title="t('system.user.docs.socialLogin')"
+      url="https://doc.iocoder.cn/social-user/"
+    />
+    <doc-alert
+      :title="t('system.user.docs.excel')"
+      url="https://doc.iocoder.cn/excel-import-and-export/"
+    />
 
-  <el-row :gutter="20">
-    <!-- 左侧部门树 -->
-    <el-col :span="4" :xs="24">
-      <ContentWrap class="h-1/1">
-        <DeptTreeSelect @node-click="handleDeptNodeClick" />
-      </ContentWrap>
-    </el-col>
-    <el-col :span="20" :xs="24">
-      <!-- 搜索 -->
-      <ContentWrap>
-        <el-form
-          class="-mb-15px"
-          :model="queryParams"
-          ref="queryFormRef"
-          :inline="true"
-          label-width="68px"
-        >
-          <el-form-item label="用户名称" prop="username">
-            <el-input
-              v-model="queryParams.username"
-              placeholder="请输入用户名称"
-              clearable
-              @keyup.enter="handleQuery"
-              class="!w-240px"
-            />
-          </el-form-item>
-          <el-form-item label="手机号码" prop="mobile">
-            <el-input
-              v-model="queryParams.mobile"
-              placeholder="请输入手机号码"
-              clearable
-              @keyup.enter="handleQuery"
-              class="!w-240px"
-            />
-          </el-form-item>
-          <el-form-item label="状态" prop="status">
-            <el-select
-              v-model="queryParams.status"
-              placeholder="请选择用户状态"
-              clearable
-              class="!w-240px"
-            >
-              <el-option
-                v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
-                :key="dict.value"
-                :label="dict.displayLabel ?? dict.label"
-                :value="dict.value"
+    <el-row :gutter="20">
+      <!-- 左侧部门树 -->
+      <el-col :span="4" :xs="24">
+        <ContentWrap class="h-1/1">
+          <DeptTreeSelect @node-click="handleDeptNodeClick" />
+        </ContentWrap>
+      </el-col>
+      <el-col :span="20" :xs="24">
+        <!-- 搜索 -->
+        <ContentWrap>
+          <el-form :model="queryParams" ref="queryFormRef" :inline="true" label-position="top">
+            <el-form-item :label="t('system.user.fields.username')" prop="username">
+              <el-input
+                v-model="queryParams.username"
+                :placeholder="t('system.user.placeholders.username')"
+                clearable
+                @keyup.enter="handleQuery"
+                class="!w-240px"
               />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="创建时间" prop="createTime">
-            <el-date-picker
-              v-model="queryParams.createTime"
-              value-format="YYYY-MM-DD HH:mm:ss"
-              type="datetimerange"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              class="!w-240px"
-            />
-          </el-form-item>
-          <el-form-item>
-            <el-button @click="handleQuery"><Icon icon="ep:search" />搜索</el-button>
-            <el-button @click="resetQuery"><Icon icon="ep:refresh" />重置</el-button>
-            <el-button
-              type="primary"
-              plain
-              @click="openForm('create')"
-              v-hasPermi="['system:user:create']"
-            >
-              <Icon icon="ep:plus" /> 新增
-            </el-button>
-            <el-button
-              type="warning"
-              plain
-              @click="handleImport"
-              v-hasPermi="['system:user:import']"
-            >
-              <Icon icon="ep:upload" /> {{ t('system.user.import.action') }}
-            </el-button>
-            <el-button
-              type="success"
-              plain
-              @click="handleExport"
-              :loading="exportLoading"
-              v-hasPermi="['system:user:export']"
-            >
-              <Icon icon="ep:download" />{{ t('system.user.export.action') }}
-            </el-button>
-            <el-button
-              type="danger"
-              plain
-              :disabled="checkedIds.length === 0"
-              @click="handleDeleteBatch"
-              v-hasPermi="['system:user:delete']"
-            >
-              <Icon icon="ep:delete" />批量删除
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </ContentWrap>
-      <ContentWrap>
-        <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
-          <el-table-column type="selection" width="55" />
-          <el-table-column label="用户编号" align="center" key="id" prop="id" />
-          <el-table-column
-            label="用户名称"
-            align="center"
-            prop="username"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="用户昵称"
-            align="center"
-            prop="nickname"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column
-            label="部门"
-            align="center"
-            key="deptName"
-            prop="deptName"
-            :show-overflow-tooltip="true"
-          />
-          <el-table-column label="手机号码" align="center" prop="mobile" width="120" />
-          <el-table-column label="状态" key="status">
-            <template #default="scope">
-              <el-switch
-                v-model="scope.row.status"
-                :active-value="0"
-                :inactive-value="1"
-                @change="handleStatusChange(scope.row)"
-                :disabled="!checkPermi(['system:user:update'])"
+            </el-form-item>
+            <el-form-item :label="t('system.user.fields.mobile')" prop="mobile">
+              <el-input
+                v-model="queryParams.mobile"
+                :placeholder="t('system.user.placeholders.mobile')"
+                clearable
+                @keyup.enter="handleQuery"
+                class="!w-240px"
               />
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="创建时间"
-            align="center"
-            prop="createTime"
-            :formatter="dateFormatter"
-            width="180"
+            </el-form-item>
+            <el-form-item :label="t('system.user.fields.status')" prop="status">
+              <el-select
+                v-model="queryParams.status"
+                :placeholder="t('system.user.placeholders.status')"
+                clearable
+                class="!w-240px"
+              >
+                <el-option
+                  v-for="dict in getIntDictOptions(DICT_TYPE.COMMON_STATUS)"
+                  :key="dict.value"
+                  :label="dict.displayLabel ?? dict.label"
+                  :value="dict.value"
+                />
+              </el-select>
+            </el-form-item>
+            <el-form-item :label="t('system.user.fields.createdAt')" prop="createTime">
+              <el-date-picker
+                popper-class="rain-user-date-filter"
+                :popper-options="datePickerOptions"
+                v-model="queryParams.createTime"
+                value-format="YYYY-MM-DD HH:mm:ss"
+                type="datetimerange"
+                :start-placeholder="t('system.user.placeholders.startDate')"
+                :end-placeholder="t('system.user.placeholders.endDate')"
+                class="!w-400px max-w-full"
+              />
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="handleQuery"
+                ><Icon icon="ep:search" />{{ t('system.user.actions.search') }}</el-button
+              >
+              <el-button @click="resetQuery"
+                ><Icon icon="ep:refresh" />{{ t('system.user.actions.reset') }}</el-button
+              >
+              <el-button
+                type="primary"
+                plain
+                @click="openForm('create')"
+                v-hasPermi="['system:user:create']"
+              >
+                <Icon icon="ep:plus" /> {{ t('system.user.actions.create') }}
+              </el-button>
+              <el-button
+                type="warning"
+                plain
+                @click="handleImport"
+                v-hasPermi="['system:user:import']"
+              >
+                <Icon icon="ep:upload" /> {{ t('system.user.import.action') }}
+              </el-button>
+              <el-button
+                type="success"
+                plain
+                @click="handleExport"
+                :loading="exportLoading"
+                v-hasPermi="['system:user:export']"
+              >
+                <Icon icon="ep:download" />{{ t('system.user.export.action') }}
+              </el-button>
+              <el-button
+                type="danger"
+                plain
+                :disabled="checkedIds.length === 0"
+                @click="handleDeleteBatch"
+                v-hasPermi="['system:user:delete']"
+              >
+                <Icon icon="ep:delete" />{{ t('system.user.actions.batchDelete') }}
+              </el-button>
+            </el-form-item>
+          </el-form>
+        </ContentWrap>
+        <ContentWrap>
+          <el-table
+            ref="tableRef"
+            v-loading="loading"
+            :data="list"
+            @selection-change="handleRowCheckboxChange"
+          >
+            <el-table-column type="selection" width="55" />
+            <el-table-column
+              :label="t('system.user.fields.id')"
+              align="center"
+              key="id"
+              prop="id"
+              min-width="110"
+              ><template #default="{ row }"
+                ><bdi dir="ltr">{{ row.id }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.username')"
+              align="center"
+              prop="username"
+              min-width="150"
+              :show-overflow-tooltip="true"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.username }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.nickname')"
+              align="center"
+              prop="nickname"
+              min-width="180"
+              :show-overflow-tooltip="true"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.nickname }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.department')"
+              align="center"
+              key="deptName"
+              prop="deptName"
+              min-width="150"
+              :show-overflow-tooltip="true"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.deptName }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.mobile')"
+              align="center"
+              prop="mobile"
+              width="120"
+              ><template #default="{ row }"
+                ><bdi dir="ltr">{{ row.mobile }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column :label="t('system.user.fields.status')" key="status">
+              <template #default="scope">
+                <el-switch
+                  v-model="scope.row.status"
+                  :active-value="0"
+                  :inactive-value="1"
+                  @change="handleStatusChange(scope.row)"
+                  @keydown.space.prevent="toggleUserStatusWithSpace(scope.row)"
+                  :disabled="!checkPermi(['system:user:update']) || statusBusy.has(scope.row.id)"
+                  :aria-label="t('system.user.statusFor', { name: scope.row.username })"
+                />
+              </template>
+            </el-table-column>
+            <el-table-column
+              :label="t('system.user.fields.createdAt')"
+              align="center"
+              prop="createTime"
+              class-name="rain-user-date"
+              :formatter="dateFormatter"
+              width="180"
+            />
+            <el-table-column :label="t('system.user.fields.actions')" align="center" width="160">
+              <template #default="scope">
+                <div class="flex items-center justify-center">
+                  <el-button
+                    type="primary"
+                    link
+                    @click="openForm('update', scope.row.id)"
+                    v-hasPermi="['system:user:update']"
+                  >
+                    <Icon icon="ep:edit" />{{ t('system.user.actions.edit') }}
+                  </el-button>
+                  <el-dropdown
+                    @command="(command) => handleCommand(command, scope.row)"
+                    v-hasPermi="[
+                      'system:user:delete',
+                      'system:user:update-password',
+                      'system:permission:assign-user-role'
+                    ]"
+                  >
+                    <el-button
+                      type="primary"
+                      link
+                      :aria-label="t('system.user.moreFor', { name: scope.row.username })"
+                      ><Icon icon="ep:d-arrow-right" />
+                      {{ t('system.user.actions.more') }}</el-button
+                    >
+                    <template #dropdown>
+                      <el-dropdown-menu>
+                        <el-dropdown-item
+                          command="handleDelete"
+                          v-if="checkPermi(['system:user:delete'])"
+                        >
+                          <Icon icon="ep:delete" />{{ t('system.user.actions.delete') }}
+                        </el-dropdown-item>
+                        <el-dropdown-item
+                          command="handleResetPwd"
+                          v-if="checkPermi(['system:user:update-password'])"
+                        >
+                          <Icon icon="ep:key" />{{ t('system.user.actions.resetPassword') }}
+                        </el-dropdown-item>
+                        <el-dropdown-item
+                          command="handleRole"
+                          v-if="checkPermi(['system:permission:assign-user-role'])"
+                        >
+                          <Icon icon="ep:circle-check" />{{ t('system.user.actions.assignRoles') }}
+                        </el-dropdown-item>
+                      </el-dropdown-menu>
+                    </template>
+                  </el-dropdown>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+          <Pagination
+            :total="total"
+            v-model:page="queryParams.pageNo"
+            v-model:limit="queryParams.pageSize"
+            @pagination="getList"
           />
-          <el-table-column label="操作" align="center" width="160">
-            <template #default="scope">
-              <div class="flex items-center justify-center">
-                <el-button
-                  type="primary"
-                  link
-                  @click="openForm('update', scope.row.id)"
-                  v-hasPermi="['system:user:update']"
-                >
-                  <Icon icon="ep:edit" />修改
-                </el-button>
-                <el-dropdown
-                  @command="(command) => handleCommand(command, scope.row)"
-                  v-hasPermi="[
-                    'system:user:delete',
-                    'system:user:update-password',
-                    'system:permission:assign-user-role'
-                  ]"
-                >
-                  <el-button type="primary" link><Icon icon="ep:d-arrow-right" /> 更多</el-button>
-                  <template #dropdown>
-                    <el-dropdown-menu>
-                      <el-dropdown-item
-                        command="handleDelete"
-                        v-if="checkPermi(['system:user:delete'])"
-                      >
-                        <Icon icon="ep:delete" />删除
-                      </el-dropdown-item>
-                      <el-dropdown-item
-                        command="handleResetPwd"
-                        v-if="checkPermi(['system:user:update-password'])"
-                      >
-                        <Icon icon="ep:key" />重置密码
-                      </el-dropdown-item>
-                      <el-dropdown-item
-                        command="handleRole"
-                        v-if="checkPermi(['system:permission:assign-user-role'])"
-                      >
-                        <Icon icon="ep:circle-check" />分配角色
-                      </el-dropdown-item>
-                    </el-dropdown-menu>
-                  </template>
-                </el-dropdown>
-              </div>
-            </template>
-          </el-table-column>
-        </el-table>
-        <Pagination
-          :total="total"
-          v-model:page="queryParams.pageNo"
-          v-model:limit="queryParams.pageSize"
-          @pagination="getList"
-        />
-      </ContentWrap>
-    </el-col>
-  </el-row>
+        </ContentWrap>
+      </el-col>
+    </el-row>
 
-  <!-- 添加或修改用户对话框 -->
-  <UserForm ref="formRef" @success="getList" />
-  <!-- 用户导入对话框 -->
-  <UserImportForm ref="importFormRef" @success="getList" />
-  <!-- 分配角色 -->
-  <UserAssignRoleForm ref="assignRoleFormRef" @success="getList" />
+    <!-- 添加或修改用户对话框 -->
+    <UserActionDialog ref="actionDialog" />
+    <UserForm ref="formRef" @success="getList" />
+    <!-- 用户导入对话框 -->
+    <UserImportForm ref="importFormRef" @success="getList" />
+    <!-- 分配角色 -->
+    <UserAssignRoleForm ref="assignRoleFormRef" @success="getList" />
+  </section>
 </template>
 <script lang="ts" setup>
-import { ElMessageBox } from 'element-plus'
+import { useContextTask } from '@/hooks/web/useContextTask'
+import { useTableCheckboxAccessibility } from '@/hooks/web/useTableCheckboxAccessibility'
+import UserActionDialog from './UserActionDialog.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { checkPermi } from '@/utils/permission'
 import { dateFormatter } from '@/utils/formatTime'
@@ -226,10 +283,27 @@ defineOptions({ name: 'SystemUser' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
+const datePickerOptions = computed(() => {
+  const label = t('system.user.fields.createdAt')
+  return {
+    modifiers: [
+      {
+        name: 'rain-user-date-name',
+        enabled: true,
+        phase: 'write' as const,
+        fn: ({ state }: { state: { elements: { popper: HTMLElement } } }) => {
+          state.elements.popper.setAttribute('aria-label', label)
+        }
+      }
+    ]
+  }
+})
 
 const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
-const list = ref([]) // 列表的数
+const list = ref<UserApi.UserVO[]>([]) // 列表的数
+const tableRef = ref()
+useTableCheckboxAccessibility(() => tableRef.value?.$el)
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -237,19 +311,47 @@ const queryParams = reactive({
   mobile: undefined,
   status: undefined,
   deptId: undefined as number | undefined,
-  createTime: []
+  createTime: [] as string[] | null
 })
 const queryFormRef = ref() // 搜索的表单
 
 /** 查询列表 */
+const clearContext = () => {
+  list.value = []
+  total.value = 0
+  checkedIds.value = []
+  queryParams.username = undefined
+  queryParams.mobile = undefined
+  queryParams.status = undefined
+  queryParams.deptId = undefined
+  queryParams.createTime = []
+  statusBusy.clear()
+  exportLoading.value = false
+  loading.value = false
+  void getList()
+}
+const listTask = useContextTask(clearContext)
+const actionTask = useContextTask()
+const actionDialog = ref<InstanceType<typeof UserActionDialog>>()
+const statusBusy = reactive(new Set<number>())
 const getList = async () => {
+  const current = listTask.begin()
+  const query = {
+    ...queryParams,
+    createTime: Array.isArray(queryParams.createTime)
+      ? [...queryParams.createTime]
+      : queryParams.createTime
+  }
   loading.value = true
   try {
-    const data = await UserApi.getUserPage(queryParams)
+    const data = await UserApi.getUserPage(query)
+    if (!current()) return
     list.value = data.list
     total.value = data.total
+  } catch {
+    /* The shared transport reports the localized error. */
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
 
@@ -284,36 +386,60 @@ const handleImport = () => {
 }
 
 /** 修改用户状态 */
+const toggleUserStatusWithSpace = (row: UserApi.UserVO) => {
+  if (!checkPermi(['system:user:update']) || statusBusy.has(row.id)) return
+  row.status =
+    row.status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+  void handleStatusChange(row)
+}
 const handleStatusChange = async (row: UserApi.UserVO) => {
+  const owner = actionTask.context.value
+  const current = actionTask.capture()
+  const status = row.status
+  statusBusy.add(row.id)
   try {
-    // 修改状态的二次确认
-    const text = row.status === CommonStatusEnum.ENABLE ? '启用' : '停用'
-    await message.confirm('确认要"' + text + '""' + row.username + '"用户吗?')
-    // 发起修改状态
-    await UserApi.updateUserStatus(row.id, row.status)
-    // 刷新列表
-    await getList()
+    const accepted = await actionDialog.value?.ask(
+      status === CommonStatusEnum.ENABLE ? 'enable' : 'disable',
+      row.username
+    )
+    if (!current()) return
+    if (!accepted) {
+      row.status =
+        status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+      return
+    }
+    await UserApi.updateUserStatus(row.id, status)
+    if (current()) await getList()
   } catch {
-    // 取消后，进行恢复按钮
-    row.status =
-      row.status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+    if (current())
+      row.status =
+        status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+  } finally {
+    if (actionTask.context.value === owner) statusBusy.delete(row.id)
   }
 }
 
 /** 导出按钮操作 */
 const exportLoading = ref(false)
 const handleExport = async () => {
+  const owner = actionTask.context.value
   try {
-    // 导出的二次确认
-    await message.exportConfirm()
+    const current = actionTask.capture()
+    const query = {
+      ...queryParams,
+      createTime: Array.isArray(queryParams.createTime)
+        ? [...queryParams.createTime]
+        : queryParams.createTime
+    }
+    if (!(await actionDialog.value?.ask('export')) || !current()) return
     // 发起导出
     exportLoading.value = true
     const filename = t('system.user.export.filename')
-    const data = await UserApi.exportUser(queryParams)
-    download.excel(data, filename)
+    const data = await UserApi.exportUser(query)
+    if (current()) download.excel(data, filename)
   } catch {
   } finally {
-    exportLoading.value = false
+    if (actionTask.context.value === owner) exportLoading.value = false
   }
 }
 
@@ -336,15 +462,16 @@ const handleCommand = (command: string, row: UserApi.UserVO) => {
 
 /** 删除按钮操作 */
 const handleDelete = async (id: number) => {
+  const current = actionTask.capture()
   try {
-    // 删除的二次确认
-    await message.delConfirm()
-    // 发起删除
+    if (!(await actionDialog.value?.ask('delete')) || !current()) return
     await UserApi.deleteUser(id)
+    if (!current()) return
     message.success(t('common.delSuccess'))
-    // 刷新列表
     await getList()
-  } catch {}
+  } catch {
+    /* The request handler owns error messages. */
+  }
 }
 
 /** 批量删除按钮操作 */
@@ -354,37 +481,32 @@ const handleRowCheckboxChange = (rows: UserApi.UserVO[]) => {
 }
 
 const handleDeleteBatch = async () => {
+  const ids = [...checkedIds.value]
+  if (!ids.length) return
+  const current = actionTask.capture()
   try {
-    // 删除的二次确认
-    await message.delConfirm()
-    // 发起批量删除
-    await UserApi.deleteUserList(checkedIds.value)
+    if (!(await actionDialog.value?.ask('batchDelete', '', ids.length)) || !current()) return
+    await UserApi.deleteUserList(ids)
+    if (!current()) return
     checkedIds.value = []
     message.success(t('common.delSuccess'))
-    // 刷新列表
     await getList()
-  } catch {}
+  } catch {
+    /* The request handler owns error messages. */
+  }
 }
 
 /** 重置密码 */
 const handleResetPwd = async (row: UserApi.UserVO) => {
+  const current = actionTask.capture()
   try {
-    // 重置的二次确认
-    const result = await ElMessageBox.prompt(
-      '请输入"' + row.username + '"的新密码',
-      t('common.reminder'),
-      {
-        confirmButtonText: t('common.ok'),
-        cancelButtonText: t('common.cancel'),
-        type: 'warning',
-        inputValidator: (value) => (value.length >= 4 && value.length <= 16) || '密码长度为 4-16 位'
-      }
-    )
-    const password = result.value
-    // 发起重置
+    const password = await actionDialog.value?.ask('resetPassword', row.username)
+    if (typeof password !== 'string' || !current()) return
     await UserApi.resetUserPassword(row.id, password)
-    message.success('修改成功，新密码是：' + password)
-  } catch {}
+    if (current()) message.success(t('system.user.passwordChanged', { password }))
+  } catch {
+    /* The request handler owns error messages. */
+  }
 }
 
 /** 分配角色 */

@@ -13,49 +13,57 @@
     open(selectedIds?: number[]) — 打开弹窗，可传入已选 ID 用于预选高亮
 -->
 <template>
-  <Dialog :title="title" v-model="dialogVisible" width="80%" align-center append-to-body>
-    <el-row class="h-[calc(100vh-196px)]" :gutter="15">
+  <Dialog
+    :title="effectiveTitle"
+    v-model="dialogVisible"
+    width="80%"
+    class="rain-user-management rain-user-selector"
+    align-center
+    append-to-body
+    show-locale
+  >
+    <el-row class="rain-user-selector-grid" :gutter="15">
       <!-- 左侧部门树 -->
-      <el-col class="h-full" :span="5" :xs="24">
-        <ContentWrap class="h-full" :body-style="{ height: '100%', '--el-card-padding': '0px' }">
+      <el-col class="rain-user-selector-departments" :span="5" :xs="24">
+        <ContentWrap :body-style="{ '--el-card-padding': '0px' }">
           <DeptTreeSelect ref="deptTreeRef" @node-click="handleDeptNodeClick" />
         </ContentWrap>
       </el-col>
       <!-- 右侧：搜索表单 + 用户表格 -->
-      <el-col class="h-full overflow-auto" :span="19" :xs="24">
+      <el-col class="rain-user-selector-content" :span="19" :xs="24">
         <ContentWrap>
-          <el-form class="-mb-[15px]" :inline="true" :model="queryParams" label-width="72px">
-            <el-form-item label="用户名称">
+          <el-form :inline="true" :model="queryParams" label-position="top">
+            <el-form-item :label="t('system.user.fields.username')">
               <el-input
                 v-model="queryParams.username"
-                placeholder="请输入用户名称"
+                :placeholder="t('system.user.placeholders.username')"
                 clearable
                 @keyup.enter="handleQuery"
                 class="!w-240px"
               />
             </el-form-item>
-            <el-form-item label="用户昵称">
+            <el-form-item :label="t('system.user.fields.nickname')">
               <el-input
                 v-model="queryParams.nickname"
-                placeholder="请输入用户昵称"
+                :placeholder="t('system.user.placeholders.nickname')"
                 clearable
                 @keyup.enter="handleQuery"
                 class="!w-240px"
               />
             </el-form-item>
-            <el-form-item label="手机号码">
+            <el-form-item :label="t('system.user.fields.mobile')">
               <el-input
                 v-model="queryParams.mobile"
-                placeholder="请输入手机号码"
+                :placeholder="t('system.user.placeholders.mobile')"
                 clearable
                 @keyup.enter="handleQuery"
                 class="!w-240px"
               />
             </el-form-item>
-            <el-form-item label="状态">
+            <el-form-item :label="t('system.user.fields.status')">
               <el-select
                 v-model="queryParams.status"
-                placeholder="请选择状态"
+                :placeholder="t('system.user.placeholders.status')"
                 clearable
                 class="!w-240px"
               >
@@ -69,22 +77,19 @@
             </el-form-item>
             <el-form-item>
               <el-button @click="handleQuery">
-                <Icon icon="ep:search" class="mr-5px" /> 搜索
+                <Icon icon="ep:search" class="me-5px" /> {{ t('system.user.actions.search') }}
               </el-button>
               <el-button @click="resetQuery">
-                <Icon icon="ep:refresh" class="mr-5px" /> 重置
+                <Icon icon="ep:refresh" class="me-5px" /> {{ t('system.user.actions.reset') }}
               </el-button>
             </el-form-item>
           </el-form>
         </ContentWrap>
         <!-- 数据表格：单选 radio / 多选 checkbox 统一在一个 table 内 -->
-        <ContentWrap
-          class="h-[calc(100%-var(--content-wrap-padding,10px)*2-var(--content-wrap-margin,15px)*2-32px*2-3px*2-2px)] !mb-0"
-          :body-style="{ height: '100%', padding: 'var(--content-wrap-padding,10px)' }"
-        >
+        <ContentWrap class="!mb-0" :body-style="{ padding: 'var(--content-wrap-padding,10px)' }">
           <el-table
             ref="tableRef"
-            class="!h-[calc(100%-32px-30px+var(--content-wrap-padding,10px))]"
+            height="360"
             v-loading="loading"
             :data="list"
             :stripe="true"
@@ -111,25 +116,72 @@
                   v-model="selectedRadioId"
                   :value="row.id"
                   class="radio-no-label"
+                  :aria-label="t('system.user.selectRow', { name: row.nickname || row.username })"
                   :disabled="row.disabled"
                   @change="handleRadioChange(row)"
                 />
               </template>
             </el-table-column>
-            <el-table-column label="用户编号" align="center" prop="id" width="150" />
-            <el-table-column label="用户名称" align="center" prop="username" width="150" />
-            <el-table-column label="用户昵称" align="left" prop="nickname" min-width="150" />
-            <el-table-column label="部门" align="center" prop="deptName" width="150" />
-            <el-table-column label="手机号码" align="center" prop="mobile" width="130" />
-            <el-table-column label="状态" align="center" prop="status" width="80">
+            <el-table-column
+              :label="t('system.user.fields.id')"
+              align="center"
+              prop="id"
+              width="150"
+              ><template #default="{ row }"
+                ><bdi dir="ltr">{{ row.id }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.username')"
+              align="center"
+              prop="username"
+              width="150"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.username }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.nickname')"
+              class-name="rain-user-name"
+              prop="nickname"
+              min-width="150"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.nickname }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.department')"
+              align="center"
+              prop="deptName"
+              width="150"
+              ><template #default="{ row }"
+                ><bdi dir="auto">{{ row.deptName }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.mobile')"
+              align="center"
+              prop="mobile"
+              width="130"
+              ><template #default="{ row }"
+                ><bdi dir="ltr">{{ row.mobile }}</bdi></template
+              ></el-table-column
+            >
+            <el-table-column
+              :label="t('system.user.fields.status')"
+              align="center"
+              prop="status"
+              width="80"
+            >
               <template #default="scope">
                 <dict-tag :type="DICT_TYPE.COMMON_STATUS" :value="scope.row.status" />
               </template>
             </el-table-column>
             <el-table-column
-              label="创建时间"
+              :label="t('system.user.fields.createdAt')"
               align="center"
               prop="createTime"
+              class-name="rain-user-date"
               :formatter="dateFormatter"
               width="180"
             />
@@ -144,8 +196,8 @@
       </el-col>
     </el-row>
     <template #footer>
-      <el-button type="primary" @click="confirmSelect">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button type="primary" @click="confirmSelect">{{ t('common.ok') }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
@@ -156,6 +208,8 @@ import { CommonStatusEnum } from '@/utils/constants'
 import * as UserApi from '@/api/system/user'
 import DeptTreeSelect from '@/views/system/dept/components/DeptTreeSelect.vue'
 import { dateFormatter } from '@/utils/formatTime'
+import { useContextTask } from '@/hooks/web/useContextTask'
+import { useTableCheckboxAccessibility } from '@/hooks/web/useTableCheckboxAccessibility'
 
 defineOptions({ name: 'UserSelectDialogV2' })
 
@@ -170,11 +224,12 @@ const props = withDefaults(
     deptId?: number // 部门 ID
   }>(),
   {
-    title: '人员选择',
     multiple: true
   }
 )
 
+const { t } = useI18n()
+const effectiveTitle = computed(() => props.title ?? t('system.user.selectTitle'))
 const message = useMessage()
 const emit = defineEmits<{
   selected: [rows: UserApi.UserVO[], activityId?: any]
@@ -197,6 +252,7 @@ const handleDeptNodeClick = (deptId: number | undefined) => {
 
 // ==================== 选中状态 ====================
 const tableRef = ref() // 表格 Ref
+useTableCheckboxAccessibility(() => tableRef.value?.$el)
 const selectedRows = ref<UserSelectRow[]>([]) // 多选模式：选中行
 const selectedRadioId = ref<number>() // 单选模式：选中 ID
 const currentRadioRow = ref<UserSelectRow>() // 单选模式：选中行对象
@@ -258,21 +314,46 @@ const queryParams = reactive({
 })
 
 /** 查询用户列表 */
+const listTask = useContextTask(() => {
+  dialogVisible.value = false
+  list.value = []
+  total.value = 0
+  selectedRows.value = []
+  selectedRadioId.value = undefined
+  currentRadioRow.value = undefined
+  preSelectedIds.value = []
+  preDisabledIds.value = []
+  loading.value = false
+  tableRef.value?.clearSelection()
+})
 const getList = async () => {
+  if (!dialogVisible.value) return
+  const current = listTask.begin()
+  const query = { ...queryParams }
+  const disabledIds = [...preDisabledIds.value]
   loading.value = true
   try {
-    const data = await UserApi.getUserPage(queryParams)
-    list.value = data.list
+    const data = await UserApi.getUserPage(query)
+    if (!current() || !dialogVisible.value) return
+    list.value = data.list.map((row: UserApi.UserVO) => ({
+      ...row,
+      disabled: disabledIds.includes(row.id)
+    }))
     total.value = data.total
-    list.value.forEach((row) => {
-      row.disabled = preDisabledIds.value.includes(row.id)
-    })
     await nextTick()
-    applyPreSelection()
+    if (current() && dialogVisible.value) applyPreSelection()
+  } catch {
+    /* The shared request handler reports the error. */
   } finally {
-    loading.value = false
+    if (current()) loading.value = false
   }
 }
+watch(dialogVisible, (visible) => {
+  if (!visible) {
+    listTask.invalidate()
+    loading.value = false
+  }
+})
 
 /** 恢复预选状态（当前页可见范围内） */
 const applyPreSelection = () => {
@@ -307,6 +388,7 @@ const handleQuery = () => {
 /** 重置查询条件 */
 const resetQuery = () => {
   queryParams.username = undefined
+  queryParams.nickname = undefined
   queryParams.mobile = undefined
   queryParams.status = CommonStatusEnum.ENABLE
   queryParams.deptId = undefined
@@ -319,13 +401,13 @@ const resetQuery = () => {
 const confirmSelect = () => {
   if (props.multiple) {
     if (selectedRows.value.length === 0) {
-      message.warning('请至少选择一条数据')
+      message.warning(t('system.user.chooseAtLeastOne'))
       return
     }
     emit('selected', selectedRows.value, activityId.value)
   } else {
     if (!currentRadioRow.value) {
-      message.warning('请选择一条数据')
+      message.warning(t('system.user.chooseOne'))
       return
     }
     emit('selected', [currentRadioRow.value], activityId.value)
@@ -337,11 +419,14 @@ const confirmSelect = () => {
 
 /** 打开弹窗，可传入已选 ID 用于预选高亮 */
 const open = async (selectedIds?: number[], disabledIds?: number[], _activityId?: any) => {
+  listTask.invalidate()
+  const current = listTask.capture()
   preDisabledIds.value = disabledIds ?? []
   activityId.value = _activityId
   dialogVisible.value = true
   // 重置查询条件 + 页码，避免二次打开继承上次过滤上下文
   queryParams.username = undefined
+  queryParams.nickname = undefined
   queryParams.mobile = undefined
   queryParams.status = CommonStatusEnum.ENABLE
   queryParams.deptId = props.deptId
@@ -353,10 +438,11 @@ const open = async (selectedIds?: number[], disabledIds?: number[], _activityId?
   preSelectedIds.value = (selectedIds ?? []).filter((id) => !preDisabledIds.value.includes(id))
   // 清空部门树选中 + 多选模式清空跨页缓存的勾选
   await nextTick()
+  if (!current() || !dialogVisible.value) return
   deptTreeRef.value?.reset()
   tableRef.value?.clearSelection()
   await getList()
-  if (queryParams.deptId) {
+  if (current() && dialogVisible.value && queryParams.deptId) {
     deptTreeRef.value?.setCurrent(queryParams.deptId)
   }
 }

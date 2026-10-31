@@ -59,3 +59,168 @@
     transition: none !important;
   }
 }
+
+.rain-user-select,
+.rain-user-date-filter,
+.rain-user-management {
+  --el-text-color-placeholder: var(--el-text-color-regular);
+}
+.rain-user-management {
+  font-family: var(--el-font-family);
+  --el-color-primary: #2554ca;
+  --el-color-error: #b91c1c;
+  --el-color-danger: #b91c1c;
+  --el-color-warning: #946200;
+  --el-color-success: #1f7a3a;
+  .el-table {
+    --el-table-header-text-color: var(--el-text-color-primary);
+  }
+  .el-table .cell {
+    word-break: normal;
+  }
+  .el-button--primary:not(.is-link):not(.is-plain) {
+    --el-button-bg-color: #2554ca;
+    --el-button-border-color: #2554ca;
+    --el-button-text-color: #fff;
+    --el-button-hover-bg-color: #1943b0;
+    --el-button-hover-border-color: #1943b0;
+    --el-button-hover-text-color: #fff;
+  }
+  .el-tag--info {
+    --el-tag-text-color: var(--el-text-color-primary);
+  }
+  .el-select__tags-text {
+    color: var(--el-text-color-primary);
+  }
+  .rain-user-name .cell {
+    text-align: start;
+  }
+  .rain-user-date .cell {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .el-form--inline .el-form-item {
+    margin-inline: 0;
+    margin-block-end: 0;
+    max-width: 100%;
+  }
+  .el-form--inline .el-form-item__content {
+    max-width: 100%;
+  }
+  .el-form-item__content > :is(.el-input, .el-select, .el-tree-select) {
+    width: 100%;
+  }
+  input:is([type='email'], [type='tel'], [type='password']) {
+    direction: ltr;
+  }
+}
+.dark .rain-user-management {
+  --el-color-primary: #93c5fd;
+  --el-color-error: #fca5a5;
+  --el-color-danger: #fca5a5;
+  --el-color-warning: #fbd38d;
+  --el-color-success: #8fe0ac;
+  .el-checkbox {
+    --el-checkbox-checked-icon-color: #111827;
+  }
+}
+.rain-user-selector-content {
+  min-width: 0;
+}
+.rain-user-date-filter {
+  --el-color-primary: #2554ca;
+  .el-date-table th {
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: nowrap;
+    padding-inline: 1px;
+  }
+  .el-date-range-picker {
+    box-sizing: border-box;
+    inline-size: min(646px, calc(100vw - 32px));
+    max-block-size: min(65vh, 620px);
+    overflow: auto;
+  }
+  .el-date-range-picker .el-picker-panel__body {
+    min-width: 0;
+    min-inline-size: 0;
+  }
+}
+.dark .rain-user-date-filter {
+  --el-color-primary: #93c5fd;
+  .el-date-table td:is(.start-date, .end-date) .el-date-table-cell__text {
+    color: #111827;
+  }
+}
+@media (max-width: 600px) {
+  .rain-user-management .el-date-editor.el-range-editor {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) 20px;
+    row-gap: 4px;
+    block-size: auto;
+    min-block-size: 64px;
+    padding-block: 4px;
+    .el-range-input {
+      grid-column: 2;
+      inline-size: 100%;
+      direction: ltr;
+      text-align: start;
+    }
+    .el-range-input:first-of-type {
+      grid-row: 1;
+    }
+    .el-range-input:last-of-type {
+      grid-row: 2;
+    }
+    .el-range__icon {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+    .el-range__close-icon {
+      grid-column: 3;
+      grid-row: 1 / 3;
+    }
+    .el-range-separator {
+      display: none;
+    }
+  }
+  .rain-user-management .el-form--inline .el-form-item {
+    width: 100%;
+  }
+  .rain-user-selector > .el-dialog__body {
+    max-height: 65vh;
+    overflow: auto;
+  }
+  .rain-user-selector-departments .el-card__body {
+    max-height: 160px;
+    overflow: auto;
+  }
+  .rain-user-date-filter {
+    .el-date-range-picker__content {
+      display: block;
+      inline-size: 100%;
+      padding: 12px;
+    }
+    .el-date-range-picker__time-header {
+      display: block;
+    }
+    .el-date-range-picker__editors-wrap {
+      display: flex;
+      inline-size: 100%;
+    }
+    .el-date-range-picker__time-picker-wrap {
+      display: block;
+      flex: 1;
+      min-inline-size: 0;
+    }
+    .el-date-range-picker__time-header > .el-icon-arrow-right {
+      display: block;
+      margin-inline: auto;
+    }
+  }
+}

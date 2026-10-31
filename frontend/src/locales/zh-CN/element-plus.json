@@ -1,0 +1,38 @@
+{
+  "common": {
+    "elementPlus": {
+      "datepicker": {
+        "selectedDate": "已选日期",
+        "weeksFull": {
+          "sun": "星期日",
+          "mon": "星期一",
+          "tue": "星期二",
+          "wed": "星期三",
+          "thu": "星期四",
+          "fri": "星期五",
+          "sat": "星期六"
+        }
+      },
+      "pagination": {
+        "page": "页",
+        "prev": "上一页",
+        "next": "下一页",
+        "currentPage": "第 {pager} 页",
+        "prevPages": "向前 {pager} 页",
+        "nextPages": "向后 {pager} 页",
+        "deprecationWarning": "你使用了一些已被废弃的用法，请参考 el-pagination 的官方文档"
+      },
+      "table": {
+        "selectAllLabel": "选择所有行",
+        "selectRowLabel": "选择当前行",
+        "expandRowLabel": "展开当前行",
+        "collapseRowLabel": "收起当前行",
+        "sortLabel": "按 {column} 排序",
+        "filterLabel": "按 {column} 过滤"
+      },
+      "tag": {
+        "close": "关闭此标签"
+      }
+    }
+  }
+}

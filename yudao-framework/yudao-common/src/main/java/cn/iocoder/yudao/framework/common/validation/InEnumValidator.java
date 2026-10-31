@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.framework.common.validation;
 
 import cn.iocoder.yudao.framework.common.core.ArrayValuable;
+import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -11,9 +12,11 @@ import java.util.List;
 public class InEnumValidator implements ConstraintValidator<InEnum, Object> {
 
     private List<?> values;
+    private String messageKey;
 
     @Override
     public void initialize(InEnum annotation) {
+        this.messageKey = annotation.messageKey();
         ArrayValuable<?>[] values = annotation.value().getEnumConstants();
         if (values.length == 0) {
             this.values = Collections.emptyList();
@@ -34,8 +37,11 @@ public class InEnumValidator implements ConstraintValidator<InEnum, Object> {
         }
         // 校验不通过，自定义提示语句
         context.disableDefaultConstraintViolation(); // 禁用默认的 message 的值
-        context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate()
-                .replaceAll("\\{value}", values.toString())).addConstraintViolation(); // 重新添加错误提示语句
+        String argument = values.toString();
+        String original = context.getDefaultConstraintMessageTemplate().replace("{value}", argument);
+        String message = messageKey.isEmpty() ? original
+                : ErrorMessageContext.resolve(messageKey, new Object[]{argument}, original);
+        context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         return false;
     }
 

@@ -11,7 +11,13 @@
 -->
 <template>
   <div class="h-full">
-    <el-input v-model="filterText" class="p-[15px]" clearable :placeholder="filterPlaceholder">
+    <el-input
+      v-model="filterText"
+      class="p-[15px]"
+      clearable
+      :placeholder="effectivePlaceholder"
+      :aria-label="t('system.user.fields.department')"
+    >
       <template #prefix>
         <Icon icon="ep:search" />
       </template>
@@ -27,7 +33,11 @@
         highlight-current
         node-key="id"
         @node-click="handleNodeClick"
-      />
+        :aria-label="t('system.user.fields.department')"
+        ><template #default="{ data }"
+          ><bdi dir="auto">{{ data.name }}</bdi></template
+        ></el-tree
+      >
     </el-scrollbar>
   </div>
 </template>
@@ -36,16 +46,14 @@
 import { ElTree } from 'element-plus'
 import * as DeptApi from '@/api/system/dept'
 import { defaultProps, handleTree } from '@/utils/tree'
+import { useContextTask } from '@/hooks/web/useContextTask'
 
 defineOptions({ name: 'DeptTreeSelect' })
 
-withDefaults(
-  defineProps<{
-    filterPlaceholder?: string // 搜索输入框占位文字
-  }>(),
-  {
-    filterPlaceholder: '请输入部门名称'
-  }
+const props = defineProps<{ filterPlaceholder?: string }>()
+const { t } = useI18n()
+const effectivePlaceholder = computed(
+  () => props.filterPlaceholder ?? t('system.user.placeholders.departmentFilter')
 )
 
 const emit = defineEmits<{
@@ -58,9 +66,20 @@ const treeRef = ref<InstanceType<typeof ElTree>>() // 树 Ref
 let currentNodeId: number | null = null // 当前选中的节点 ID
 
 /** 加载部门树 */
+const loadTask = useContextTask(() => {
+  deptList.value = []
+  reset()
+  emit('node-click', undefined)
+  void loadTree()
+})
 const loadTree = async () => {
-  const res = await DeptApi.getSimpleDeptList()
-  deptList.value = handleTree(res)
+  const current = loadTask.begin()
+  try {
+    const res = await DeptApi.getSimpleDeptList()
+    if (current()) deptList.value = handleTree(res)
+  } catch {
+    /* The shared request handler reports errors in the current language. */
+  }
 }
 
 /** 基于名字过滤 */
@@ -96,6 +115,7 @@ const reset = () => {
 }
 
 const setCurrent = (deptId: number) => {
+  currentNodeId = deptId
   treeRef.value?.setCurrentKey(deptId)
 }
 

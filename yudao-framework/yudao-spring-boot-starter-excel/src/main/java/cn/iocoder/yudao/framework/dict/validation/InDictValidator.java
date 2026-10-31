@@ -2,6 +2,7 @@ package cn.iocoder.yudao.framework.dict.validation;
 
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.dict.core.DictFrameworkUtils;
+import cn.iocoder.yudao.framework.common.i18n.ErrorMessageContext;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
@@ -10,9 +11,11 @@ import java.util.List;
 public class InDictValidator implements ConstraintValidator<InDict, Object> {
 
     private String dictType;
+    private String messageKey;
 
     @Override
     public void initialize(InDict annotation) {
+        this.messageKey = annotation.messageKey();
         this.dictType = annotation.type();
     }
 
@@ -31,9 +34,11 @@ public class InDictValidator implements ConstraintValidator<InDict, Object> {
 
         // 校验不通过，自定义提示语句
         context.disableDefaultConstraintViolation(); // 禁用默认的 message 的值
-        context.buildConstraintViolationWithTemplate(
-                context.getDefaultConstraintMessageTemplate().replaceAll("\\{value}", values.toString())
-        ).addConstraintViolation(); // 重新添加错误提示语句
+        String argument = values.toString();
+        String original = context.getDefaultConstraintMessageTemplate().replace("{value}", argument);
+        String message = messageKey.isEmpty() ? original
+                : ErrorMessageContext.resolve(messageKey, new Object[]{argument}, original);
+        context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         return false;
     }
 

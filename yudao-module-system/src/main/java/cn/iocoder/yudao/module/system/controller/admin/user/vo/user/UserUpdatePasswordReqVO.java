@@ -12,12 +12,12 @@ import jakarta.validation.constraints.NotNull;
 public class UserUpdatePasswordReqVO {
 
     @Schema(description = "用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
-    @NotNull(message = "用户编号不能为空")
+    @NotNull(message = "{system.user.validation.userIdRequired}")
     private Long id;
 
     @Schema(description = "密码", requiredMode = Schema.RequiredMode.REQUIRED, example = "123456")
-    @NotEmpty(message = "密码不能为空")
-    @Length(min = 4, max = 16, message = "密码长度为 4-16 位")
+    @NotEmpty(message = "{system.user.validation.passwordRequired}")
+    @Length(min = 4, max = 16, message = "{system.user.validation.passwordLength}")
     private String password;
 
 }

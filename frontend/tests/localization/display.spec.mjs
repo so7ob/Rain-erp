@@ -14,6 +14,15 @@ const dictionary = defaults.dictionaries.map(({ key, literalReason, parameters, 
   cssClass: ''
 }))
 
+async function userStatusControl(page, label) {
+  const content = page.locator('section.rain-user-management')
+  const input = content.getByRole('combobox', { name: label, exact: true })
+  await expect(input).toBeVisible()
+  const id = await input.getAttribute('id')
+  expect(id).toBeTruthy()
+  return content.locator('.el-select').filter({ has: page.locator(`[id="${id}"]`) })
+}
+
 async function setup(page, menuSource = menus) {
   await fixtureApi(page, true)
   const requests = []
@@ -70,12 +79,13 @@ test('core titles and dictionary labels switch languages while query drafts and 
   const requests = await setup(page)
   await page.goto('/system/user')
   await expect(page).toHaveTitle(/المستخدمون/)
-  const username = page.locator('input[placeholder="请输入用户名称"]:visible')
+  const initialUsername = page
+    .locator('section.rain-user-management')
+    .getByRole('textbox', { name: 'اسم تسجيل الدخول', exact: true })
+  await expect(initialUsername).toBeVisible()
+  const username = page.locator(`[id="${await initialUsername.getAttribute('id')}"]`)
   await username.fill('عميل Test 00123')
-  const status = page
-    .locator('.el-form-item')
-    .filter({ has: page.locator('.el-form-item__label').filter({ hasText: /^状态$/ }) })
-    .locator('.el-select')
+  const status = await userStatusControl(page, 'الحالة')
   await status.click()
   await page.getByRole('option', { name: 'مفعّل', exact: true }).click()
   for (const [name, locale, title, label] of [
@@ -201,10 +211,7 @@ test('late dictionary responses cannot replace the selected language context', a
   await language(page, 'English', 'en')
   await expect.poll(() => english).toBe(true)
   release()
-  const status = page
-    .locator('.el-form-item')
-    .filter({ has: page.locator('.el-form-item__label').filter({ hasText: /^状态$/ }) })
-    .locator('.el-select')
+  const status = await userStatusControl(page, 'Status')
   await status.click()
   await expect(page.getByRole('option', { name: 'current-label', exact: true })).toBeVisible()
   await expect(page.getByRole('option', { name: 'stale-label', exact: true })).toHaveCount(0)
@@ -244,11 +251,7 @@ test('user and tenant changes isolate menu, visited-tab and dictionary cache sta
   })
   await page.goto('/system/user')
   await expect(page).toHaveTitle(/First tenant menu/)
-  await page
-    .locator('.el-form-item')
-    .filter({ has: page.locator('.el-form-item__label').filter({ hasText: /^状态$/ }) })
-    .locator('.el-select')
-    .click()
+  await (await userStatusControl(page, 'الحالة')).click()
   await expect(page.getByRole('option', { name: 'مفعّل', exact: true })).toBeVisible()
   await expect(page.getByText('Legacy wrong dictionary', { exact: true })).toHaveCount(0)
   await page.keyboard.press('Escape')
