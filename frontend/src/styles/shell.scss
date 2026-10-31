@@ -60,6 +60,11 @@
   }
 }
 
+.rain-user-select,
+.rain-user-date-filter,
+.rain-user-management {
+  --el-text-color-placeholder: var(--el-text-color-regular);
+}
 .rain-user-management {
   font-family: var(--el-font-family);
   --el-color-primary: #2554ca;
@@ -69,6 +74,9 @@
   --el-color-success: #1f7a3a;
   .el-table {
     --el-table-header-text-color: var(--el-text-color-primary);
+  }
+  .el-table .cell {
+    word-break: normal;
   }
   .el-button--primary:not(.is-link):not(.is-plain) {
     --el-button-bg-color: #2554ca;
@@ -98,6 +106,7 @@
   }
   .el-form--inline .el-form-item {
     margin-inline: 0;
+    margin-block-end: 0;
     max-width: 100%;
   }
   .el-form--inline .el-form-item__content {
@@ -123,6 +132,24 @@
 .rain-user-selector-content {
   min-width: 0;
 }
+.rain-user-date-filter {
+  --el-color-primary: #2554ca;
+  .el-date-range-picker {
+    box-sizing: border-box;
+    inline-size: min(646px, calc(100vw - 32px));
+    max-block-size: min(65vh, 620px);
+    overflow: auto;
+  }
+  .el-picker-panel__body {
+    min-inline-size: 0;
+  }
+}
+.dark .rain-user-date-filter {
+  --el-color-primary: #93c5fd;
+  .el-date-table td:is(.start-date, .end-date) .el-date-table-cell__text {
+    color: #111827;
+  }
+}
 @media (max-width: 600px) {
   .rain-user-management .el-form--inline .el-form-item {
     width: 100%;
@@ -134,5 +161,28 @@
   .rain-user-selector-departments .el-card__body {
     max-height: 160px;
     overflow: auto;
+  }
+  .rain-user-date-filter {
+    .el-date-range-picker__content {
+      display: block;
+      inline-size: 100%;
+      padding: 12px;
+    }
+    .el-date-range-picker__time-header {
+      display: block;
+    }
+    .el-date-range-picker__editors-wrap {
+      display: flex;
+      inline-size: 100%;
+    }
+    .el-date-range-picker__time-picker-wrap {
+      display: block;
+      flex: 1;
+      min-inline-size: 0;
+    }
+    .el-date-range-picker__time-header > .el-icon-arrow-right {
+      display: block;
+      margin-inline: auto;
+    }
   }
 }

@@ -103,13 +103,15 @@ const open = async (row: UserApi.UserVO) => {
 defineExpose({ open })
 const emit = defineEmits(['success'])
 const submitForm = async () => {
+  if (!formReady.value || formLoading.value) return
+  const current = saveTask.begin()
   if (
-    !formReady.value ||
-    formLoading.value ||
-    !(await formRef.value?.validate().catch(() => false))
+    !(await formRef.value?.validate().catch(() => false)) ||
+    !current() ||
+    !dialogVisible.value ||
+    !formReady.value
   )
     return
-  const current = saveTask.begin()
   const data = { userId: formData.value.id, roleIds: [...formData.value.roleIds] }
   formLoading.value = true
   try {

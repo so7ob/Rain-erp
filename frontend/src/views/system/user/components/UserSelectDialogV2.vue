@@ -209,6 +209,7 @@ import * as UserApi from '@/api/system/user'
 import DeptTreeSelect from '@/views/system/dept/components/DeptTreeSelect.vue'
 import { dateFormatter } from '@/utils/formatTime'
 import { useContextTask } from '@/hooks/web/useContextTask'
+import { useTableCheckboxAccessibility } from '@/hooks/web/useTableCheckboxAccessibility'
 
 defineOptions({ name: 'UserSelectDialogV2' })
 
@@ -251,6 +252,7 @@ const handleDeptNodeClick = (deptId: number | undefined) => {
 
 // ==================== 选中状态 ====================
 const tableRef = ref() // 表格 Ref
+useTableCheckboxAccessibility(() => tableRef.value?.$el)
 const selectedRows = ref<UserSelectRow[]>([]) // 多选模式：选中行
 const selectedRadioId = ref<number>() // 单选模式：选中 ID
 const currentRadioRow = ref<UserSelectRow>() // 单选模式：选中行对象

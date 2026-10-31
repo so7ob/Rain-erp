@@ -41,12 +41,14 @@ const user = { id: 1, username: 'user0001', nickname: 'عميل ACME 00123' } as
       <label>Fixture custom title <input v-model="customTitle" /></label>
       <output aria-label="Fixture saved users">{{ saved }}</output>
       <output aria-label="Fixture selected users">{{ JSON.stringify(selected) }}</output>
-      <label>Fixture simple selector</label
-      ><UserSelect v-model="simple" aria-label="Fixture simple selector" />
-      <label>Fixture single selector</label
-      ><UserSelectV2 v-model="single" aria-label="Fixture single selector" :multiple="false" />
-      <label>Fixture multiple selector</label
-      ><UserSelectV2 v-model="multiple" aria-label="Fixture multiple selector" :multiple="true" />
+      <div class="fixture-user-selectors">
+        <label>Fixture simple selector</label
+        ><UserSelect v-model="simple" aria-label="Fixture simple selector" />
+        <label>Fixture single selector</label
+        ><UserSelectV2 v-model="single" aria-label="Fixture single selector" :multiple="false" />
+        <label>Fixture multiple selector</label
+        ><UserSelectV2 v-model="multiple" aria-label="Fixture multiple selector" :multiple="true" />
+      </div>
       <output aria-label="Fixture single value">{{ JSON.stringify(single) }}</output>
       <output aria-label="Fixture multiple value">{{ JSON.stringify(multiple) }}</output>
       <UserForm ref="form" @success="saved++" />

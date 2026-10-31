@@ -7,13 +7,17 @@ import { normalizeLocale } from '@/locales/policy'
 import { CACHE_KEY, useCache } from '@/hooks/web/useCache'
 import { LocaleDropdownType } from '@/types/localeDropdown'
 import { setCacheLocale } from '@/hooks/web/cacheContext'
+import { adaptElementPlusLocale } from '@/locales/elementPlusAdapter'
+import arAdditions from '@/locales/ar/element-plus.json'
+import enAdditions from '@/locales/en/element-plus.json'
+import zhAdditions from '@/locales/zh-CN/element-plus.json'
 
 const { wsCache } = useCache()
 
 const elLocaleMap = {
-  ar,
-  'zh-CN': zhCn,
-  en: en
+  ar: adaptElementPlusLocale(ar, arAdditions.common.elementPlus),
+  'zh-CN': adaptElementPlusLocale(zhCn, zhAdditions.common.elementPlus),
+  en: adaptElementPlusLocale(en, enAdditions.common.elementPlus)
 }
 interface LocaleState {
   currentLocale: LocaleDropdownType

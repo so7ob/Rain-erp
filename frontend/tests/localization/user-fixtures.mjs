@@ -35,6 +35,7 @@ export async function userFixtures(page, options = {}) {
       method: request.method(),
       language: request.headers()['accept-language'],
       query: Object.fromEntries(url.searchParams),
+      queryEntries: [...url.searchParams],
       body: request.postData()
     })
     let data
@@ -63,7 +64,11 @@ export async function userFixtures(page, options = {}) {
         (url.searchParams.get('ids') || '').split(',').includes(String(user.id))
       )
     else if (path === '/system/user/simple-list') data = users
-    else if (path === '/system/user/page') {
+    else if (path === '/system/user/update-status') {
+      const payload = request.postDataJSON()
+      users.find((user) => user.id === payload.id).status = payload.status
+      data = true
+    } else if (path === '/system/user/page') {
       const rows = users
         .filter((user) =>
           ['username', 'nickname', 'mobile'].every(

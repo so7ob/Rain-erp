@@ -63,12 +63,10 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item
-              :label="t('system.user.fields.createdAt')"
-              prop="createTime"
-              class-name="rain-user-date"
-            >
+            <el-form-item :label="t('system.user.fields.createdAt')" prop="createTime">
               <el-date-picker
+                popper-class="rain-user-date-filter"
+                :popper-options="datePickerOptions"
                 v-model="queryParams.createTime"
                 value-format="YYYY-MM-DD HH:mm:ss"
                 type="datetimerange"
@@ -122,9 +120,19 @@
           </el-form>
         </ContentWrap>
         <ContentWrap>
-          <el-table v-loading="loading" :data="list" @selection-change="handleRowCheckboxChange">
+          <el-table
+            ref="tableRef"
+            v-loading="loading"
+            :data="list"
+            @selection-change="handleRowCheckboxChange"
+          >
             <el-table-column type="selection" width="55" />
-            <el-table-column :label="t('system.user.fields.id')" align="center" key="id" prop="id"
+            <el-table-column
+              :label="t('system.user.fields.id')"
+              align="center"
+              key="id"
+              prop="id"
+              min-width="110"
               ><template #default="{ row }"
                 ><bdi dir="ltr">{{ row.id }}</bdi></template
               ></el-table-column
@@ -133,6 +141,7 @@
               :label="t('system.user.fields.username')"
               align="center"
               prop="username"
+              min-width="150"
               :show-overflow-tooltip="true"
               ><template #default="{ row }"
                 ><bdi dir="auto">{{ row.username }}</bdi></template
@@ -142,6 +151,7 @@
               :label="t('system.user.fields.nickname')"
               align="center"
               prop="nickname"
+              min-width="180"
               :show-overflow-tooltip="true"
               ><template #default="{ row }"
                 ><bdi dir="auto">{{ row.nickname }}</bdi></template
@@ -152,6 +162,7 @@
               align="center"
               key="deptName"
               prop="deptName"
+              min-width="150"
               :show-overflow-tooltip="true"
               ><template #default="{ row }"
                 ><bdi dir="auto">{{ row.deptName }}</bdi></template
@@ -173,6 +184,7 @@
                   :active-value="0"
                   :inactive-value="1"
                   @change="handleStatusChange(scope.row)"
+                  @keydown.space.prevent="toggleUserStatusWithSpace(scope.row)"
                   :disabled="!checkPermi(['system:user:update']) || statusBusy.has(scope.row.id)"
                   :aria-label="t('system.user.statusFor', { name: scope.row.username })"
                 />
@@ -260,6 +272,7 @@
 </template>
 <script lang="ts" setup>
 import { useContextTask } from '@/hooks/web/useContextTask'
+import { useTableCheckboxAccessibility } from '@/hooks/web/useTableCheckboxAccessibility'
 import UserActionDialog from './UserActionDialog.vue'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { checkPermi } from '@/utils/permission'
@@ -276,10 +289,27 @@ defineOptions({ name: 'SystemUser' })
 
 const message = useMessage() // 消息弹窗
 const { t } = useI18n() // 国际化
+const datePickerOptions = computed(() => {
+  const label = t('system.user.fields.createdAt')
+  return {
+    modifiers: [
+      {
+        name: 'rain-user-date-name',
+        enabled: true,
+        phase: 'write' as const,
+        fn: ({ state }: { state: { elements: { popper: HTMLElement } } }) => {
+          state.elements.popper.setAttribute('aria-label', label)
+        }
+      }
+    ]
+  }
+})
 
 const loading = ref(true) // 列表的加载中
 const total = ref(0) // 列表的总页数
 const list = ref<UserApi.UserVO[]>([]) // 列表的数
+const tableRef = ref()
+useTableCheckboxAccessibility(() => tableRef.value?.$el)
 const queryParams = reactive({
   pageNo: 1,
   pageSize: 10,
@@ -287,7 +317,7 @@ const queryParams = reactive({
   mobile: undefined,
   status: undefined,
   deptId: undefined as number | undefined,
-  createTime: []
+  createTime: [] as string[] | null
 })
 const queryFormRef = ref() // 搜索的表单
 
@@ -312,7 +342,12 @@ const actionDialog = ref<InstanceType<typeof UserActionDialog>>()
 const statusBusy = reactive(new Set<number>())
 const getList = async () => {
   const current = listTask.begin()
-  const query = { ...queryParams, createTime: [...queryParams.createTime] }
+  const query = {
+    ...queryParams,
+    createTime: Array.isArray(queryParams.createTime)
+      ? [...queryParams.createTime]
+      : queryParams.createTime
+  }
   loading.value = true
   try {
     const data = await UserApi.getUserPage(query)
@@ -357,6 +392,12 @@ const handleImport = () => {
 }
 
 /** 修改用户状态 */
+const toggleUserStatusWithSpace = (row: UserApi.UserVO) => {
+  if (!checkPermi(['system:user:update']) || statusBusy.has(row.id)) return
+  row.status =
+    row.status === CommonStatusEnum.ENABLE ? CommonStatusEnum.DISABLE : CommonStatusEnum.ENABLE
+  void handleStatusChange(row)
+}
 const handleStatusChange = async (row: UserApi.UserVO) => {
   const owner = actionTask.context.value
   const current = actionTask.capture()
@@ -390,7 +431,12 @@ const handleExport = async () => {
   const owner = actionTask.context.value
   try {
     const current = actionTask.capture()
-    const query = { ...queryParams, createTime: [...queryParams.createTime] }
+    const query = {
+      ...queryParams,
+      createTime: Array.isArray(queryParams.createTime)
+        ? [...queryParams.createTime]
+        : queryParams.createTime
+    }
     if (!(await actionDialog.value?.ask('export')) || !current()) return
     // 发起导出
     exportLoading.value = true

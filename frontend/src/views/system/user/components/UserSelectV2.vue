@@ -1,7 +1,7 @@
 <template>
   <div
-    v-bind="attrs"
-    class="w-full"
+    v-bind="wrapperAttrs()"
+    class="w-full rain-user-select"
     :class="disabled ? 'cursor-not-allowed' : 'cursor-pointer'"
     @click="openDialog"
     @mouseenter="hovering = true"
@@ -32,33 +32,36 @@
           </div>
         </div>
       </template>
-      <el-input
-        :model-value="displayLabel"
-        :placeholder="effectivePlaceholder"
-        :disabled="disabled"
-        readonly
-        container-role="combobox"
-        aria-haspopup="dialog"
-        :aria-expanded="dialogOpen"
-        :aria-controls="dialogOpen ? dialogId : undefined"
-        :aria-label="accessibleLabel"
-        :class="disabled ? 'is-select-disabled' : 'is-select-clickable'"
-        @keydown.enter.prevent="openDialog"
-        @keydown.space.prevent="openDialog"
-        @keydown.delete.prevent="clearSelection"
-      >
-        <template #suffix>
-          <button
-            v-if="showClear"
-            type="button"
-            class="rain-user-clear"
-            :aria-label="t('system.user.actions.clear')"
-            @click.stop="clearSelection"
-            ><Icon icon="ep:circle-close" aria-hidden="true"
-          /></button>
-          <Icon v-else icon="ep:search" aria-hidden="true" />
-        </template>
-      </el-input>
+      <span class="block w-full">
+        <el-input
+          v-bind="inputAttrs()"
+          :model-value="displayLabel"
+          :placeholder="effectivePlaceholder"
+          :disabled="disabled"
+          readonly
+          container-role="combobox"
+          aria-haspopup="dialog"
+          :aria-expanded="dialogOpen"
+          :aria-controls="dialogOpen ? dialogId : undefined"
+          :aria-label="accessibleLabel()"
+          :class="disabled ? 'is-select-disabled' : 'is-select-clickable'"
+          @keydown.enter.prevent="openDialog"
+          @keydown.space.prevent="openDialog"
+          @keydown.delete.prevent="clearSelection"
+        >
+          <template #suffix>
+            <button
+              v-if="showClear"
+              type="button"
+              class="rain-user-clear"
+              :aria-label="t('system.user.actions.clear')"
+              @click.stop="clearSelection"
+              ><Icon icon="ep:circle-close" aria-hidden="true"
+            /></button>
+            <Icon v-else icon="ep:search" aria-hidden="true" />
+          </template>
+        </el-input>
+      </span>
     </el-tooltip>
   </div>
   <UserSelectDialogV2
@@ -100,9 +103,12 @@ const emit = defineEmits<{
 }>()
 const { t } = useI18n()
 const effectivePlaceholder = computed(() => props.placeholder ?? t('system.user.selectUser'))
-const accessibleLabel = computed(() =>
+const accessibleLabel = () =>
   typeof attrs['aria-label'] === 'string' ? attrs['aria-label'] : effectivePlaceholder.value
-)
+const wrapperAttrs = () =>
+  Object.fromEntries(Object.entries(attrs).filter(([name]) => !name.startsWith('aria-')))
+const inputAttrs = () =>
+  Object.fromEntries(Object.entries(attrs).filter(([name]) => name.startsWith('aria-')))
 const selectedItems = ref<UserApi.UserVO[]>([])
 const dialogRef = ref<InstanceType<typeof UserSelectDialogV2>>()
 const hovering = ref(false)

@@ -3,6 +3,10 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import { scanSource, readCatalogs } from './localization.mjs'
 import { createScopedTask } from '../src/utils/scopedTask.ts'
+import { adaptElementPlusLocale } from '../src/locales/elementPlusAdapter.ts'
+import ar from 'element-plus/es/locale/lang/ar.mjs'
+import en from 'element-plus/es/locale/lang/en.mjs'
+import zh from 'element-plus/es/locale/lang/zh-cn.mjs'
 
 test('user management and shared selector/help controls keep all owned display text extracted', () => {
   const catalogs = readCatalogs(new URL('../src/locales/', import.meta.url))
@@ -50,4 +54,36 @@ test('scoped operations reject older work, a changed tenant/login and disposed o
   const last = task.begin()
   task.dispose()
   assert.equal(last(), false)
+})
+
+test('library additions translate the reached controls without mutating native locale definitions', () => {
+  for (const [language, base] of [
+    ['ar', ar],
+    ['en', en],
+    ['zh-CN', zh]
+  ]) {
+    const original = structuredClone(base)
+    const additions = JSON.parse(
+      fs.readFileSync(new URL(`../src/locales/${language}/element-plus.json`, import.meta.url))
+    ).common.elementPlus
+    const adapted = adaptElementPlusLocale(base, additions)
+    assert.deepEqual(base, original)
+    assert.equal(adapted.name, base.name)
+    assert.equal(adapted.el.datepicker.today, base.el.datepicker.today)
+    if (language !== 'ar') assert.deepEqual(adapted, base)
+    else {
+      const visit = (object) => {
+        for (const value of Object.values(object)) {
+          if (typeof value === 'object') visit(value)
+          else
+            assert.equal(
+              /[A-Za-z]/.test(value.replace(/\{[^}]*\}|el-pagination/g, '')),
+              false,
+              value
+            )
+        }
+      }
+      for (const section of ['table', 'tag', 'datepicker', 'pagination']) visit(adapted.el[section])
+    }
+  }
 })

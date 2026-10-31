@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+- Localize user management, confirmation/password dialogs and user/department selectors; retain drafts and selections across language changes and verified session renewal, discard obsolete contexts, preserve validation bounds, and improve responsive Arabic date filters and library accessibility (#36).
+
 - Localize registered user spreadsheet filenames, sheets, headers, dictionary labels and import failures; accept Arabic/English/legacy templates, preserve typed data and custom labels, and retain import drafts across language changes and verified session renewal (#34).
 
 - Respect reduced motion in shared overlays, wait for actual entry before accessibility measurements, and increase selection table header contrast (#32).

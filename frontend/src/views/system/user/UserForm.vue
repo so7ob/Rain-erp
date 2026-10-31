@@ -248,13 +248,15 @@ const open = async (type: string, id?: number) => {
 defineExpose({ open })
 const emit = defineEmits(['success'])
 const submitForm = async () => {
+  if (!formReady.value || formLoading.value) return
+  const current = saveTask.begin()
   if (
-    !formReady.value ||
-    formLoading.value ||
-    !(await formRef.value?.validate().catch(() => false))
+    !(await formRef.value?.validate().catch(() => false)) ||
+    !current() ||
+    !dialogVisible.value ||
+    !formReady.value
   )
     return
-  const current = saveTask.begin()
   const data = {
     ...formData.value,
     postIds: [...(formData.value.postIds || [])],

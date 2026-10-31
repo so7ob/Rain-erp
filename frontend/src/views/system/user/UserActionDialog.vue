@@ -90,9 +90,13 @@ const ask = (kind: Kind, name = '', count?: number): Promise<boolean | string | 
   })
 }
 const confirm = async () => {
+  const pending = complete
+  const owner = action.value
+  const password = model.password
   if (action.value?.kind === 'resetPassword') {
     if (!(await formRef.value?.validate().catch(() => false))) return
-    settle(model.password)
+    if (complete !== pending || action.value !== owner || !visible.value) return
+    settle(password)
   } else settle(true)
 }
 watch(visible, (value) => {

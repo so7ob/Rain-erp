@@ -1,0 +1,38 @@
+{
+  "common": {
+    "elementPlus": {
+      "datepicker": {
+        "selectedDate": "Selected date",
+        "weeksFull": {
+          "sun": "Sunday",
+          "mon": "Monday",
+          "tue": "Tuesday",
+          "wed": "Wednesday",
+          "thu": "Thursday",
+          "fri": "Friday",
+          "sat": "Saturday"
+        }
+      },
+      "pagination": {
+        "page": "Page",
+        "prev": "Go to previous page",
+        "next": "Go to next page",
+        "currentPage": "page {pager}",
+        "prevPages": "Previous {pager} pages",
+        "nextPages": "Next {pager} pages",
+        "deprecationWarning": "Deprecated usages detected, please refer to the el-pagination documentation for more details"
+      },
+      "table": {
+        "selectAllLabel": "Select all rows",
+        "selectRowLabel": "Select this row",
+        "expandRowLabel": "Expand this row",
+        "collapseRowLabel": "Collapse this row",
+        "sortLabel": "Sort by {column}",
+        "filterLabel": "Filter by {column}"
+      },
+      "tag": {
+        "close": "Close this tag"
+      }
+    }
+  }
+}

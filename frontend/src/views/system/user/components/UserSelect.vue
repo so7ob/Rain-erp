@@ -8,7 +8,7 @@
     :clearable="clearable"
     filterable
     :filter-method="handleFilter"
-    class="!w-1/1"
+    class="!w-1/1 rain-user-select"
     @change="handleChange"
   >
     <el-option v-for="item in filteredList" :key="item.id" :label="item.nickname" :value="item.id">
