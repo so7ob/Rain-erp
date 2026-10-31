@@ -97,8 +97,19 @@ The reviewed #28 head passed PR CI, but the identical-tree post-merge run [41137
 
 The project adapter now honors reduced motion on these containers, settings and notification overlays. The fixture exposes the real Element Plus `opened` event; contrast and geometry scans wait for that event, full ancestor opacity and completion of finite animations. A regression holds the real normal-motion entrance at its midpoint, verifies readiness stays pending, finishes it, and then runs axe. The reduced-motion case verifies the same controlled entrance does not animate. Both retain full contrast checks without sleeps, test retries or rule exclusions. Stable measurement also exposed the selection table's low-contrast default header color; its project-scoped token now uses primary body text.
 
-The browser suite contains 72 cases: 65 production application cases and seven isolated source-component cases. The existing 375/1280 light/dark matrices remain in place. #28 remains open until the corrective descendant has successful post-merge develop CI.
+The browser suite contains 72 cases: 65 production application cases and seven isolated source-component cases. The existing 375/1280 light/dark matrices remain in place. #28 and #32 were subsequently closed after successful corrective develop CI [41141533145](https://github.com/so7ob/Rain-erp/actions/runs/41141533145).
 
 ## Local source preview
 
 Use [the local development guide](local-development.md) to serve the authoritative frontend through Vite on the existing local port 3085, verify HMR/API routing, or restore the original static output. Runtime overrides remain ignored; this workflow does not publish an application release.
+
+
+## User spreadsheet localization (#34)
+
+The opt-in workbook tests use the real Apache Fesod and POI codecs. They cover all three output languages, regional/unsupported/malformed headers, legacy requests, cross-language template import, duplicate/ambiguous headers, dictionary aliases colliding with custom labels, customized labels, exact large Long text, numeric decimals and Gregorian dates, original mixed text and `01` dictionary identity. Concurrent exports check independent headers and unchanged annotations; the download stream test checks metadata before the first byte. The existing ModuleMessageCatalogTest scans every main-source module catalog, including inactive modules, for duplicate keys, Arabic completeness, parameter parity and valid formats. Intentionally incomplete negative fixtures remain in test resources only.
+
+The real user controller and locale filter run against a mocked domain service, without runtime data writes. H2 service tests exercise actual localized Bean Validation, original usernames, duplicate accounts and department error arguments; no-header expectations retain the original Chinese messages. The shared dictionary source identities and terminology are cross-checked against the frontend defaults.
+
+Ten additional source-component browser cases cover the user import dialog, error/retry/results at 375/1280 in light/dark modes with full scoped axe rules, retained files/checkboxes across languages, chosen download filenames, literal mixed names, required/type/one-file checks, keyboard removal, multipart refresh/replay and another tab's retained draft. Obsolete user/tenant/visited-tenant results cannot reappear. Network and domain services use explicit synthetic fixtures; the browser does not write to the running application's backend. The original 65 production cases and seven shared-source cases remain required. There are no browser retries or new accessibility exclusions.
+
+Focused checks passed 44 frontend configuration/catalog cases, ten import browser cases, and 78 Java cases across ExcelUtilsTest, LocalizedExcelTest, UserSpreadsheetLocaleTest and AdminUserServiceImplTest. The final complete gates remain required for delivery. Use an exact-head detached verification worktree outside the IDE workspace for Maven; keep the Java language server active and avoid concurrent writers to the same target directory. Do not copy local frontend environments or dependencies into that worktree.

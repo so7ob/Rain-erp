@@ -117,7 +117,11 @@ public final class ExcelLocaleCatalog {
     }
 
     public String message(String suffix, String original) {
-        return resolve(prefix + "." + suffix, original);
+        String key = prefix + "." + suffix;
+        translations(key);
+        // Only the registered source caption is a default; callers may provide a custom caption.
+        return java.util.Objects.equals(original, messages.get("zh").getProperty(key))
+                ? resolve(key, original) : original;
     }
 
     private String resolve(String key, String original) {

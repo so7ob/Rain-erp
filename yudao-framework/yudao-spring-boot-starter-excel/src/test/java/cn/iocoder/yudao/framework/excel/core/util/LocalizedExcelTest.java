@@ -164,6 +164,26 @@ class LocalizedExcelTest {
         assertTrue(verified.get());
     }
 
+    @Test
+    void customFileAndSheetCaptionsRemainOriginalAlongsideLocalizedHeaders() throws Exception {
+        Locale locale = Locale.forLanguageTag("ar");
+        var previous = LocaleContextHolder.getLocaleContext();
+        LocaleContextHolder.setLocale(locale);
+        try (var ignored = ErrorMessageContext.open((key, arguments, original) -> messages.getMessage(key, arguments, original, locale))) {
+            MockHttpServletResponse response = new MockHttpServletResponse();
+            ExcelUtils.write(response, "Custom00123.xls", "عميل Custom 00123", AmountRow.class, List.of());
+            assertTrue(response.getHeader("Content-Disposition").contains("filename=Custom00123.xls"));
+            try (var workbook = WorkbookFactory.create(new ByteArrayInputStream(response.getContentAsByteArray()))) {
+                var sheet = workbook.getSheet("عميل Custom 00123");
+                assertNotNull(sheet);
+                assertTrue(sheet.isRightToLeft());
+                assertEquals("المعرّف", sheet.getRow(0).getCell(0).getStringCellValue());
+            }
+        } finally {
+            LocaleContextHolder.setLocaleContext(previous);
+        }
+    }
+
     private <T> byte[] write(String language, Class<T> type, List<T> data) throws Exception {
         return write(language, type, data, new MockHttpServletResponse());
     }
