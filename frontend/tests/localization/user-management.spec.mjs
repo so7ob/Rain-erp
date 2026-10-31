@@ -66,9 +66,12 @@ test('multiple user selector keeps preselection, disabled IDs, search text and c
 }) => {
   await userFixtures(page)
   await page.goto(userFixtureUrl())
-  await page.getByLabel('Fixture custom title', { exact: true }).fill('Custom عنوان 00123')
+  await page.getByLabel('Fixture custom title', { exact: true }).fill('system.user.selectTitle')
+  await expect(
+    page.getByRole('combobox', { name: 'Fixture single selector', exact: true })
+  ).toHaveAttribute('placeholder', 'system.user.selectTitle')
   await page.getByRole('button', { name: 'Open multiple selector fixture' }).click()
-  let dialog = page.getByRole('dialog', { name: 'Custom عنوان 00123', exact: true })
+  let dialog = page.getByRole('dialog', { name: 'system.user.selectTitle', exact: true })
   await expect(
     dialog.getByRole('row').filter({ hasText: 'user0001' }).getByRole('checkbox')
   ).toBeChecked()
@@ -80,7 +83,7 @@ test('multiple user selector keeps preselection, disabled IDs, search text and c
   await dialog.getByRole('row').filter({ hasText: 'user0011' }).getByRole('checkbox').press('Space')
   await dialog.getByPlaceholder('أدخل الاسم المعروض', { exact: true }).fill('Draft 00123')
   await chooseUserLanguage(page, dialog, 'English')
-  dialog = page.getByRole('dialog', { name: 'Custom عنوان 00123', exact: true })
+  dialog = page.getByRole('dialog', { name: 'system.user.selectTitle', exact: true })
   await expect(dialog.getByPlaceholder('Enter a display name', { exact: true })).toHaveValue(
     'Draft 00123'
   )
@@ -166,6 +169,48 @@ test('user management continues to enforce query-only permissions in the real di
   await expect(
     content.getByRole('switch', { name: 'حالة حساب user0001', exact: true })
   ).toBeDisabled()
+})
+
+test('single and batch deletion preserve cancellation, original IDs and translated count confirmation', async ({
+  page
+}) => {
+  const { requests } = await userFixtures(page)
+  await page.goto(userFixtureUrl())
+  await page.getByRole('button', { name: 'Toggle user page fixture' }).click()
+  const content = page.locator('section.rain-user-management')
+  const single = content.getByRole('row').filter({ hasText: 'user0005' })
+  await single.getByRole('button', { name: /user0005/ }).click()
+  await page.getByRole('menuitem', { name: 'حذف', exact: true }).click()
+  let dialog = page.getByRole('dialog', { name: 'تأكيد العملية', exact: true })
+  await dialog.getByRole('button', { name: 'إلغاء', exact: true }).click()
+  await expect(dialog).not.toBeVisible()
+  expect(requests.filter((request) => request.path === '/system/user/delete')).toHaveLength(0)
+  await single.getByRole('button', { name: /user0005/ }).click()
+  await page.getByRole('menuitem', { name: 'حذف', exact: true }).click()
+  await dialog.getByRole('button', { name: 'تأكيد', exact: true }).click()
+  await expect(single).toHaveCount(0)
+  expect(requests.find((request) => request.path === '/system/user/delete').query.id).toBe('5')
+  for (const username of ['user0003', 'user0004'])
+    await content
+      .getByRole('row')
+      .filter({ hasText: username })
+      .getByRole('checkbox')
+      .press('Space')
+  await content.getByRole('button', { name: 'حذف المحدد', exact: true }).click()
+  await expect(
+    dialog.getByText('هل تريد حذف المستخدمَين المحددَين؟', { exact: true })
+  ).toBeVisible()
+  await chooseUserLanguage(page, dialog, 'English')
+  dialog = page.getByRole('dialog', { name: 'System Hint', exact: true })
+  await dialog.getByRole('button', { name: 'OK', exact: true }).click()
+  await expect(content.getByRole('row').filter({ hasText: 'user0003' })).toHaveCount(0)
+  await expect(content.getByRole('row').filter({ hasText: 'user0004' })).toHaveCount(0)
+  expect(
+    requests
+      .find((request) => request.path === '/system/user/delete-list')
+      .query.ids.split(',')
+      .sort()
+  ).toEqual(['3', '4'])
 })
 
 test('user creation survives verified credential renewal and replays the original draft once', async ({

@@ -95,7 +95,12 @@ export async function userFixtures(page, options = {}) {
         { dictType: 'system_user_sex', value: '1', label: '男' },
         { dictType: 'system_user_sex', value: '2', label: '女' }
       ]
-    else if (path === '/system/user/export-excel') {
+    else if (path === '/system/user/delete' || path === '/system/user/delete-list') {
+      const ids = (url.searchParams.get('ids') || url.searchParams.get('id') || '').split(',')
+      for (let index = users.length - 1; index >= 0; index--)
+        if (ids.includes(String(users[index].id))) users.splice(index, 1)
+      data = true
+    } else if (path === '/system/user/export-excel') {
       await route.fulfill({
         contentType: 'application/vnd.ms-excel',
         body: Buffer.from('synthetic-user-export')

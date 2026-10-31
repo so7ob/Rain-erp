@@ -1,4 +1,4 @@
-/** Keep the latest operation only, within the same authenticated user/tenant context. */
+/** Keep asynchronous work within its authenticated user and tenant context. */
 export const createScopedTask = (context: () => string) => {
   let generation = 0
   let invalidation = 0

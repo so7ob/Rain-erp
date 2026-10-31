@@ -45,7 +45,12 @@ const user = { id: 1, username: 'user0001', nickname: 'عميل ACME 00123' } as
         <label>Fixture simple selector</label
         ><UserSelect v-model="simple" aria-label="Fixture simple selector" />
         <label>Fixture single selector</label
-        ><UserSelectV2 v-model="single" aria-label="Fixture single selector" :multiple="false" />
+        ><UserSelectV2
+          v-model="single"
+          aria-label="Fixture single selector"
+          :placeholder="customTitle || undefined"
+          :multiple="false"
+        />
         <label>Fixture multiple selector</label
         ><UserSelectV2 v-model="multiple" aria-label="Fixture multiple selector" :multiple="true" />
       </div>
