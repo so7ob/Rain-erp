@@ -2,7 +2,8 @@
 <template>
   <el-select
     v-model="selectValue"
-    :placeholder="placeholder"
+    :placeholder="effectivePlaceholder"
+    :aria-label="t('system.user.selectUser')"
     :disabled="disabled"
     :clearable="clearable"
     filterable
@@ -12,9 +13,9 @@
   >
     <el-option v-for="item in filteredList" :key="item.id" :label="item.nickname" :value="item.id">
       <div class="flex items-center gap-8px">
-        <span>{{ item.nickname }}</span>
-        <el-tag v-if="item.deptName" size="small" type="info" class="ml-4px">
-          {{ item.deptName }}
+        <bdi dir="auto">{{ item.nickname }}</bdi>
+        <el-tag v-if="item.deptName" size="small" type="info" class="ms-4px">
+          <bdi dir="auto">{{ item.deptName }}</bdi>
         </el-tag>
       </div>
     </el-option>
@@ -23,6 +24,7 @@
 
 <script setup lang="ts">
 import * as UserApi from '@/api/system/user'
+import { useContextTask } from '@/hooks/web/useContextTask'
 
 defineOptions({ name: 'UserSelect' })
 
@@ -35,8 +37,7 @@ const props = withDefaults(
   }>(),
   {
     disabled: false,
-    clearable: true,
-    placeholder: '请选择用户'
+    clearable: true
   }
 )
 
@@ -45,6 +46,8 @@ const emit = defineEmits<{
   change: [item: UserApi.UserVO | undefined]
 }>()
 
+const { t } = useI18n()
+const effectivePlaceholder = computed(() => props.placeholder ?? t('system.user.selectUser'))
 const allList = ref<UserApi.UserVO[]>([])
 const filteredList = ref<UserApi.UserVO[]>([])
 
@@ -74,8 +77,23 @@ const handleChange = (val: number | undefined) => {
 }
 
 /** 加载用户列表 */
-onMounted(async () => {
-  allList.value = await UserApi.getSimpleUserList()
-  filteredList.value = allList.value
+const loadTask = useContextTask(() => {
+  allList.value = []
+  filteredList.value = []
+  emit('update:modelValue', undefined)
+  emit('change', undefined)
+  void loadUsers()
 })
+const loadUsers = async () => {
+  const current = loadTask.begin()
+  try {
+    const rows = await UserApi.getSimpleUserList()
+    if (!current()) return
+    allList.value = rows
+    filteredList.value = rows
+  } catch {
+    /* The shared request handler owns the error message. */
+  }
+}
+onMounted(loadUsers)
 </script>

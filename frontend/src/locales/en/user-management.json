@@ -1,0 +1,89 @@
+{
+  "system": {
+    "user": {
+      "fields": {
+        "id": "User ID",
+        "username": "Username",
+        "nickname": "Display name",
+        "department": "Department",
+        "mobile": "Phone number",
+        "email": "Email",
+        "password": "Password",
+        "gender": "Gender",
+        "posts": "Posts",
+        "remark": "Notes",
+        "status": "Status",
+        "createdAt": "Created at",
+        "roles": "Roles",
+        "actions": "Actions"
+      },
+      "actions": {
+        "search": "Search",
+        "reset": "Reset",
+        "create": "Add user",
+        "edit": "Edit",
+        "delete": "Delete",
+        "batchDelete": "Delete selected",
+        "more": "More",
+        "resetPassword": "Reset password",
+        "assignRoles": "Assign roles",
+        "enable": "Enable",
+        "disable": "Disable",
+        "clear": "Clear selection"
+      },
+      "createTitle": "Add user",
+      "editTitle": "Edit user",
+      "assignRolesTitle": "Assign user roles",
+      "selectTitle": "Select users",
+      "selectUser": "Select a user",
+      "chooseOne": "Select one user",
+      "chooseAtLeastOne": "Select at least one user",
+      "placeholders": {
+        "username": "Enter a username",
+        "nickname": "Enter a display name",
+        "department": "Select a department",
+        "departmentFilter": "Search departments",
+        "mobile": "Enter a phone number",
+        "email": "Enter an email address",
+        "password": "Enter a password",
+        "gender": "Select a gender",
+        "posts": "Select posts",
+        "remark": "Enter notes",
+        "status": "Select a status",
+        "roles": "Select roles",
+        "startDate": "Start date",
+        "endDate": "End date"
+      },
+      "validation": {
+        "usernameRequired": "Username is required",
+        "nicknameRequired": "Display name is required",
+        "passwordRequired": "Password is required",
+        "email": "Enter a valid email address",
+        "mobile": "Enter a valid phone number",
+        "passwordLength": "Password must contain 4–16 characters"
+      },
+      "confirm": {
+        "enable": "Enable user “{name}”?",
+        "disable": "Disable user “{name}”?",
+        "resetPassword": "Enter a new password for “{name}”",
+        "export": "Export user data using the current filters?",
+        "deleteCount": "Delete {count} selected user? | Delete {count} selected users?"
+      },
+      "passwordChanged": "Password updated. New password: {password}",
+      "docs": {
+        "userCenter": "User management guide (Chinese)",
+        "socialLogin": "Social sign-in guide (Chinese)",
+        "excel": "Spreadsheet import/export guide (Chinese)"
+      },
+      "selectRow": "Select {name}",
+      "statusFor": "Account status for {name}",
+      "moreFor": "More actions for {name}",
+      "selectedCount": "{count} selected user | {count} selected users",
+      "loadFailed": "Could not load the user data. Close this window and try again.",
+      "listSeparator": ", "
+    }
+  },
+  "common": {
+    "documentationLink": "Documentation: {title}"
+  }
+}

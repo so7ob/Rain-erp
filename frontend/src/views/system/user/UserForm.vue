@@ -1,54 +1,91 @@
 <template>
-  <Dialog v-model="dialogVisible" :title="dialogTitle">
+  <Dialog
+    v-model="dialogVisible"
+    :title="dialogTitle"
+    class="rain-user-management"
+    width="640"
+    show-locale
+  >
+    <el-alert
+      v-if="loadFailed"
+      :title="t('system.user.loadFailed')"
+      type="error"
+      :closable="false"
+    />
     <el-form
       ref="formRef"
       v-loading="formLoading"
       :model="formData"
       :rules="formRules"
-      label-width="80px"
+      label-position="top"
+      :disabled="formLoading || !formReady"
     >
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="用户昵称" prop="nickname">
-            <el-input v-model="formData.nickname" placeholder="请输入用户昵称" />
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.nickname')" prop="nickname">
+            <el-input
+              v-model="formData.nickname"
+              :placeholder="t('system.user.placeholders.nickname')"
+            />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="归属部门" prop="deptId">
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.department')" prop="deptId">
             <el-tree-select
               v-model="formData.deptId"
               :data="deptList"
               :props="defaultProps"
               check-strictly
               node-key="id"
-              placeholder="请选择归属部门"
+              :placeholder="t('system.user.placeholders.department')"
             />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="手机号码" prop="mobile">
-            <el-input v-model="formData.mobile" maxlength="11" placeholder="请输入手机号码" />
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.mobile')" prop="mobile">
+            <el-input
+              v-model="formData.mobile"
+              type="tel"
+              maxlength="11"
+              :placeholder="t('system.user.placeholders.mobile')"
+            />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="邮箱" prop="email">
-            <el-input v-model="formData.email" maxlength="50" placeholder="请输入邮箱" />
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.email')" prop="email">
+            <el-input
+              v-model="formData.email"
+              type="email"
+              maxlength="50"
+              :placeholder="t('system.user.placeholders.email')"
+            />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
-          <el-form-item v-if="formData.id === undefined" label="用户名称" prop="username">
-            <el-input v-model="formData.username" placeholder="请输入用户名称" />
+        <el-col :xs="24" :sm="12">
+          <el-form-item
+            v-if="formData.id === undefined"
+            :label="t('system.user.fields.username')"
+            prop="username"
+          >
+            <el-input
+              v-model="formData.username"
+              :placeholder="t('system.user.placeholders.username')"
+            />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item v-if="formData.id === undefined" label="用户密码" prop="password">
+        <el-col :xs="24" :sm="12">
+          <el-form-item
+            v-if="formData.id === undefined"
+            :label="t('system.user.fields.password')"
+            prop="password"
+          >
             <el-input
               v-model="formData.password"
-              placeholder="请输入用户密码"
+              :placeholder="t('system.user.placeholders.password')"
               show-password
               type="password"
             />
@@ -56,9 +93,9 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="12">
-          <el-form-item label="用户性别">
-            <el-select v-model="formData.sex" placeholder="请选择">
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.gender')">
+            <el-select v-model="formData.sex" :placeholder="t('system.user.placeholders.gender')">
               <el-option
                 v-for="dict in getIntDictOptions(DICT_TYPE.SYSTEM_USER_SEX)"
                 :key="dict.value"
@@ -68,9 +105,13 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-          <el-form-item label="岗位">
-            <el-select v-model="formData.postIds" multiple placeholder="请选择">
+        <el-col :xs="24" :sm="12">
+          <el-form-item :label="t('system.user.fields.posts')">
+            <el-select
+              v-model="formData.postIds"
+              multiple
+              :placeholder="t('system.user.placeholders.posts')"
+            >
               <el-option
                 v-for="item in postList"
                 :key="item.id"
@@ -83,137 +124,162 @@
       </el-row>
       <el-row>
         <el-col :span="24">
-          <el-form-item label="备注">
-            <el-input v-model="formData.remark" placeholder="请输入内容" type="textarea" />
+          <el-form-item :label="t('system.user.fields.remark')">
+            <el-input
+              v-model="formData.remark"
+              :placeholder="t('system.user.placeholders.remark')"
+              type="textarea"
+            />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading || !formReady" type="primary" @click="submitForm">{{
+        t('common.ok')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
 <script lang="ts" setup>
+import type { FormInstance, FormRules } from 'element-plus'
 import { DICT_TYPE, getIntDictOptions } from '@/utils/dict'
 import { CommonStatusEnum } from '@/utils/constants'
 import { defaultProps, handleTree } from '@/utils/tree'
+import { useContextTask } from '@/hooks/web/useContextTask'
+import { useLocalizedForm } from '@/hooks/web/useLocalizedForm'
 import * as PostApi from '@/api/system/post'
 import * as DeptApi from '@/api/system/dept'
 import * as UserApi from '@/api/system/user'
-import { FormRules } from 'element-plus'
 
 defineOptions({ name: 'SystemUserForm' })
-
-const { t } = useI18n() // 国际化
-const message = useMessage() // 消息弹窗
-
-const dialogVisible = ref(false) // 弹窗的是否展示
-const dialogTitle = ref('') // 弹窗的标题
-const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
-const formType = ref('') // 表单的类型：create - 新增；update - 修改
-const formData = ref({
+const { t } = useI18n()
+const message = useMessage()
+const dialogVisible = ref(false)
+const formLoading = ref(false)
+const formReady = ref(false)
+const loadFailed = ref(false)
+const formType = ref('create')
+const dialogTitle = computed(() =>
+  t(formType.value === 'create' ? 'system.user.createTitle' : 'system.user.editTitle')
+)
+const initialForm = () => ({
   nickname: '',
-  deptId: '',
+  deptId: undefined as number | undefined,
   mobile: '',
   email: '',
-  id: undefined,
+  id: undefined as number | undefined,
   username: '',
   password: '',
-  sex: undefined,
-  postIds: [],
+  sex: undefined as number | undefined,
+  postIds: [] as (string | number)[],
   remark: '',
   status: CommonStatusEnum.ENABLE,
-  roleIds: []
+  roleIds: [] as number[]
 })
-const formRules = reactive<FormRules>({
-  username: [{ required: true, message: '用户名称不能为空', trigger: 'blur' }],
-  nickname: [{ required: true, message: '用户昵称不能为空', trigger: 'blur' }],
-  password: [{ required: true, message: '用户密码不能为空', trigger: 'blur' }],
+const formData = ref(initialForm())
+const formRef = ref<FormInstance>()
+const deptList = ref<Tree[]>([])
+const postList = ref<PostApi.PostVO[]>([])
+const formRules = computed<FormRules>(() => ({
+  username: [
+    { required: true, message: t('system.user.validation.usernameRequired'), trigger: 'blur' }
+  ],
+  nickname: [
+    { required: true, message: t('system.user.validation.nicknameRequired'), trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: t('system.user.validation.passwordRequired'), trigger: 'blur' }
+  ],
   email: [
-    {
-      type: 'email',
-      message: '请输入正确的邮箱地址',
-      trigger: ['blur', 'change']
-    }
+    { type: 'email', message: t('system.user.validation.email'), trigger: ['blur', 'change'] }
   ],
   mobile: [
-    {
-      pattern: /^1[3-9]\d{9}$/,
-      message: '请输入正确的手机号码',
-      trigger: 'blur'
-    }
+    { pattern: /^1[3-9]\d{9}$/, message: t('system.user.validation.mobile'), trigger: 'blur' }
   ]
-})
-const formRef = ref() // 表单 Ref
-const deptList = ref<Tree[]>([]) // 树形结构
-const postList = ref([] as PostApi.PostVO[]) // 岗位列表
-
-/** 打开弹窗 */
-const open = async (type: string, id?: number) => {
-  dialogVisible.value = true
-  dialogTitle.value = t('action.' + type)
-  formType.value = type
-  resetForm()
-  // 修改时，设置数据
-  if (id) {
-    formLoading.value = true
-    try {
-      formData.value = await UserApi.getUser(id)
-    } finally {
-      formLoading.value = false
-    }
-  }
-  // 加载部门树
-  deptList.value = handleTree(await DeptApi.getSimpleDeptList())
-  // 加载岗位列表
-  postList.value = await PostApi.getSimplePostList()
+}))
+useLocalizedForm(() => formRef.value)
+const clearContext = () => {
+  dialogVisible.value = false
+  formData.value = initialForm()
+  deptList.value = []
+  postList.value = []
+  formLoading.value = false
+  formReady.value = false
 }
-defineExpose({ open }) // 提供 open 方法，用于打开弹窗
-
-/** 提交表单 */
-const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
-const submitForm = async () => {
-  // 校验表单
-  if (!formRef) return
-  const valid = await formRef.value.validate()
-  if (!valid) return
-  // 提交请求
-  formLoading.value = true
-  try {
-    const data = formData.value as unknown as UserApi.UserVO
-    if (formType.value === 'create') {
-      await UserApi.createUser(data)
-      message.success(t('common.createSuccess'))
-    } else {
-      await UserApi.updateUser(data)
-      message.success(t('common.updateSuccess'))
-    }
-    dialogVisible.value = false
-    // 发送操作成功的事件
-    emit('success')
-  } finally {
-    formLoading.value = false
-  }
-}
-
-/** 重置表单 */
+const loadTask = useContextTask(clearContext)
+const saveTask = useContextTask()
 const resetForm = () => {
-  formData.value = {
-    nickname: '',
-    deptId: '',
-    mobile: '',
-    email: '',
-    id: undefined,
-    username: '',
-    password: '',
-    sex: undefined,
-    postIds: [],
-    remark: '',
-    status: CommonStatusEnum.ENABLE,
-    roleIds: []
-  }
+  formData.value = initialForm()
   formRef.value?.resetFields()
 }
+const open = async (type: string, id?: number) => {
+  loadTask.invalidate()
+  saveTask.invalidate()
+  formType.value = type
+  resetForm()
+  dialogVisible.value = true
+  formReady.value = false
+  loadFailed.value = false
+  formLoading.value = true
+  const current = loadTask.begin()
+  try {
+    const [user, departments, posts] = await Promise.all([
+      id ? UserApi.getUser(id) : Promise.resolve(undefined),
+      DeptApi.getSimpleDeptList(),
+      PostApi.getSimplePostList()
+    ])
+    if (!current() || !dialogVisible.value) return
+    if (id && !user) {
+      loadFailed.value = true
+      return
+    }
+    if (user) formData.value = user
+    deptList.value = handleTree(departments)
+    postList.value = posts
+    formReady.value = true
+  } catch {
+    if (current()) loadFailed.value = true
+  } finally {
+    if (current()) formLoading.value = false
+  }
+}
+defineExpose({ open })
+const emit = defineEmits(['success'])
+const submitForm = async () => {
+  if (
+    !formReady.value ||
+    formLoading.value ||
+    !(await formRef.value?.validate().catch(() => false))
+  )
+    return
+  const current = saveTask.begin()
+  const data = {
+    ...formData.value,
+    postIds: [...(formData.value.postIds || [])],
+    roleIds: [...(formData.value.roleIds || [])]
+  } as unknown as UserApi.UserVO
+  const type = formType.value
+  formLoading.value = true
+  try {
+    if (type === 'create') await UserApi.createUser(data)
+    else await UserApi.updateUser(data)
+    if (!current() || !dialogVisible.value) return
+    message.success(t(type === 'create' ? 'common.createSuccess' : 'common.updateSuccess'))
+    dialogVisible.value = false
+    emit('success')
+  } catch {
+    // The shared transport presents the localized error; retain the entered form.
+  } finally {
+    if (current()) formLoading.value = false
+  }
+}
+watch(dialogVisible, (visible) => {
+  if (!visible) {
+    loadTask.invalidate()
+    saveTask.invalidate()
+    formLoading.value = false
+  }
+})
 </script>

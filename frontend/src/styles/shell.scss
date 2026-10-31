@@ -59,3 +59,80 @@
     transition: none !important;
   }
 }
+
+.rain-user-management {
+  font-family: var(--el-font-family);
+  --el-color-primary: #2554ca;
+  --el-color-error: #b91c1c;
+  --el-color-danger: #b91c1c;
+  --el-color-warning: #946200;
+  --el-color-success: #1f7a3a;
+  .el-table {
+    --el-table-header-text-color: var(--el-text-color-primary);
+  }
+  .el-button--primary:not(.is-link):not(.is-plain) {
+    --el-button-bg-color: #2554ca;
+    --el-button-border-color: #2554ca;
+    --el-button-text-color: #fff;
+    --el-button-hover-bg-color: #1943b0;
+    --el-button-hover-border-color: #1943b0;
+    --el-button-hover-text-color: #fff;
+  }
+  .el-tag--info {
+    --el-tag-text-color: var(--el-text-color-primary);
+  }
+  .el-select__tags-text {
+    color: var(--el-text-color-primary);
+  }
+  .rain-user-name .cell {
+    text-align: start;
+  }
+  .rain-user-date .cell {
+    direction: ltr;
+    unicode-bidi: isolate;
+  }
+  .el-form--inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .el-form--inline .el-form-item {
+    margin-inline: 0;
+    max-width: 100%;
+  }
+  .el-form--inline .el-form-item__content {
+    max-width: 100%;
+  }
+  .el-form-item__content > :is(.el-input, .el-select, .el-tree-select) {
+    width: 100%;
+  }
+  input:is([type='email'], [type='tel'], [type='password']) {
+    direction: ltr;
+  }
+}
+.dark .rain-user-management {
+  --el-color-primary: #93c5fd;
+  --el-color-error: #fca5a5;
+  --el-color-danger: #fca5a5;
+  --el-color-warning: #fbd38d;
+  --el-color-success: #8fe0ac;
+  .el-checkbox {
+    --el-checkbox-checked-icon-color: #111827;
+  }
+}
+.rain-user-selector-content {
+  min-width: 0;
+}
+@media (max-width: 600px) {
+  .rain-user-management .el-form--inline .el-form-item {
+    width: 100%;
+  }
+  .rain-user-selector > .el-dialog__body {
+    max-height: 65vh;
+    overflow: auto;
+  }
+  .rain-user-selector-departments .el-card__body {
+    max-height: 160px;
+    overflow: auto;
+  }
+}

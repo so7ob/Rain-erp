@@ -1,7 +1,9 @@
 <template>
   <el-alert v-if="getEnable()" type="success" show-icon>
     <template #title>
-      <div @click="goToUrl">{{ '【' + title + '】文档地址：' + url }}</div>
+      <a :href="url" target="_blank" rel="noopener noreferrer"
+        >{{ t('common.documentationLink', { title }) }} <bdi dir="ltr">{{ url }}</bdi></a
+      >
     </template>
   </el-alert>
 </template>
@@ -10,15 +12,12 @@ import { propTypes } from '@/utils/propTypes'
 
 defineOptions({ name: 'DocAlert' })
 
-const props = defineProps({
+defineProps({
   title: propTypes.string,
   url: propTypes.string
 })
 
-/** 跳转 URL 链接 */
-const goToUrl = () => {
-  window.open(props.url)
-}
+const { t } = useI18n()
 
 /** 是否开启 */
 const getEnable = () => {

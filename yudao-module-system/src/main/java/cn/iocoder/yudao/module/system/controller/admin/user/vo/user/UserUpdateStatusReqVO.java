@@ -13,13 +13,13 @@ import lombok.Data;
 public class UserUpdateStatusReqVO {
 
     @Schema(description = "用户编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
-    @NotNull(message = "角色编号不能为空")
+    @NotNull(message = "{system.user.validation.statusUserIdRequired}")
     private Long id;
 
     @Schema(description = "状态，见 CommonStatusEnum 枚举", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "状态不能为空")
-    @InEnum(value = CommonStatusEnum.class, message = "修改状态必须是 {value}")
-    @InDict(type = DictTypeConstants.COMMON_STATUS)
+    @NotNull(message = "{system.user.validation.statusRequired}")
+    @InEnum(value = CommonStatusEnum.class, message = "修改状态必须是 {value}", messageKey = "system.user.validation.statusAllowed")
+    @InDict(type = DictTypeConstants.COMMON_STATUS, messageKey = "system.user.validation.statusDictionary")
     private Integer status;
 
 }

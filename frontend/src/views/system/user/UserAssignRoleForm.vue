@@ -1,96 +1,134 @@
 <template>
-  <Dialog v-model="dialogVisible" title="分配角色">
-    <el-form ref="formRef" v-loading="formLoading" :model="formData" label-width="80px">
-      <el-form-item label="用户名称">
+  <Dialog
+    v-model="dialogVisible"
+    :title="t('system.user.assignRolesTitle')"
+    class="rain-user-management"
+    width="560"
+    show-locale
+  >
+    <el-alert
+      v-if="loadFailed"
+      :title="t('system.user.loadFailed')"
+      type="error"
+      :closable="false"
+    />
+    <el-form
+      ref="formRef"
+      v-loading="formLoading"
+      :model="formData"
+      label-position="top"
+      :disabled="formLoading || !formReady"
+    >
+      <el-form-item :label="t('system.user.fields.username')">
         <el-input v-model="formData.username" :disabled="true" />
       </el-form-item>
-      <el-form-item label="用户昵称">
+      <el-form-item :label="t('system.user.fields.nickname')">
         <el-input v-model="formData.nickname" :disabled="true" />
       </el-form-item>
-      <el-form-item label="角色">
-        <el-select v-model="formData.roleIds" multiple placeholder="请选择角色">
+      <el-form-item :label="t('system.user.fields.roles')">
+        <el-select
+          v-model="formData.roleIds"
+          multiple
+          :placeholder="t('system.user.placeholders.roles')"
+        >
           <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id" />
         </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button :disabled="formLoading" type="primary" @click="submitForm">确 定</el-button>
-      <el-button @click="dialogVisible = false">取 消</el-button>
+      <el-button :disabled="formLoading || !formReady" type="primary" @click="submitForm">{{
+        t('common.ok')
+      }}</el-button>
+      <el-button @click="dialogVisible = false">{{ t('common.cancel') }}</el-button>
     </template>
   </Dialog>
 </template>
 <script lang="ts" setup>
+import type { FormInstance } from 'element-plus'
 import * as PermissionApi from '@/api/system/permission'
 import * as UserApi from '@/api/system/user'
 import * as RoleApi from '@/api/system/role'
+import { useContextTask } from '@/hooks/web/useContextTask'
 
 defineOptions({ name: 'SystemUserAssignRoleForm' })
-
-const { t } = useI18n() // 国际化
-const message = useMessage() // 消息弹窗
-
-const dialogVisible = ref(false) // 弹窗的是否展示
-const formLoading = ref(false) // 表单的加载中：1）修改时的数据加载；2）提交的按钮禁用
-const formData = ref({
-  id: -1,
-  nickname: '',
-  username: '',
-  roleIds: []
-})
-const formRef = ref() // 表单 Ref
-const roleList = ref([] as RoleApi.RoleVO[]) // 角色的列表
-
-/** 打开弹窗 */
-const open = async (row: UserApi.UserVO) => {
-  dialogVisible.value = true
+const { t } = useI18n()
+const message = useMessage()
+const dialogVisible = ref(false)
+const formLoading = ref(false)
+const formReady = ref(false)
+const loadFailed = ref(false)
+const initialForm = () => ({ id: -1, nickname: '', username: '', roleIds: [] as number[] })
+const formData = ref(initialForm())
+const formRef = ref<FormInstance>()
+const roleList = ref<RoleApi.RoleVO[]>([])
+const resetForm = () => {
+  formData.value = initialForm()
+  roleList.value = []
+  formRef.value?.resetFields()
+}
+const loadTask = useContextTask(() => {
+  dialogVisible.value = false
   resetForm()
-  // 设置数据
+  formLoading.value = false
+  formReady.value = false
+})
+const saveTask = useContextTask()
+const open = async (row: UserApi.UserVO) => {
+  loadTask.invalidate()
+  saveTask.invalidate()
+  resetForm()
   formData.value.id = row.id
   formData.value.username = row.username
   formData.value.nickname = row.nickname
-  // 获得角色拥有的菜单集合
+  dialogVisible.value = true
   formLoading.value = true
+  formReady.value = false
+  loadFailed.value = false
+  const current = loadTask.begin()
   try {
-    formData.value.roleIds = await PermissionApi.getUserRoleList(row.id)
+    const [roles, available] = await Promise.all([
+      PermissionApi.getUserRoleList(row.id),
+      RoleApi.getSimpleRoleList()
+    ])
+    if (!current() || !dialogVisible.value) return
+    formData.value.roleIds = roles
+    roleList.value = available
+    formReady.value = true
+  } catch {
+    if (current()) loadFailed.value = true
   } finally {
-    formLoading.value = false
+    if (current()) formLoading.value = false
   }
-  // 获得角色列表
-  roleList.value = await RoleApi.getSimpleRoleList()
 }
-defineExpose({ open }) // 提供 open 方法，用于打开弹窗
-
-/** 提交表单 */
-const emit = defineEmits(['success']) // 定义 success 事件，用于操作成功后的回调
+defineExpose({ open })
+const emit = defineEmits(['success'])
 const submitForm = async () => {
-  // 校验表单
-  if (!formRef) return
-  const valid = await formRef.value.validate()
-  if (!valid) return
-  // 提交请求
+  if (
+    !formReady.value ||
+    formLoading.value ||
+    !(await formRef.value?.validate().catch(() => false))
+  )
+    return
+  const current = saveTask.begin()
+  const data = { userId: formData.value.id, roleIds: [...formData.value.roleIds] }
   formLoading.value = true
   try {
-    await PermissionApi.assignUserRole({
-      userId: formData.value.id,
-      roleIds: formData.value.roleIds
-    })
+    await PermissionApi.assignUserRole(data)
+    if (!current() || !dialogVisible.value) return
     message.success(t('common.updateSuccess'))
     dialogVisible.value = false
-    // 发送操作成功的事件
     emit('success', true)
+  } catch {
+    // The shared transport presents the localized error; retain the selected roles.
   } finally {
+    if (current()) formLoading.value = false
+  }
+}
+watch(dialogVisible, (visible) => {
+  if (!visible) {
+    loadTask.invalidate()
+    saveTask.invalidate()
     formLoading.value = false
   }
-}
-
-/** 重置表单 */
-const resetForm = () => {
-  formData.value = {
-    id: -1,
-    nickname: '',
-    username: '',
-    roleIds: []
-  }
-  formRef.value?.resetFields()
-}
+})
 </script>

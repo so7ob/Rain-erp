@@ -31,6 +31,9 @@ public @interface InDict {
 
     String message() default "必须在指定范围 {value}";
 
+    /** Optional project message identity; an empty value retains legacy interpolation. */
+    String messageKey() default "";
+
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
