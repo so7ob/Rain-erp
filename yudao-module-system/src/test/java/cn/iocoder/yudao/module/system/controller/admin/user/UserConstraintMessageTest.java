@@ -32,7 +32,7 @@ class UserConstraintMessageTest {
             assertEquals("Enum list 2,3", legacy.get("collection"));
             assertEquals("Dictionary [0, 1]", legacy.get("dictionary"));
             assertEquals("Dictionary list [0, 1]", legacy.get("dictionaryCollection"));
-            try (var ignored = ErrorMessageContext.openScope((key, arguments, original) -> "مترجم " + key + " " + arguments[0])) {
+            try (var ignored = ErrorMessageContext.open((key, arguments, original) -> "مترجم " + key + " " + arguments[0])) {
                 Map<String, String> localized = messages(validator.validate(fixture));
                 assertEquals("مترجم fixture.scalar [0, 1]", localized.get("scalar"));
                 assertEquals("مترجم fixture.collection 2,3", localized.get("collection"));
